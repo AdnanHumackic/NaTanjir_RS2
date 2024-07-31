@@ -102,10 +102,10 @@ namespace naTanjir.Services
                 entity.DatumKreiranja = DateTime.Now;
             }
 
-            //if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
-            //{
-            //    throw new Exception("Molimo unesite validnu ocjenu između 1 i 5.");
-            //}
+            if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
+            {
+                throw new Exception("Molimo unesite validnu ocjenu između 1 i 5.");
+            }
 
             if (request?.IsDeleted == null)
             {

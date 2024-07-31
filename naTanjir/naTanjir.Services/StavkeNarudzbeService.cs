@@ -69,7 +69,6 @@ namespace naTanjir.Services
             return query;
         }
 
-        //ovo ostavi po strani malo
         public override void BeforeInsert(StavkeNarudzbeInsertRequest request, StavkeNarudzbe entity)
         {
             if(request?.Kolicina==null || request.Kolicina <= 0)
@@ -94,12 +93,12 @@ namespace naTanjir.Services
             {
                 var narudzba = new Narudzba
                 {
-                    BrojNarudzbe=123,//promijeni vrijednost
+                    BrojNarudzbe=123,
                     DatumKreiranja=DateTime.Now,
                     IsDeleted=false,
                     IsDostavljena=false,
                     IsNaPutu=false,
-                    KorisnikId=1,//napravi servis koji daje mogucnost dohvatanaj trenutno prijavljenog korisnika
+                    KorisnikId=1,
                     UkupnaCijena=request.Kolicina*request.Cijena,
                     VrijemeBrisanja=null,
                 };
@@ -111,9 +110,7 @@ namespace naTanjir.Services
             entity.NarudzbaId = request.NarudzbaId;
             base.BeforeInsert(request, entity);
 
-            //razmisli sta ces za update
-            //dodaj tabelu upiti mozda
-            //mozda obrisi tabelu korpa jer nema smisla da je imas kad vec imas stavke narudzbe
+          
         }
     }
 }
