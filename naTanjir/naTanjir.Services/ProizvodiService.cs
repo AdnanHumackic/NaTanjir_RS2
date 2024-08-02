@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client.Extensibility;
 using naTanjir.Model;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -49,27 +50,27 @@ namespace naTanjir.Services
         {
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new Exception("Molimo unesite naziv proizvoda.");
+                throw new UserException("Molimo unesite naziv proizvoda.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Opis))
             {
-                throw new Exception("Molimo unesite opis proizvoda.");
+                throw new UserException("Molimo unesite opis proizvoda.");
             }
 
             if (request?.Cijena == null || request.Cijena <= 0)
             {
-                throw new Exception("Molimo unesite validnu cijenu.");
+                throw new UserException("Molimo unesite validnu cijenu.");
             }
 
             if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId==null)
             {
-                throw new Exception("Molimo unesite tip proizvoda.");
+                throw new UserException("Molimo unesite tip proizvoda.");
             }
 
             if(request.RestoranId==0 || request?.RestoranId==null)
             {
-                throw new Exception("Molimo unesite restoran kojem proizvod pripada.");
+                throw new UserException("Molimo unesite restoran kojem proizvod pripada.");
             }
 
             base.BeforeInsert(request, entity);
@@ -81,27 +82,27 @@ namespace naTanjir.Services
 
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new Exception("Molimo unesite naziv proizvoda.");
+                throw new UserException("Molimo unesite naziv proizvoda.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Opis))
             {
-                throw new Exception("Molimo unesite opis proizvoda.");
+                throw new UserException("Molimo unesite opis proizvoda.");
             }
 
             if (request.Cijena==0 || request.Cijena<0)
             {
-                throw new Exception("Molimo unesite validnu cijenu.");
+                throw new UserException("Molimo unesite validnu cijenu.");
             }
 
             if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId==null)
             {
-                throw new Exception("Molimo unesite tip proizvoda.");
+                throw new UserException("Molimo unesite tip proizvoda.");
             }
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite status restorana.");
+                throw new UserException("Molimo unesite status restorana.");
             }
         }
 

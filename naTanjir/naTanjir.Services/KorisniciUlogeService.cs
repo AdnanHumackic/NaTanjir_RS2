@@ -1,6 +1,7 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -49,12 +50,12 @@ namespace naTanjir.Services
         {
             if(request.KorisnikId==0 || request?.KorisnikId == null)
             {
-                throw new Exception("Molimo unesite id korisnika.");
+                throw new UserException("Molimo unesite id korisnika.");
             }
 
             if (request.UlogaId == 0 || request?.UlogaId == null)
             {
-                throw new Exception("Molimo unesite id uloge.");
+                throw new UserException("Molimo unesite id uloge.");
             }
 
             base.BeforeInsert(request, entity);
@@ -66,7 +67,7 @@ namespace naTanjir.Services
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite status.");
+                throw new UserException("Molimo unesite status.");
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -43,16 +44,17 @@ namespace naTanjir.Services
         {
             if(request?.ProizvodId==null || request.ProizvodId == 0)
             {
-                throw new Exception("Molimo unesite proizvod id.");
+                throw new UserException("Molimo unesite proizvod id.");
             }
             
             if(request?.KorpaId==null || request.KorpaId == 0)
             {
-                throw new Exception("Molimo unesite korpa id.");
+                throw new UserException("Molimo unesite korpa id.");
             }
+
             if (request?.Kolicina == null || request.Kolicina <= 0 )
             {
-                throw new Exception("Molimo unesite validnu kolicinu.");
+                throw new UserException("Molimo unesite validnu kolicinu.");
             }
             base.BeforeInsert(request, entity);
         }
@@ -63,17 +65,17 @@ namespace naTanjir.Services
            
             if (request?.ProizvodId == null || request.ProizvodId == 0)
             {
-                throw new Exception("Molimo unesite proizvod id.");
+                throw new UserException("Molimo unesite proizvod id.");
             }
 
             if (request?.Kolicina == null || request.Kolicina <= 0)
             {
-                throw new Exception("Molimo unesite validnu kolicinu.");
+                throw new UserException("Molimo unesite validnu kolicinu.");
             }
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite status.");
+                throw new UserException("Molimo unesite status.");
             }
 
         }

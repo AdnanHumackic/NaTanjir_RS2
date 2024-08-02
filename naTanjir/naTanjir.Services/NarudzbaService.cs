@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -83,17 +84,17 @@ namespace naTanjir.Services
         {
             if(request?.KorisnikId==null || request.KorisnikId == 0)
             {
-                throw new Exception("Molimo unesite korisnik id.");
+                throw new UserException("Molimo unesite korisnik id.");
             }
 
             if(request?.BrojNarudzbe==null || request.BrojNarudzbe == 0)
             {
-                throw new Exception("Molimo unesite broj narudzbe.");
+                throw new UserException("Molimo unesite broj narudzbe.");
             }
 
             if(request?.UkupnaCijena==null || request.UkupnaCijena <= 0)
             {
-                throw new Exception("Molimo unesite ukupnu cijenu koja mora bit veća od 0.");
+                throw new UserException("Molimo unesite ukupnu cijenu koja mora bit veća od 0.");
             }
 
             if (request?.DatumKreiranja == null)
@@ -110,16 +111,16 @@ namespace naTanjir.Services
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite stauts narudzbe.");
+                throw new UserException("Molimo unesite stauts narudzbe.");
             }
             if (request?.IsDostavljena == null)
             {
-                throw new Exception("Molimo unesite stauts dostave narudzbe.");
+                throw new UserException("Molimo unesite stauts dostave narudzbe.");
             }
 
             if (request?.IsNaPutu == null)
             {
-                throw new Exception("Molimo unesite stauts dostave narudzbe.");
+                throw new UserException("Molimo unesite stauts dostave narudzbe.");
             }
         }
     }

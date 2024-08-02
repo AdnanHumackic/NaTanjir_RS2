@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -49,32 +50,32 @@ namespace naTanjir.Services
         {
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new Exception("Molimo unesite naziv restorana.");
+                throw new UserException("Molimo unesite naziv restorana.");
             }
 
             if (string.IsNullOrWhiteSpace(request.RadnoVrijemeOd))
             {
-                throw new Exception("Molimo unesite radno vrijeme od.");
+                throw new UserException("Molimo unesite radno vrijeme od.");
             }
 
             if (string.IsNullOrWhiteSpace(request.RadnoVrijemeDo))
             {
-                throw new Exception("Molimo unesite radno vrijeme do.");
+                throw new UserException("Molimo unesite radno vrijeme do.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Lokacija))
             {
-                throw new Exception("Molimo unesite lokaciju restorana.");
+                throw new UserException("Molimo unesite lokaciju restorana.");
             }
 
             if (request.VrstaRestoranaId == 0 || request?.VrstaRestoranaId == null)
             {
-                throw new Exception("Molimo unesite vrstu restorana.");
+                throw new UserException("Molimo unesite vrstu restorana.");
             }
 
             if (request.VlasnikId == 0 || request?.VlasnikId == null)
             {
-                throw new Exception("Molimo unesite vlasnika restorana.");
+                throw new UserException("Molimo unesite vlasnika restorana.");
             }
 
             base.BeforeInsert(request, entity);
@@ -86,22 +87,22 @@ namespace naTanjir.Services
 
             if (string.IsNullOrWhiteSpace(request.RadnoVrijemeOd))
             {
-                throw new Exception("Molimo unesite radno vrijeme od.");
+                throw new UserException("Molimo unesite radno vrijeme od.");
             }
 
             if (string.IsNullOrWhiteSpace(request.RadnoVrijemeDo))
             {
-                throw new Exception("Molimo unesite radno vrijeme do.");
+                throw new UserException("Molimo unesite radno vrijeme do.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Lokacija))
             {
-                throw new Exception("Molimo unesite lokaciju restorana.");
+                throw new UserException("Molimo unesite lokaciju restorana.");
             }
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite status restorana.");
+                throw new UserException("Molimo unesite status restorana.");
             }
         }
     }

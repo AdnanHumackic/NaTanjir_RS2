@@ -1,6 +1,8 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using naTanjir.Model;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -16,8 +18,11 @@ namespace naTanjir.Services
 {
     public class KorisniciService:BaseCRUDService<Model.Korisnici, KorisniciSearchObject, Database.Korisnici, KorisniciInsertRequest, KorisniciUpdateRequest>, IKorisniciService
     {
-        public KorisniciService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
+
+        ILogger<KorisniciService> _logger;
+        public KorisniciService(NaTanjirContext context, IMapper mapper, ILogger<KorisniciService> logger) : base(context, mapper)
         {
+            _logger = logger;
         }
 
         public override IQueryable<Database.Korisnici> AddFilter(KorisniciSearchObject searchObject, IQueryable<Database.Korisnici> query)
@@ -61,7 +66,7 @@ namespace naTanjir.Services
         {
             if (request.Lozinka != request.LozinkaPotvrda)
             {
-                throw new Exception("Lozinka i LozinkaPotvrda moraju biti iste.");
+                throw new UserException("Lozinka i LozinkaPotvrda moraju biti iste.");
             }
 
             entity.LozinkaSalt = GenerateSalt();
@@ -100,7 +105,7 @@ namespace naTanjir.Services
             {
                 if (request.Lozinka != request.LozinkaPotvrda)
                 {
-                    throw new Exception("Lozinka i LozinkaPotvrda moraju biti iste.");
+                    throw new UserException("Lozinka i LozinkaPotvrda moraju biti iste.");
                 }
                 entity.LozinkaSalt = GenerateSalt();
                 entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.Lozinka);

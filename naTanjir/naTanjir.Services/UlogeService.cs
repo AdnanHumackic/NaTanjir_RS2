@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -36,7 +37,7 @@ namespace naTanjir.Services
         {
             if (string.IsNullOrEmpty(request.Naziv))
             {
-                throw new Exception("Molimo unesite naziv uloge.");
+                throw new UserException("Molimo unesite naziv uloge.");
             }
 
             base.BeforeInsert(request, entity);
@@ -48,12 +49,12 @@ namespace naTanjir.Services
 
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new Exception("Molimo unesite naziv uloge.");
+                throw new UserException("Molimo unesite naziv uloge.");
             }
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite status uloge.");
+                throw new UserException("Molimo unesite status uloge.");
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -39,7 +40,7 @@ namespace naTanjir.Services
         {
             if (request?.KorisnikId == null || request?.KorisnikId==0)
             {
-                throw new Exception("Molimo unesite korisnik id.");
+                throw new UserException("Molimo unesite korisnik id.");
             }
 
             base.BeforeInsert(request, entity);

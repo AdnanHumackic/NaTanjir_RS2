@@ -1,6 +1,7 @@
 ﻿
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -73,24 +74,25 @@ namespace naTanjir.Services
         {
             if(request?.Kolicina==null || request.Kolicina <= 0)
             {
-                throw new Exception("Molimo unesite validnu kolicinu.");
+                throw new UserException("Molimo unesite validnu kolicinu.");
             }
             if (request?.Cijena == null || request.Cijena <= 0)
             {
-                throw new Exception("Molimo unesite validnu kolicinu.");
+                throw new UserException("Molimo unesite validnu kolicinu.");
             }
             if(request?.ProizvodId==null || request.ProizvodId == 0)
             {
-                throw new Exception("Molimo unesite proizvod id.");
+                throw new UserException("Molimo unesite proizvod id.");
             }
 
             if(request?.RestoranId==null || request.RestoranId == 0)
             {
-                throw new Exception("Molimo unesite restoran id.");
+                throw new UserException("Molimo unesite restoran id.");
             }
 
             if (request?.NarudzbaId==0 || request?.NarudzbaId == null)
             {
+                //test
                 var narudzba = new Narudzba
                 {
                     BrojNarudzbe=123,
@@ -98,7 +100,7 @@ namespace naTanjir.Services
                     IsDeleted=false,
                     IsDostavljena=false,
                     IsNaPutu=false,
-                    KorisnikId=1,
+                    KorisnikId=1,//getCurrentUser
                     UkupnaCijena=request.Kolicina*request.Cijena,
                     VrijemeBrisanja=null,
                 };
@@ -109,8 +111,6 @@ namespace naTanjir.Services
             }
             entity.NarudzbaId = request.NarudzbaId;
             base.BeforeInsert(request, entity);
-
-          
         }
     }
 }

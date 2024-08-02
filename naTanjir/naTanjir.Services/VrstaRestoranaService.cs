@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -16,7 +17,7 @@ namespace naTanjir.Services
         {
         }
 
-        public override IQueryable<VrstaRestorana> AddFilter(VrstaRestoranaSearchObject searchObject, IQueryable<VrstaRestorana> query)
+        public override IQueryable<Database.VrstaRestorana> AddFilter(VrstaRestoranaSearchObject searchObject, IQueryable<VrstaRestorana> query)
         {
             query = base.AddFilter(searchObject, query);
 
@@ -35,7 +36,7 @@ namespace naTanjir.Services
         {
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new Exception("Molimo unseite naziv za vrstu restorana.");
+                throw new UserException("Molimo unseite naziv za vrstu restorana.");
             }
 
             base.BeforeInsert(request, entity);
@@ -47,12 +48,12 @@ namespace naTanjir.Services
 
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new Exception("Molimo unseite naziv za vrstu proizvoda.");
+                throw new UserException("Molimo unseite naziv za vrstu proizvoda.");
             }
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molime unesite status vrste restorana.");
+                throw new UserException("Molime unesite status vrste restorana.");
             }
         }
     }

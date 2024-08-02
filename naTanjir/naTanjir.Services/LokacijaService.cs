@@ -1,6 +1,7 @@
 ﻿
   using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -35,7 +36,7 @@ namespace naTanjir.Services
             if (!request.GeografskaDuzina.HasValue || !request.GeografskaSirina.HasValue ||
                  request.GeografskaDuzina.Value == 0 || request.GeografskaSirina.Value == 0)
             {
-                throw new Exception("Molimo unesite validne podatke.");
+                throw new UserException("Molimo unesite validne podatke.");
             }
 
             base.BeforeInsert(request, entity);
@@ -48,12 +49,12 @@ namespace naTanjir.Services
             if (!request.GeografskaDuzina.HasValue || !request.GeografskaSirina.HasValue ||
                  request.GeografskaDuzina.Value == 0 || request.GeografskaSirina.Value == 0)
             {
-                throw new Exception("Molimo unesite validne podatke.");
+                throw new UserException("Molimo unesite validne podatke.");
             }
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite status lokacije.");
+                throw new UserException("Molimo unesite status lokacije.");
             }
         }
     }

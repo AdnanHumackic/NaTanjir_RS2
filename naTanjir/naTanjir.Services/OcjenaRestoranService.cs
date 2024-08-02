@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
@@ -78,17 +79,17 @@ namespace naTanjir.Services
 
             if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
             {
-                throw new Exception("Molimo unesite validnu ocjenu između 1 i 5.");
+                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
             }
 
             if (request?.KorisnikId == null || request.KorisnikId==0)
             {
-                throw new Exception("Molimo unesite korisnik id.");
+                throw new UserException("Molimo unesite korisnik id.");
             }
 
             if (request?.RestoranId == null || request.RestoranId==0)
             {
-                throw new Exception("Molimo unesite restoran id.");
+                throw new UserException("Molimo unesite restoran id.");
             }
             base.BeforeInsert(request, entity);
         }
@@ -104,12 +105,12 @@ namespace naTanjir.Services
 
             if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
             {
-                throw new Exception("Molimo unesite validnu ocjenu između 1 i 5.");
+                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
             }
 
             if (request?.IsDeleted == null)
             {
-                throw new Exception("Molimo unesite stauts ocjene.");
+                throw new UserException("Molimo unesite stauts ocjene.");
             }
 
         }
