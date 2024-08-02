@@ -50,7 +50,7 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unseite naziv za vrstu proizvoda.");
             }
-
+            //test
             if (request?.IsDeleted == null)
             {
                 throw new UserException("Molime unesite status vrste restorana.");
