@@ -9,8 +9,6 @@ namespace naTanjir.API.Controllers
     [Route("[controller]")]
     public class LokacijaController : BaseCRUDController<Model.Lokacija, LokacijaSearchObject, LokacijaInsertRequest, LokacijaUpdateRequest>
     {
-        protected ILokacijaService _service;
-
         public LokacijaController(ILokacijaService service)
             : base(service)
         {

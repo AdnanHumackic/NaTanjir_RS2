@@ -10,8 +10,6 @@ namespace naTanjir.API.Controllers
     [Route("[controller]")]
     public class ProizvodKorpaController : BaseCRUDController<Model.ProizvodKorpa, ProizvodKorpaSearchObject, ProizvodKorpaInsertRequest, ProizvodKorpaUpdateRequest>
     {
-        protected IProizvodKorpaService _service;
-
         public ProizvodKorpaController(IProizvodKorpaService service)
             : base(service)
         {

@@ -2,11 +2,13 @@
 using naTanjir.Model.SearchObject;
 using naTanjir.Model;
 using naTanjir.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class BaseController<TModel, TSearch>:ControllerBase  where TSearch : BaseSearchObject
     {
         protected IService<TModel, TSearch> _service;
@@ -16,13 +18,13 @@ namespace naTanjir.API.Controllers
             _service = service;
         }
         [HttpGet]
-        public PagedResult<TModel> GetList([FromQuery] TSearch search)
+        public virtual PagedResult<TModel> GetList([FromQuery] TSearch search)
         {
             return _service.GetPaged(search);
         }
 
         [HttpGet("{id}")]
-        public TModel GetById(int id)
+        public virtual TModel GetById(int id)
         {
             return _service.GetById(id);
         }
