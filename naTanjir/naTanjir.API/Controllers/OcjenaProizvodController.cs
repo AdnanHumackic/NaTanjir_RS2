@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using naTanjir.Model;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services;
@@ -9,8 +11,6 @@ namespace naTanjir.API.Controllers
     [Route("[controller]")]
     public class OcjenaProizvodController:BaseCRUDController<Model.OcjenaProizvod, OcjenaProizvodSearchObject, OcjenaProizvodInsertRequest, OcjenaProizvodUpdateRequest>
     {
-        protected IOcjenaProizvodService _service;
-
         public OcjenaProizvodController(IOcjenaProizvodService service)
             : base(service)
         {

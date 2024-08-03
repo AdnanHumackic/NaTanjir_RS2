@@ -112,6 +112,23 @@ namespace naTanjir.Services
             }
         }
 
-      
+        public Model.Korisnici Login(string username, string password)
+        {
+            var entity = Context.Korisnicis.Include(x=>x.KorisniciUloges).ThenInclude(y=>y.Uloga).FirstOrDefault(x => x.KorisnickoIme == username);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            var hash = GenerateHash(entity.LozinkaSalt, password);
+
+            if (hash != entity.LozinkaHash)
+            {
+                return null;
+            }
+
+            return Mapper.Map<Model.Korisnici>(entity);
+        }
     }
 }

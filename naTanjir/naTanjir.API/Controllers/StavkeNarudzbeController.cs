@@ -9,8 +9,6 @@ namespace naTanjir.API.Controllers
     [Route("[controller]")]
     public class StavkeNarudzbeController:BaseCRUDController<Model.StavkeNarudzbe, StavkeNarudzbeSearchObject, StavkeNarudzbeInsertRequest, StavkeNarudzbeUpdateRequest>
     {
-        protected IStavkeNarudzbe _service;
-
         public StavkeNarudzbeController(IStavkeNarudzbe service)
             : base(service)
         {

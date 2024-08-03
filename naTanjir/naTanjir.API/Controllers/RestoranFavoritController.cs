@@ -9,8 +9,6 @@ namespace naTanjir.API.Controllers
     [Route("[controller]")]
     public class RestoranFavoritController:BaseCRUDController<Model.RestoranFavorit, RestoranFavoritSearchObject, RestoranFavoritInsertRequest, RestoranFavoritUpdateRequest>
     {
-        protected IRestoranFavoritService _service;
-
         public RestoranFavoritController(IRestoranFavoritService service)
             : base(service)
         {

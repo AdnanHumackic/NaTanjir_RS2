@@ -9,8 +9,6 @@ namespace naTanjir.API.Controllers
     [Route("[controller]")]
     public class KorpaController:BaseCRUDController<Model.Korpa, KorpaSearchObject, KorpaInsertRequest, KorpaUpdateRequest>
     {
-        protected IKorpaService _service;
-
         public KorpaController(IKorpaService service)
             : base(service)
         {
