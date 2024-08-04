@@ -13,6 +13,7 @@ namespace naTanjir.Services
 {
     public class UlogeService : BaseCRUDService<Model.Uloge, UlogeSearchObject, Database.Uloge, UlogeInsertRequest, UlogeUpdateRequest>, IUlogeService
     {
+      
         public UlogeService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
         {
         }
@@ -35,9 +36,9 @@ namespace naTanjir.Services
 
         public override void BeforeInsert(UlogeInsertRequest request, Uloge entity)
         {
-            if (string.IsNullOrEmpty(request.Naziv))
+            if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new UserException("Molimo unesite naziv uloge.");
+                throw new UserException("Molimo unesite naziv vrste restorana.");
             }
 
             base.BeforeInsert(request, entity);
@@ -49,7 +50,7 @@ namespace naTanjir.Services
 
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new UserException("Molimo unesite naziv uloge.");
+                throw new UserException("Molimo unesite naziv vrste restorana.");
             }
 
             if (request?.IsDeleted == null)

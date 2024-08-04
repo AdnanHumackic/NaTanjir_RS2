@@ -28,19 +28,19 @@ namespace naTanjir.API.Controllers
             return base.GetById(id);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public override Uloge Insert(UlogeInsertRequest request)
         {
             return base.Insert(request);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public override Uloge Update(int id, UlogeUpdateRequest request)
         {
             return base.Update(id, request);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public override void Delete(int id)
         {
             base.Delete(id);

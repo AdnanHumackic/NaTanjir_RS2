@@ -14,6 +14,8 @@ namespace naTanjir.Services
 {
     public class VrstaProizvodumService : BaseCRUDService<Model.VrstaProizvodum, VrstaProizvodumSearchObject, Database.VrstaProizvodum, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>, IVrstaProizvodumService
     {
+        
+
         public VrstaProizvodumService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
         {
         }
@@ -38,7 +40,7 @@ namespace naTanjir.Services
         {
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new UserException("Molimo unseite naziv za vrstu proizvoda.");
+                throw new UserException("Molimo unesite naziv vrste proizvoda.");
             }
 
             base.BeforeInsert(request, entity);
@@ -51,7 +53,7 @@ namespace naTanjir.Services
 
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new UserException("Molimo unseite naziv za vrstu proizvoda.");
+                throw new UserException("Molimo unesite naziv vrste proizvoda.");
             }
 
             if (request?.IsDeleted == null)

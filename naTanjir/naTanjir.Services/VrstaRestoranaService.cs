@@ -13,6 +13,7 @@ namespace naTanjir.Services
 {
     public class VrstaRestoranaService : BaseCRUDService<Model.VrstaRestorana, VrstaRestoranaSearchObject, Database.VrstaRestorana, VrstaRestoranaInsertRequest, VrstaRestoranaUpdateRequest>, IVrstaRestoranaService
     {
+
         public VrstaRestoranaService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
         {
         }
@@ -36,7 +37,7 @@ namespace naTanjir.Services
         {
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new UserException("Molimo unseite naziv za vrstu restorana.");
+                throw new UserException("Molimo unesite naziv vrste restorana.");
             }
 
             base.BeforeInsert(request, entity);
@@ -48,7 +49,7 @@ namespace naTanjir.Services
 
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
-                throw new UserException("Molimo unseite naziv za vrstu proizvoda.");
+                throw new UserException("Molimo unesite naziv vrste restorana.");
             }
 
             if (request?.IsDeleted == null)

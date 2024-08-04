@@ -8,8 +8,6 @@ namespace naTanjir.Model.Request
     {
         public bool IsDeleted { get; set; }
 
-        public bool IsDostavljena { get; set; }
-        public bool IsNaPutu { get; set; }
 
     }
 }

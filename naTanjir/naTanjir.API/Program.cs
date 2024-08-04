@@ -21,8 +21,6 @@ builder.Services.AddTransient<IRestoranFavoritService, RestoranFavoritService>()
 builder.Services.AddTransient<IKorisniciUloge, KorisniciUlogeService>();
 builder.Services.AddTransient<IOcjenaRestoranService, OcjenaRestoranService>();
 builder.Services.AddTransient<IOcjenaProizvodService, OcjenaProizvodService>();
-builder.Services.AddTransient<IKorpaService, KorpaService>();
-builder.Services.AddTransient<IProizvodKorpaService, ProizvodKorpaService>();
 builder.Services.AddTransient<INarudzbaService, NarudzbaService>();
 builder.Services.AddTransient<IStavkeNarudzbe, StavkeNarudzbeService>();
 
