@@ -33,8 +33,6 @@ public partial class Korisnici:ISoftDelete
 
     public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; } = new List<KorisniciUloge>();
 
-    public virtual ICollection<Korpa> Korpas { get; set; } = new List<Korpa>();
-
     public virtual Lokacija? Lokacija { get; set; }
 
     public virtual ICollection<Narudzba> Narudzbas { get; set; } = new List<Narudzba>();
@@ -46,4 +44,6 @@ public partial class Korisnici:ISoftDelete
     public virtual ICollection<RestoranFavorit> RestoranFavorits { get; set; } = new List<RestoranFavorit>();
 
     public virtual ICollection<Restoran> Restorans { get; set; } = new List<Restoran>();
+
+    public virtual ICollection<Upit> Upits { get; set; } = new List<Upit>();
 }

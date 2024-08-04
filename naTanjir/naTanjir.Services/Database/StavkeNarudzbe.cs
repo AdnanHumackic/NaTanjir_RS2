@@ -15,13 +15,13 @@ public partial class StavkeNarudzbe:ISoftDelete
 
     public DateTime? VrijemeBrisanja { get; set; }
 
-    public int NarudzbaId { get; set; }
+    public int? NarudzbaId { get; set; }
 
     public int ProizvodId { get; set; }
 
     public int RestoranId { get; set; }
 
-    public virtual Narudzba Narudzba { get; set; } = null!;
+    public virtual Narudzba? Narudzba { get; set; }
 
     public virtual Proizvod Proizvod { get; set; } = null!;
 

@@ -15,9 +15,6 @@ namespace naTanjir.Model
         public DateTime DatumKreiranja { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public bool? IsDostavljena { get; set; }
-
         public int KorisnikId { get; set; }
         public virtual Korisnici Korisnik { get; set; } = null!;
 

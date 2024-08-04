@@ -98,8 +98,6 @@ namespace naTanjir.Services
                     BrojNarudzbe=123,
                     DatumKreiranja=DateTime.Now,
                     IsDeleted=false,
-                    IsDostavljena=false,
-                    IsNaPutu=false,
                     KorisnikId=1,//getCurrentUser
                     UkupnaCijena=request.Kolicina*request.Cijena,
                     VrijemeBrisanja=null,

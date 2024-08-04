@@ -8,7 +8,7 @@ namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    //[Authorize]
     public class BaseController<TModel, TSearch>:ControllerBase  where TSearch : BaseSearchObject
     {
         protected IService<TModel, TSearch> _service;

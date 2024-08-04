@@ -27,8 +27,6 @@ public partial class Proizvod:ISoftDelete
 
     public virtual ICollection<OcjenaProizvod> OcjenaProizvods { get; set; } = new List<OcjenaProizvod>();
 
-    public virtual ICollection<ProizvodKorpa> ProizvodKorpas { get; set; } = new List<ProizvodKorpa>();
-
     public virtual Restoran Restoran { get; set; } = null!;
 
     public virtual ICollection<StavkeNarudzbe> StavkeNarudzbes { get; set; } = new List<StavkeNarudzbe>();

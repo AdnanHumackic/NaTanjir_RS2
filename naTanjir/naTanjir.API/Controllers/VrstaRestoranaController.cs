@@ -28,19 +28,19 @@ namespace naTanjir.API.Controllers
             return base.GetById(id);
         }
 
-        [Authorize(Roles ="Admin")]
+        //[Authorize(Roles ="Admin")]
         public override VrstaRestorana Insert(VrstaRestoranaInsertRequest request)
         {
             return base.Insert(request);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public override VrstaRestorana Update(int id, VrstaRestoranaUpdateRequest request)
         {
             return base.Update(id, request);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public override void Delete(int id)
         {
             base.Delete(id);

@@ -57,11 +57,6 @@ namespace naTanjir.Services
                 query = query.Include(x => x.StavkeNarudzbes.Where(x => x.RestoranId == searchObject.RestoranId)) ;
             }
 
-            if (searchObject.IsDostavljena == true)
-            {
-                query = query.Where(x => x.IsDostavljena == searchObject.IsDostavljena);
-            }
-
             if (searchObject.IsKorisnikIncluded == true)
             {
                 query = query.Include(x => x.Korisnik);
@@ -112,15 +107,6 @@ namespace naTanjir.Services
             if (request?.IsDeleted == null)
             {
                 throw new UserException("Molimo unesite stauts narudzbe.");
-            }
-            if (request?.IsDostavljena == null)
-            {
-                throw new UserException("Molimo unesite stauts dostave narudzbe.");
-            }
-
-            if (request?.IsNaPutu == null)
-            {
-                throw new UserException("Molimo unesite stauts dostave narudzbe.");
             }
         }
     }

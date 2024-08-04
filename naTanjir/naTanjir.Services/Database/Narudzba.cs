@@ -13,13 +13,11 @@ public partial class Narudzba:ISoftDelete
 
     public DateTime DatumKreiranja { get; set; }
 
-    public bool IsDostavljena { get; set; }
+    public DateTime? VrijemeBrisanja { get; set; }
 
-    public bool IsNaPutu { get; set; }
+    public string? StateMachine { get; set; }
 
     public bool IsDeleted { get; set; }
-
-    public DateTime? VrijemeBrisanja { get; set; }
 
     public int KorisnikId { get; set; }
 

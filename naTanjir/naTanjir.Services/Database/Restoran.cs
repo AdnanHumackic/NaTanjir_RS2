@@ -21,6 +21,8 @@ public partial class Restoran:ISoftDelete
 
     public DateTime? VrijemeBrisanja { get; set; }
 
+    public string? StateMachine { get; set; }
+
     public int VrstaRestoranaId { get; set; }
 
     public int VlasnikId { get; set; }
@@ -32,6 +34,8 @@ public partial class Restoran:ISoftDelete
     public virtual ICollection<RestoranFavorit> RestoranFavorits { get; set; } = new List<RestoranFavorit>();
 
     public virtual ICollection<StavkeNarudzbe> StavkeNarudzbes { get; set; } = new List<StavkeNarudzbe>();
+
+    public virtual ICollection<Upit> Upits { get; set; } = new List<Upit>();
 
     public virtual Korisnici Vlasnik { get; set; } = null!;
 
