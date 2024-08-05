@@ -6,6 +6,8 @@ using naTanjir.API.Authentication;
 using naTanjir.API.Filters;
 using naTanjir.Services;
 using naTanjir.Services.Database;
+using naTanjir.Services.Validator.Implementation;
+using naTanjir.Services.Validator.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,11 @@ builder.Services.AddTransient<IOcjenaRestoranService, OcjenaRestoranService>();
 builder.Services.AddTransient<IOcjenaProizvodService, OcjenaProizvodService>();
 builder.Services.AddTransient<INarudzbaService, NarudzbaService>();
 builder.Services.AddTransient<IStavkeNarudzbe, StavkeNarudzbeService>();
+
+builder.Services.AddTransient<IUlogeValidatorService, UlogeValidatorService>();
+builder.Services.AddTransient<IVrstaRestoranaValidatorService, VrstaRestoranaValidatorService>();
+builder.Services.AddTransient<IVrstaProizvodumValidatorService, VrstaProizvodumValidatorService>();
+builder.Services.AddTransient<IRestoranFavoritValidatorService, RestoranFavoritValidatorService>();
 
 
 builder.Services.AddControllers(x =>
