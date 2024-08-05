@@ -12,6 +12,7 @@ namespace naTanjir.Model.Request
 
         public int NarudzbaId { get; set; }
 
+        //public List<int> Proizvod {get;set;}
         public int ProizvodId { get; set; }
 
         public int RestoranId { get; set; }

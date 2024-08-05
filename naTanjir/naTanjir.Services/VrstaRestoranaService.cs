@@ -3,6 +3,7 @@ using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,12 @@ namespace naTanjir.Services
 {
     public class VrstaRestoranaService : BaseCRUDService<Model.VrstaRestorana, VrstaRestoranaSearchObject, Database.VrstaRestorana, VrstaRestoranaInsertRequest, VrstaRestoranaUpdateRequest>, IVrstaRestoranaService
     {
+        private readonly IVrstaRestoranaValidatorService vrstaRestoranaValidator;
 
-        public VrstaRestoranaService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
+        public VrstaRestoranaService(NaTanjirContext context, IMapper mapper, 
+            IVrstaRestoranaValidatorService vrstaRestoranaValidator) : base(context, mapper)
         {
+            this.vrstaRestoranaValidator = vrstaRestoranaValidator;
         }
 
         public override IQueryable<Database.VrstaRestorana> AddFilter(VrstaRestoranaSearchObject searchObject, IQueryable<VrstaRestorana> query)
@@ -35,10 +39,7 @@ namespace naTanjir.Services
 
         public override void BeforeInsert(VrstaRestoranaInsertRequest request, Database.VrstaRestorana entity)
         {
-            if (string.IsNullOrWhiteSpace(request.Naziv))
-            {
-                throw new UserException("Molimo unesite naziv vrste restorana.");
-            }
+            vrstaRestoranaValidator.ValidateVrstaRestoranaNazivIns(request);
 
             base.BeforeInsert(request, entity);
         }
@@ -47,10 +48,7 @@ namespace naTanjir.Services
         {
             base.BeforeUpdate(request, entity);
 
-            if (string.IsNullOrWhiteSpace(request.Naziv))
-            {
-                throw new UserException("Molimo unesite naziv vrste restorana.");
-            }
+            vrstaRestoranaValidator.ValidateVrstaRestoranaNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {

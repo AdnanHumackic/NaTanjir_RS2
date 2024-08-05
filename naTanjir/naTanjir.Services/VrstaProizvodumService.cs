@@ -3,6 +3,7 @@ using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,12 @@ namespace naTanjir.Services
 {
     public class VrstaProizvodumService : BaseCRUDService<Model.VrstaProizvodum, VrstaProizvodumSearchObject, Database.VrstaProizvodum, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>, IVrstaProizvodumService
     {
-        
+        private readonly IVrstaProizvodumValidatorService vrstaProizvodumValidator;
 
-        public VrstaProizvodumService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
+        public VrstaProizvodumService(NaTanjirContext context, IMapper mapper, 
+            IVrstaProizvodumValidatorService vrstaProizvodumValidator) : base(context, mapper)
         {
+            this.vrstaProizvodumValidator = vrstaProizvodumValidator;
         }
 
         public override IQueryable<VrstaProizvodum> AddFilter(VrstaProizvodumSearchObject searchObject, IQueryable<VrstaProizvodum> query)
@@ -38,10 +41,7 @@ namespace naTanjir.Services
 
         public override void BeforeInsert(VrstaProizvodumInsertRequest request, VrstaProizvodum entity)
         {
-            if (string.IsNullOrWhiteSpace(request.Naziv))
-            {
-                throw new UserException("Molimo unesite naziv vrste proizvoda.");
-            }
+            vrstaProizvodumValidator.ValidateVrstaProizvodumNazivIns(request);
 
             base.BeforeInsert(request, entity);
         }
@@ -51,10 +51,7 @@ namespace naTanjir.Services
         {
             base.BeforeUpdate(request, entity);
 
-            if (string.IsNullOrWhiteSpace(request.Naziv))
-            {
-                throw new UserException("Molimo unesite naziv vrste proizvoda.");
-            }
+            vrstaProizvodumValidator.ValidateVrstaProizvodumNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {
