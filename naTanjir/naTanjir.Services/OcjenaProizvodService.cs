@@ -5,6 +5,7 @@ using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,12 @@ namespace naTanjir.Services
 {
     public class OcjenaProizvodService : BaseCRUDService<Model.OcjenaProizvod, OcjenaProizvodSearchObject, Database.OcjenaProizvod, OcjenaProizvodInsertRequest, OcjenaProizvodUpdateRequest>, IOcjenaProizvodService
     {
-        public OcjenaProizvodService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
+        private readonly IOcjenaProizvodValidatorService ocjenaProizvodValidator;
+
+        public OcjenaProizvodService(NaTanjirContext context, IMapper mapper, 
+            IOcjenaProizvodValidatorService ocjenaProizvodValidator) : base(context, mapper)
         {
+            this.ocjenaProizvodValidator = ocjenaProizvodValidator;
         }
 
         public override IQueryable<Database.OcjenaProizvod> AddFilter(OcjenaProizvodSearchObject searchObject, IQueryable<Database.OcjenaProizvod> query)
@@ -73,6 +78,8 @@ namespace naTanjir.Services
 
         public override void BeforeInsert(OcjenaProizvodInsertRequest request, Database.OcjenaProizvod entity)
         {
+            ocjenaProizvodValidator.ValidateOcjenaProizvodtIns(request);
+
             if (request?.DatumKreiranja == null)
             {
                 entity.DatumKreiranja = DateTime.Now;
@@ -81,16 +88,6 @@ namespace naTanjir.Services
             if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
             {
                 throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
-            }
-
-            if (request?.KorisnikId == null || request.KorisnikId==0)
-            {
-                throw new UserException("Molimo unesite korisnik id.");
-            }
-
-            if (request?.ProizvodId == null || request.ProizvodId == 0)
-            {
-                throw new UserException("Molimo unesite proizvod id.");
             }
 
             base.BeforeInsert(request, entity);

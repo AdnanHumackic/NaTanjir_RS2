@@ -30,6 +30,9 @@ builder.Services.AddTransient<IUlogeValidatorService, UlogeValidatorService>();
 builder.Services.AddTransient<IVrstaRestoranaValidatorService, VrstaRestoranaValidatorService>();
 builder.Services.AddTransient<IVrstaProizvodumValidatorService, VrstaProizvodumValidatorService>();
 builder.Services.AddTransient<IRestoranFavoritValidatorService, RestoranFavoritValidatorService>();
+builder.Services.AddTransient<IRestoranValidatorService, RestoranValidatorService>();
+builder.Services.AddTransient<IOcjenaRestoranValidatorService, OcjenaRestoranValidatorService>();
+builder.Services.AddTransient<IOcjenaProizvodValidatorService, OcjenaProizvodValidatorService>();
 
 
 builder.Services.AddControllers(x =>
