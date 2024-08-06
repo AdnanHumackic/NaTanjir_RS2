@@ -17,8 +17,8 @@ namespace naTanjir.Model
         public int RestoranId { get; set; }
 
         public int KorisnikId { get; set; }
-        public virtual Korisnici Korisnik { get; set; } = null!;
+        public virtual Korisnici Korisnik { get; set; }
 
-        public virtual Restoran Restoran { get; set; } = null!;
+        public virtual Restoran Restoran { get; set; }
     }
 }

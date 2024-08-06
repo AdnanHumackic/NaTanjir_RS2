@@ -18,8 +18,8 @@ namespace naTanjir.Model
 
         public int KorisnikId { get; set; }
 
-        public virtual Korisnici Korisnik { get; set; } = null!;
+        public virtual Korisnici Korisnik { get; set; } 
 
-        public virtual Proizvod Proizvod { get; set; } = null!;
+        public virtual Proizvod Proizvod { get; set; } 
     }
 }

@@ -4,6 +4,7 @@ using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.Database;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,12 @@ namespace naTanjir.Services
 {
     public class OcjenaRestoranService : BaseCRUDService<Model.OcjenaRestoran, OcjenaRestoranSearchObject, Database.OcjenaRestoran, OcjenaRestoranInsertRequest, OcjenaRestoranUpdateRequest>, IOcjenaRestoranService
     {
-        public OcjenaRestoranService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
+        private readonly IOcjenaRestoranValidatorService ocjenaRestoranValidator;
+
+        public OcjenaRestoranService(NaTanjirContext context, IMapper mapper, 
+            IOcjenaRestoranValidatorService ocjenaRestoranValidator) : base(context, mapper)
         {
+            this.ocjenaRestoranValidator = ocjenaRestoranValidator;
         }
 
         public override IQueryable<OcjenaRestoran> AddFilter(OcjenaRestoranSearchObject searchObject, IQueryable<OcjenaRestoran> query)
@@ -72,6 +77,8 @@ namespace naTanjir.Services
 
         public override void BeforeInsert(OcjenaRestoranInsertRequest request, OcjenaRestoran entity)
         {
+            ocjenaRestoranValidator.ValidateOcjenaRestorantIns(request);
+
             if (request?.DatumKreiranja == null)
             {
                 entity.DatumKreiranja = DateTime.Now;
@@ -81,16 +88,7 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
             }
-
-            if (request?.KorisnikId == null || request.KorisnikId==0)
-            {
-                throw new UserException("Molimo unesite korisnik id.");
-            }
-
-            if (request?.RestoranId == null || request.RestoranId==0)
-            {
-                throw new UserException("Molimo unesite restoran id.");
-            }
+                
             base.BeforeInsert(request, entity);
         }
 

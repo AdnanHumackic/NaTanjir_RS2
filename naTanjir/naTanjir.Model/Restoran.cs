@@ -24,6 +24,6 @@ namespace naTanjir.Model
 
         public int VlasnikId { get; set; }
 
-        public virtual VrstaRestorana VrstaRestorana { get; set; } = null!;
+        public virtual VrstaRestorana VrstaRestorana { get; set; } 
     }
 }
