@@ -1,7 +1,8 @@
 ﻿using MapsterMapper;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
 using naTanjir.Model;
 using naTanjir.Model.SearchObject;
+using naTanjir.Services.BaseServices.Interfaces;
 using naTanjir.Services.Database;
 using System;
 using System.Collections.Generic;
@@ -9,19 +10,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace naTanjir.Services
+namespace naTanjir.Services.BaseServices.Implementation
 {
-    public abstract class BaseService<TModel, TSearch, TDbEntity>: IService<TModel, TSearch> where TSearch : BaseSearchObject where TDbEntity : class where TModel : class
+    public class BaseServiceAsync<TModel, TSearch, TDbEntity> : IServiceAsync<TModel, TSearch> where TSearch : BaseSearchObject where TDbEntity : class where TModel : class
     {
-        public NaTanjirContext Context { get; set; }
-        public IMapper Mapper { get; set; }
-        public BaseService(NaTanjirContext context, IMapper mapper)
+        public NaTanjirContext Context { get; }
+        public IMapper Mapper { get; }
+
+        public BaseServiceAsync(NaTanjirContext context, IMapper mapper)
         {
             Context = context;
             Mapper = mapper;
         }
 
-        public PagedResult<TModel> GetPaged(TSearch search)
+        public async Task<PagedResult<TModel>> GetPagedAsync(TSearch search, CancellationToken cancellationToken = default)
         {
             List<TModel> result = new List<TModel>();
 
@@ -29,14 +31,14 @@ namespace naTanjir.Services
 
             query = AddFilter(search, query);
 
-            int count = query.Count();
+            int count = await query.CountAsync(cancellationToken);
 
             if (search?.Page.HasValue == true && search?.PageSize.HasValue == true)
             {
                 query = query.Skip(search.Page.Value * search.PageSize.Value).Take(search.PageSize.Value);
             }
 
-            var list = query.ToList();
+            var list = await query.ToListAsync(cancellationToken);
             result = Mapper.Map(list, result);
 
             PagedResult<TModel> pagedResult = new PagedResult<TModel>();
@@ -46,15 +48,13 @@ namespace naTanjir.Services
 
             return pagedResult;
         }
-
         public virtual IQueryable<TDbEntity> AddFilter(TSearch search, IQueryable<TDbEntity> query)
         {
             return query;
         }
-
-        public TModel GetById(int id)
+        public async Task<TModel> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            var entity=Context.Set<TDbEntity>().Find(id);
+            var entity = await Context.Set<TDbEntity>().FindAsync(id, cancellationToken);
 
             if (entity != null)
             {
@@ -64,7 +64,6 @@ namespace naTanjir.Services
             {
                 return null;
             }
-
         }
     }
 }

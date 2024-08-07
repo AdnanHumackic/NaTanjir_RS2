@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
-using naTanjir.Services;
+using naTanjir.Services.BaseServices.Interfaces;
 
-namespace naTanjir.API.Controllers
+namespace naTanjir.API.Controllers.BaseControllers
 {
     public class BaseCRUDController<TModel, TSearch, TInsert, TUpdate> : BaseController<TModel, TSearch> where TSearch : BaseSearchObject where TModel : class
     {

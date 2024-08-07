@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using naTanjir.Model.SearchObject;
 using naTanjir.Model;
-using naTanjir.Services;
 using Microsoft.AspNetCore.Authorization;
+using naTanjir.Services.BaseServices.Interfaces;
 
 namespace naTanjir.API.Controllers
 {
