@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using naTanjir.API.Authentication;
 using naTanjir.API.Filters;
 using naTanjir.Services;
+using naTanjir.Services.Auth;
 using naTanjir.Services.Database;
 using naTanjir.Services.Validator.Implementation;
 using naTanjir.Services.Validator.Interfaces;
@@ -33,6 +34,9 @@ builder.Services.AddTransient<IRestoranFavoritValidatorService, RestoranFavoritV
 builder.Services.AddTransient<IRestoranValidatorService, RestoranValidatorService>();
 builder.Services.AddTransient<IOcjenaRestoranValidatorService, OcjenaRestoranValidatorService>();
 builder.Services.AddTransient<IOcjenaProizvodValidatorService, OcjenaProizvodValidatorService>();
+
+builder.Services.AddTransient<IActiveUserService, ActiveUserService>();
+
 
 
 builder.Services.AddControllers(x =>
@@ -67,6 +71,7 @@ builder.Services.AddDbContext<NaTanjirContext>(options =>
 builder.Services.AddMapster();
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();

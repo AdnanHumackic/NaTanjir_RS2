@@ -16,5 +16,15 @@ namespace naTanjir.Services.Validator
         {
             this.Context = context;
         }
+        public bool EntityExists(int id)
+        {
+            var entity = Context.Set<TDbEntity>().Find(id);
+
+            if (entity == null)
+            {
+                throw new UserException($"Ne postoji {typeof(TDbEntity).Name} sa id: {id}");
+            }
+            return true;
+        }
     }
 }

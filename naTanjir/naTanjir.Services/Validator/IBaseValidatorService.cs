@@ -8,5 +8,6 @@ namespace naTanjir.Services.Validator
 {
     public interface IBaseValidatorService<TDbEntity> where TDbEntity:class
     {
+        bool EntityExists(int id);
     }
 }
