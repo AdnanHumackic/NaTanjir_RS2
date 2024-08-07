@@ -4,6 +4,7 @@ using naTanjir.Model;
 using naTanjir.Services;
 using naTanjir.Model.Request;
 using Microsoft.AspNetCore.Authorization;
+using naTanjir.API.Controllers.BaseControllers;
 
 namespace naTanjir.API.Controllers
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
+using naTanjir.API.Controllers.BaseControllers;
 using naTanjir.Model;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;

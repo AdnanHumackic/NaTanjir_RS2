@@ -4,6 +4,7 @@ using naTanjir.Model;
 using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
+using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
 using naTanjir.Services.Validator.Interfaces;
 using System;

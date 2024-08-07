@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace naTanjir.Services
+namespace naTanjir.Services.BaseServices.Interfaces
 {
     public interface IService<TModel, TSearch> where TSearch : BaseSearchObject
     {

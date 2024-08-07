@@ -1,5 +1,6 @@
 ﻿using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
+using naTanjir.Services.BaseServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

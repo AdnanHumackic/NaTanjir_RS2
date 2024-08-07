@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace naTanjir.Services
+namespace naTanjir.Services.BaseServices.Interfaces
 {
-    public interface ICRUDService<TModel, TSearch, TInsert, TUpdate>:IService<TModel, TSearch> where TModel:class where TSearch : BaseSearchObject
+    public interface ICRUDService<TModel, TSearch, TInsert, TUpdate> : IService<TModel, TSearch> where TModel : class where TSearch : BaseSearchObject
     {
         TModel Insert(TInsert model);
 

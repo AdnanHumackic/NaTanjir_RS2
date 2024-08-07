@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace naTanjir.Services
+namespace naTanjir.Services.BaseServices.Implementation
 {
     public abstract class BaseCRUDService<TModel, TSearch, TDbEntity, TInsert, TUpdate> : BaseService<TModel, TSearch, TDbEntity> where TModel : class where TSearch : BaseSearchObject where TDbEntity : class
     {
@@ -19,12 +19,13 @@ namespace naTanjir.Services
 
         public virtual TModel Insert(TInsert request)
         {
-            
-            TDbEntity entity=Mapper.Map<TDbEntity>(request);
+
+            TDbEntity entity = Mapper.Map<TDbEntity>(request);
 
             BeforeInsert(request, entity);
             Context.Add(entity);
             Context.SaveChanges();
+            AfterInsert(request, entity);
 
             return Mapper.Map<TModel>(entity);
         }
@@ -43,6 +44,8 @@ namespace naTanjir.Services
             BeforeUpdate(request, entity);
 
             Context.SaveChanges();
+
+            AfterUpdate(request, entity);
 
             return Mapper.Map<TModel>(entity);
         }
