@@ -1,5 +1,6 @@
 ﻿using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
+using naTanjir.Services.Auth;
 using naTanjir.Services.Database;
 using naTanjir.Services.Validator.Interfaces;
 using System;
