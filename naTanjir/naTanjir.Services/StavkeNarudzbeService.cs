@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class StavkeNarudzbeService : BaseCRUDService<Model.StavkeNarudzbe, StavkeNarudzbeSearchObject, Database.StavkeNarudzbe, StavkeNarudzbeInsertRequest, StavkeNarudzbeUpdateRequest>, IStavkeNarudzbe
+    public class StavkeNarudzbeService : BaseCRUDServiceAsync<Model.StavkeNarudzbe, StavkeNarudzbeSearchObject, Database.StavkeNarudzbe, StavkeNarudzbeInsertRequest, StavkeNarudzbeUpdateRequest>, IStavkeNarudzbe
     {
         public StavkeNarudzbeService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
         {
@@ -71,9 +71,9 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(StavkeNarudzbeInsertRequest request, StavkeNarudzbe entity)
+        public override async Task BeforeInsertAsync(StavkeNarudzbeInsertRequest request, StavkeNarudzbe entity, CancellationToken cancellationToken = default)
         {
-            if(request?.Kolicina==null || request.Kolicina <= 0)
+            if (request?.Kolicina == null || request.Kolicina <= 0)
             {
                 throw new UserException("Molimo unesite validnu kolicinu.");
             }
@@ -81,35 +81,36 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unesite validnu kolicinu.");
             }
-            if(request?.ProizvodId==null || request.ProizvodId == 0)
+            if (request?.ProizvodId == null || request.ProizvodId == 0)
             {
                 throw new UserException("Molimo unesite proizvod id.");
             }
 
-            if(request?.RestoranId==null || request.RestoranId == 0)
+            if (request?.RestoranId == null || request.RestoranId == 0)
             {
                 throw new UserException("Molimo unesite restoran id.");
             }
 
-            if (request?.NarudzbaId==0 || request?.NarudzbaId == null)
+            if (request?.NarudzbaId == 0 || request?.NarudzbaId == null)
             {
                 //test
                 var narudzba = new Narudzba
                 {
-                    BrojNarudzbe=123,
-                    DatumKreiranja=DateTime.Now,
-                    IsDeleted=false,
-                    KorisnikId=1,//getCurrentUser
-                    UkupnaCijena=request.Kolicina*request.Cijena,
-                    VrijemeBrisanja=null,
+                    BrojNarudzbe = 123,
+                    DatumKreiranja = DateTime.Now,
+                    IsDeleted = false,
+                    KorisnikId = 1,//getCurrentUser
+                    UkupnaCijena = request.Kolicina * request.Cijena,
+                    VrijemeBrisanja = null,
                 };
                 Context.Narudzbas.Add(narudzba);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
 
                 request.NarudzbaId = narudzba.NarudzbaId;
             }
             entity.NarudzbaId = request.NarudzbaId;
-            base.BeforeInsert(request, entity);
+
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
     }
 }

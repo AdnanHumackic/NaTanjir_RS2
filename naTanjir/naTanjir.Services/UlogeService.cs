@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class UlogeService : BaseCRUDService<Model.Uloge, UlogeSearchObject, Database.Uloge, UlogeInsertRequest, UlogeUpdateRequest>, IUlogeService
+    public class UlogeService : BaseCRUDServiceAsync<Model.Uloge, UlogeSearchObject, Database.Uloge, UlogeInsertRequest, UlogeUpdateRequest>, IUlogeService
     {
         private readonly IUlogeValidatorService ulogeValidator;
       
@@ -40,23 +40,23 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(UlogeInsertRequest request, Uloge entity)
+        public override async Task BeforeInsertAsync(UlogeInsertRequest request, Uloge entity, CancellationToken cancellationToken = default)
         {
             ulogeValidator.ValidateUlogaNazivIns(request);
-
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(UlogeUpdateRequest request, Uloge entity)
+        public override async Task BeforeUpdateAsync(UlogeUpdateRequest request, Uloge entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            ulogeValidator.ValidateUlogaNazivUpd(request);
+            //ulogeValidator.ValidateUlogaNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {
                 throw new UserException("Molimo unesite status uloge.");
             }
         }
+       
     }
 }

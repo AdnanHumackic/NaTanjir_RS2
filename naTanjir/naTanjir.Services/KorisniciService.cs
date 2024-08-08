@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class KorisniciService:BaseCRUDService<Model.Korisnici, KorisniciSearchObject, Database.Korisnici, KorisniciInsertRequest, KorisniciUpdateRequest>, IKorisniciService
+    public class KorisniciService:BaseCRUDServiceAsync<Model.Korisnici, KorisniciSearchObject, Database.Korisnici, KorisniciInsertRequest, KorisniciUpdateRequest>, IKorisniciService
     {
 
         ILogger<KorisniciService> _logger;
@@ -62,8 +62,8 @@ namespace naTanjir.Services
             
             return query;
         }
-  
-        public override void BeforeInsert(KorisniciInsertRequest request, Database.Korisnici entity)
+
+        public override async Task BeforeInsertAsync(KorisniciInsertRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
         {
             if (request.Lozinka != request.LozinkaPotvrda)
             {
@@ -72,10 +72,9 @@ namespace naTanjir.Services
 
             entity.LozinkaSalt = GenerateSalt();
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.Lozinka);
-            
-            base.BeforeInsert(request, entity);
+
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
-        
 
         public static string GenerateSalt()
         {
@@ -98,9 +97,9 @@ namespace naTanjir.Services
             return Convert.ToBase64String(inArray);
         }
 
-        public override void BeforeUpdate(KorisniciUpdateRequest request, Database.Korisnici entity)
+        public override async Task BeforeUpdateAsync(KorisniciUpdateRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
             if (request.Lozinka != null)
             {

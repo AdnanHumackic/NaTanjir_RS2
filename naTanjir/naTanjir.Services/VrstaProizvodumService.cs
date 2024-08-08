@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class VrstaProizvodumService : BaseCRUDService<Model.VrstaProizvodum, VrstaProizvodumSearchObject, Database.VrstaProizvodum, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>, IVrstaProizvodumService
+    public class VrstaProizvodumService : BaseCRUDServiceAsync<Model.VrstaProizvodum, VrstaProizvodumSearchObject, Database.VrstaProizvodum, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>, IVrstaProizvodumService
     {
         private readonly IVrstaProizvodumValidatorService vrstaProizvodumValidator;
 
@@ -40,24 +40,24 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(VrstaProizvodumInsertRequest request, VrstaProizvodum entity)
+        public override async Task BeforeInsertAsync(VrstaProizvodumInsertRequest request, VrstaProizvodum entity, CancellationToken cancellationToken = default)
         {
             vrstaProizvodumValidator.ValidateVrstaProizvodumNazivIns(request);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
 
-            base.BeforeInsert(request, entity);
         }
 
-
-        public override void BeforeUpdate(VrstaProizvodumUpdateRequest request, VrstaProizvodum entity)
+        public override async Task BeforeUpdateAsync(VrstaProizvodumUpdateRequest request, VrstaProizvodum entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            vrstaProizvodumValidator.ValidateVrstaProizvodumNazivUpd(request);
+            //vrstaProizvodumValidator.ValidateVrstaProizvodumNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {
                 throw new UserException("Molimo unesite status za vrstu proizvoda.");
             }
         }
+       
     }
 }

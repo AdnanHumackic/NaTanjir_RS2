@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class ProizvodiService : BaseCRUDService<Model.Proizvod, ProizvodiSearchObject, Database.Proizvod, ProizvodiInsertRequest, ProizvodiUpdateRequest>, IProizvodiService
+    public class ProizvodiService : BaseCRUDServiceAsync<Model.Proizvod, ProizvodiSearchObject, Database.Proizvod, ProizvodiInsertRequest, ProizvodiUpdateRequest>, IProizvodiService
     {
         public ProizvodiService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
         {
@@ -47,7 +47,7 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(ProizvodiInsertRequest request, Database.Proizvod entity)
+        public override async Task BeforeInsertAsync(ProizvodiInsertRequest request, Database.Proizvod entity, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
@@ -64,22 +64,22 @@ namespace naTanjir.Services
                 throw new UserException("Molimo unesite validnu cijenu.");
             }
 
-            if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId==null)
+            if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId == null)
             {
                 throw new UserException("Molimo unesite tip proizvoda.");
             }
 
-            if(request.RestoranId==0 || request?.RestoranId==null)
+            if (request.RestoranId == 0 || request?.RestoranId == null)
             {
                 throw new UserException("Molimo unesite restoran kojem proizvod pripada.");
             }
 
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(ProizvodiUpdateRequest request, Database.Proizvod entity)
+        public override async Task BeforeUpdateAsync(ProizvodiUpdateRequest request, Database.Proizvod entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
             if (string.IsNullOrWhiteSpace(request.Naziv))
             {
@@ -91,12 +91,12 @@ namespace naTanjir.Services
                 throw new UserException("Molimo unesite opis proizvoda.");
             }
 
-            if (request.Cijena==0 || request.Cijena<0)
+            if (request.Cijena == 0 || request.Cijena < 0)
             {
                 throw new UserException("Molimo unesite validnu cijenu.");
             }
 
-            if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId==null)
+            if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId == null)
             {
                 throw new UserException("Molimo unesite tip proizvoda.");
             }
@@ -106,7 +106,5 @@ namespace naTanjir.Services
                 throw new UserException("Molimo unesite status restorana.");
             }
         }
-
-       
     }
 }

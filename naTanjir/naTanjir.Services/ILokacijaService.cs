@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public interface ILokacijaService:ICRUDService<Lokacija, LokacijaSearchObject, LokacijaInsertRequest, LokacijaUpdateRequest>
+    public interface ILokacijaService:ICRUDServiceAsync<Lokacija, LokacijaSearchObject, LokacijaInsertRequest, LokacijaUpdateRequest>
     {
     }
 }

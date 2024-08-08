@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class RestoranService : BaseCRUDService<Model.Restoran, RestoranSearchObject, Database.Restoran, RestoranInsertRequest, RestoranUpdateRequest>, IRestoranService
+    public class RestoranService : BaseCRUDServiceAsync<Model.Restoran, RestoranSearchObject, Database.Restoran, RestoranInsertRequest, RestoranUpdateRequest>, IRestoranService
     {
         private readonly IRestoranValidatorService restoranValidator;
 
@@ -51,8 +51,7 @@ namespace naTanjir.Services
             return query;
         }
 
-
-        public override void BeforeInsert(RestoranInsertRequest request, Restoran entity)
+        public override async Task BeforeInsertAsync(RestoranInsertRequest request, Restoran entity, CancellationToken cancellationToken = default)
         {
             this.restoranValidator.ValidateRestoranIns(request);
 
@@ -71,12 +70,12 @@ namespace naTanjir.Services
                 throw new UserException("Molimo unesite lokaciju restorana.");
             }
 
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(RestoranUpdateRequest request, Restoran entity)
+        public override async Task BeforeUpdateAsync(RestoranUpdateRequest request, Restoran entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
             if (string.IsNullOrWhiteSpace(request.RadnoVrijemeOd))
             {

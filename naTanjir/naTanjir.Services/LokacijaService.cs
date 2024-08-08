@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class LokacijaService : BaseCRUDService<Model.Lokacija, LokacijaSearchObject, Database.Lokacija, LokacijaInsertRequest, LokacijaUpdateRequest>, ILokacijaService
+    public class LokacijaService : BaseCRUDServiceAsync<Model.Lokacija, LokacijaSearchObject, Database.Lokacija, LokacijaInsertRequest, LokacijaUpdateRequest>, ILokacijaService
     {
         public LokacijaService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
         {
@@ -32,7 +32,7 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(LokacijaInsertRequest request, Lokacija entity)
+        public override async Task BeforeInsertAsync(LokacijaInsertRequest request, Lokacija entity, CancellationToken cancellationToken = default)
         {
             if (!request.GeografskaDuzina.HasValue || !request.GeografskaSirina.HasValue ||
                  request.GeografskaDuzina.Value == 0 || request.GeografskaSirina.Value == 0)
@@ -40,15 +40,15 @@ namespace naTanjir.Services
                 throw new UserException("Molimo unesite validne podatke.");
             }
 
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(LokacijaUpdateRequest request, Lokacija entity)
+        public override async Task BeforeUpdateAsync(LokacijaUpdateRequest request, Lokacija entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
             if (!request.GeografskaDuzina.HasValue || !request.GeografskaSirina.HasValue ||
-                 request.GeografskaDuzina.Value == 0 || request.GeografskaSirina.Value == 0)
+                request.GeografskaDuzina.Value == 0 || request.GeografskaSirina.Value == 0)
             {
                 throw new UserException("Molimo unesite validne podatke.");
             }

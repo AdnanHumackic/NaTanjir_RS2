@@ -10,7 +10,7 @@ namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UlogeController : BaseCRUDController<Model.Uloge, UlogeSearchObject, UlogeInsertRequest, UlogeUpdateRequest>
+    public class UlogeController : BaseCRUDControllerAsync<Model.Uloge, UlogeSearchObject, UlogeInsertRequest, UlogeUpdateRequest>
     {
         public UlogeController(IUlogeService service)
             : base(service)
@@ -18,33 +18,34 @@ namespace naTanjir.API.Controllers
         }
 
         [AllowAnonymous]
-        public override PagedResult<Uloge> GetList([FromQuery] UlogeSearchObject search)
+        public override Task<PagedResult<Uloge>> GetList([FromQuery] UlogeSearchObject searchObject, CancellationToken cancellationToken = default)
         {
-            return base.GetList(search);
+            return base.GetList(searchObject, cancellationToken);
         }
 
         [AllowAnonymous]
-        public override Uloge GetById(int id)
+        public override Task<Uloge> GetById(int id, CancellationToken cancellationToken = default)
         {
-            return base.GetById(id);
+            return base.GetById(id, cancellationToken);
         }
 
         //[Authorize(Roles = "Admin")]
-        public override Uloge Insert(UlogeInsertRequest request)
+        public override Task<Uloge> Insert(UlogeInsertRequest request, CancellationToken cancellationToken = default)
         {
-            return base.Insert(request);
+            return base.Insert(request, cancellationToken);
         }
 
         //[Authorize(Roles = "Admin")]
-        public override Uloge Update(int id, UlogeUpdateRequest request)
+        public override Task<Uloge> Update(int id, UlogeUpdateRequest request, CancellationToken cancellationToken = default)
         {
-            return base.Update(id, request);
+            return base.Update(id, request, cancellationToken);
         }
 
         //[Authorize(Roles = "Admin")]
-        public override void Delete(int id)
+        public override Task Delete(int id, CancellationToken cancellationToken = default)
         {
-            base.Delete(id);
+            return base.Delete(id, cancellationToken);
         }
+       
     }
 }

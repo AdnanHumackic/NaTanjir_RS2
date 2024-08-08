@@ -10,7 +10,7 @@ using naTanjir.Services.BaseServices.Interfaces;
 
 namespace naTanjir.Services
 {
-    public interface IVrstaProizvodumService : ICRUDService<VrstaProizvodum, VrstaProizvodumSearchObject, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>
+    public interface IVrstaProizvodumService : ICRUDServiceAsync<VrstaProizvodum, VrstaProizvodumSearchObject, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>
     {
 
     }

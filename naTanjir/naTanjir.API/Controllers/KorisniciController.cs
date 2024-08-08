@@ -11,7 +11,7 @@ namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class KorisniciController:BaseCRUDController<Model.Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest>
+    public class KorisniciController:BaseCRUDControllerAsync<Model.Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest>
     {
         public KorisniciController(IKorisniciService service)
             : base(service)

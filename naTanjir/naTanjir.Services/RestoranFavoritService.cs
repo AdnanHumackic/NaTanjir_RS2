@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class RestoranFavoritService : BaseCRUDService<Model.RestoranFavorit, RestoranFavoritSearchObject, Database.RestoranFavorit, RestoranFavoritInsertRequest, RestoranFavoritUpdateRequest>, IRestoranFavoritService
+    public class RestoranFavoritService : BaseCRUDServiceAsync<Model.RestoranFavorit, RestoranFavoritSearchObject, Database.RestoranFavorit, RestoranFavoritInsertRequest, RestoranFavoritUpdateRequest>, IRestoranFavoritService
     {
         private readonly IRestoranFavoritValidatorService restoranFavoritValidator;
 
@@ -52,7 +52,7 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(RestoranFavoritInsertRequest request, RestoranFavorit entity)
+        public override async Task BeforeInsertAsync(RestoranFavoritInsertRequest request, RestoranFavorit entity, CancellationToken cancellationToken = default)
         {
             restoranFavoritValidator.ValidateRestoranFavoritIns(request);
 
@@ -61,17 +61,18 @@ namespace naTanjir.Services
                 entity.DatumDodavanja = DateTime.Now;
             }
 
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(RestoranFavoritUpdateRequest request, RestoranFavorit entity)
+        public override async Task BeforeUpdateAsync(RestoranFavoritUpdateRequest request, RestoranFavorit entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
             if (request?.IsDeleted == null)
             {
                 throw new UserException("Molimo unesite status");
             }
         }
+       
     }
 }

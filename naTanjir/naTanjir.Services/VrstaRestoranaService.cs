@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class VrstaRestoranaService : BaseCRUDService<Model.VrstaRestorana, VrstaRestoranaSearchObject, Database.VrstaRestorana, VrstaRestoranaInsertRequest, VrstaRestoranaUpdateRequest>, IVrstaRestoranaService
+    public class VrstaRestoranaService : BaseCRUDServiceAsync<Model.VrstaRestorana, VrstaRestoranaSearchObject, Database.VrstaRestorana, VrstaRestoranaInsertRequest, VrstaRestoranaUpdateRequest>, IVrstaRestoranaService
     {
         private readonly IVrstaRestoranaValidatorService vrstaRestoranaValidator;
 
@@ -37,19 +37,17 @@ namespace naTanjir.Services
             }
             return query;
         }
-
-        public override void BeforeInsert(VrstaRestoranaInsertRequest request, Database.VrstaRestorana entity)
+        public override async Task BeforeInsertAsync(VrstaRestoranaInsertRequest request, VrstaRestorana entity, CancellationToken cancellationToken = default)
         {
             vrstaRestoranaValidator.ValidateVrstaRestoranaNazivIns(request);
-
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(VrstaRestoranaUpdateRequest request, Database.VrstaRestorana entity)
+        public override async Task BeforeUpdateAsync(VrstaRestoranaUpdateRequest request, VrstaRestorana entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            vrstaRestoranaValidator.ValidateVrstaRestoranaNazivUpd(request);
+            //vrstaRestoranaValidator.ValidateVrstaRestoranaNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {

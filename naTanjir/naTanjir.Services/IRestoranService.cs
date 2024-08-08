@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public interface IRestoranService:ICRUDService<Model.Restoran, RestoranSearchObject, RestoranInsertRequest, RestoranUpdateRequest>
+    public interface IRestoranService:ICRUDServiceAsync<Model.Restoran, RestoranSearchObject, RestoranInsertRequest, RestoranUpdateRequest>
     {
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public interface IOcjenaRestoranService:ICRUDService<OcjenaRestoran, OcjenaRestoranSearchObject, OcjenaRestoranInsertRequest, OcjenaRestoranUpdateRequest>
+    public interface IOcjenaRestoranService:ICRUDServiceAsync<OcjenaRestoran, OcjenaRestoranSearchObject, OcjenaRestoranInsertRequest, OcjenaRestoranUpdateRequest>
     {
 
     }
