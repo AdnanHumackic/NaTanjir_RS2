@@ -10,7 +10,7 @@ namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class VrstaProizvodumController : BaseCRUDController<Model.VrstaProizvodum, VrstaProizvodumSearchObject, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>
+    public class VrstaProizvodumController : BaseCRUDControllerAsync<Model.VrstaProizvodum, VrstaProizvodumSearchObject, VrstaProizvodumInsertRequest, VrstaProizvodumUpdateRequest>
     {
         public VrstaProizvodumController(IVrstaProizvodumService service)
             : base(service)
@@ -18,33 +18,34 @@ namespace naTanjir.API.Controllers
         }
 
         [AllowAnonymous]
-        public override PagedResult<VrstaProizvodum> GetList([FromQuery] VrstaProizvodumSearchObject search)
+        public override Task<PagedResult<VrstaProizvodum>> GetList([FromQuery] VrstaProizvodumSearchObject searchObject, CancellationToken cancellationToken = default)
         {
-            return base.GetList(search);
+            return base.GetList(searchObject, cancellationToken);
         }
 
         [AllowAnonymous]
-        public override VrstaProizvodum GetById(int id)
+        public override Task<VrstaProizvodum> GetById(int id, CancellationToken cancellationToken = default)
         {
-            return base.GetById(id);
+            return base.GetById(id, cancellationToken);
         }
 
         //[Authorize(Roles = "Admin")]
-        public override VrstaProizvodum Insert(VrstaProizvodumInsertRequest request)
+        public override Task<VrstaProizvodum> Insert(VrstaProizvodumInsertRequest request, CancellationToken cancellationToken = default)
         {
-            return base.Insert(request);
+            return base.Insert(request, cancellationToken);
         }
 
         //[Authorize(Roles = "Admin")]
-        public override VrstaProizvodum Update(int id, VrstaProizvodumUpdateRequest request)
+        public override Task<VrstaProizvodum> Update(int id, VrstaProizvodumUpdateRequest request, CancellationToken cancellationToken = default)
         {
-            return base.Update(id, request);
+            return base.Update(id, request, cancellationToken);
         }
 
         //[Authorize(Roles = "Admin")]
-        public override void Delete(int id)
+        public override Task Delete(int id, CancellationToken cancellationToken = default)
         {
-            base.Delete(id);
+            return base.Delete(id, cancellationToken);
         }
+      
     }
 }

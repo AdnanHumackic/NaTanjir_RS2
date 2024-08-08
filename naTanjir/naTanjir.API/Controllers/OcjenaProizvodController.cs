@@ -10,7 +10,7 @@ namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OcjenaProizvodController:BaseCRUDController<Model.OcjenaProizvod, OcjenaProizvodSearchObject, OcjenaProizvodInsertRequest, OcjenaProizvodUpdateRequest>
+    public class OcjenaProizvodController:BaseCRUDControllerAsync<Model.OcjenaProizvod, OcjenaProizvodSearchObject, OcjenaProizvodInsertRequest, OcjenaProizvodUpdateRequest>
     {
         public OcjenaProizvodController(IOcjenaProizvodService service)
             : base(service)

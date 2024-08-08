@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class OcjenaRestoranService : BaseCRUDService<Model.OcjenaRestoran, OcjenaRestoranSearchObject, Database.OcjenaRestoran, OcjenaRestoranInsertRequest, OcjenaRestoranUpdateRequest>, IOcjenaRestoranService
+    public class OcjenaRestoranService : BaseCRUDServiceAsync<Model.OcjenaRestoran, OcjenaRestoranSearchObject, Database.OcjenaRestoran, OcjenaRestoranInsertRequest, OcjenaRestoranUpdateRequest>, IOcjenaRestoranService
     {
         private readonly IOcjenaRestoranValidatorService ocjenaRestoranValidator;
 
@@ -77,10 +77,11 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(OcjenaRestoranInsertRequest request, OcjenaRestoran entity)
+        public override async Task BeforeInsertAsync(OcjenaRestoranInsertRequest request, OcjenaRestoran entity, CancellationToken cancellationToken = default)
         {
             ocjenaRestoranValidator.ValidateOcjenaRestorantIns(request);
 
+            //fix date
             if (request?.DatumKreiranja == null)
             {
                 entity.DatumKreiranja = DateTime.Now;
@@ -90,13 +91,12 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
             }
-
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(OcjenaRestoranUpdateRequest request, OcjenaRestoran entity)
+        public override async Task BeforeUpdateAsync(OcjenaRestoranUpdateRequest request, OcjenaRestoran entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
             if (request?.DatumKreiranja == null)
             {
@@ -112,7 +112,6 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unesite stauts ocjene.");
             }
-
         }
     }
 }

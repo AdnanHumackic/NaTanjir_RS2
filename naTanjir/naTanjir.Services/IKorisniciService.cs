@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public interface IKorisniciService:ICRUDService<Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest>
+    public interface IKorisniciService:ICRUDServiceAsync<Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest>
     {
         Model.Korisnici Login(string username, string password);
     }

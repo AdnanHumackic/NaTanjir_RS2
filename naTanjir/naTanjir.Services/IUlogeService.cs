@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public interface IUlogeService : ICRUDService<Uloge, UlogeSearchObject, UlogeInsertRequest, UlogeUpdateRequest>
+    public interface IUlogeService : ICRUDServiceAsync<Uloge, UlogeSearchObject, UlogeInsertRequest, UlogeUpdateRequest>
     {
     }
 }

@@ -8,7 +8,7 @@ namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class StavkeNarudzbeController:BaseCRUDController<Model.StavkeNarudzbe, StavkeNarudzbeSearchObject, StavkeNarudzbeInsertRequest, StavkeNarudzbeUpdateRequest>
+    public class StavkeNarudzbeController:BaseCRUDControllerAsync<Model.StavkeNarudzbe, StavkeNarudzbeSearchObject, StavkeNarudzbeInsertRequest, StavkeNarudzbeUpdateRequest>
     {
         public StavkeNarudzbeController(IStavkeNarudzbe service)
             : base(service)

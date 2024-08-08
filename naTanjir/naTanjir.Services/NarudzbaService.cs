@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public class NarudzbaService : BaseCRUDService<Model.Narudzba, NarudzbaSearchObject, Database.Narudzba, NarudzbaInsertRequest, NarudzbaUpdateRequest>, INarudzbaService
+    public class NarudzbaService : BaseCRUDServiceAsync<Model.Narudzba, NarudzbaSearchObject, Database.Narudzba, NarudzbaInsertRequest, NarudzbaUpdateRequest>, INarudzbaService
     {
         public NarudzbaService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
         {
@@ -76,19 +76,19 @@ namespace naTanjir.Services
             return query;
         }
 
-        public override void BeforeInsert(NarudzbaInsertRequest request, Narudzba entity)
+        public override async Task BeforeInsertAsync(NarudzbaInsertRequest request, Narudzba entity, CancellationToken cancellationToken = default)
         {
-            if(request?.KorisnikId==null || request.KorisnikId == 0)
+            if (request?.KorisnikId == null || request.KorisnikId == 0)
             {
                 throw new UserException("Molimo unesite korisnik id.");
             }
 
-            if(request?.BrojNarudzbe==null || request.BrojNarudzbe == 0)
+            if (request?.BrojNarudzbe == null || request.BrojNarudzbe == 0)
             {
                 throw new UserException("Molimo unesite broj narudzbe.");
             }
 
-            if(request?.UkupnaCijena==null || request.UkupnaCijena <= 0)
+            if (request?.UkupnaCijena == null || request.UkupnaCijena <= 0)
             {
                 throw new UserException("Molimo unesite ukupnu cijenu koja mora bit veća od 0.");
             }
@@ -98,12 +98,12 @@ namespace naTanjir.Services
                 entity.DatumKreiranja = DateTime.Now;
             }
 
-            base.BeforeInsert(request, entity);
+            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
-        public override void BeforeUpdate(NarudzbaUpdateRequest request, Narudzba entity)
+        public override async Task BeforeUpdateAsync(NarudzbaUpdateRequest request, Narudzba entity, CancellationToken cancellationToken = default)
         {
-            base.BeforeUpdate(request, entity);
+            await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
             if (request?.IsDeleted == null)
             {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public interface IVrstaRestoranaService : ICRUDService<VrstaRestorana, VrstaRestoranaSearchObject, VrstaRestoranaInsertRequest, VrstaRestoranaUpdateRequest>
+    public interface IVrstaRestoranaService : ICRUDServiceAsync<VrstaRestorana, VrstaRestoranaSearchObject, VrstaRestoranaInsertRequest, VrstaRestoranaUpdateRequest>
     {
     }
 }

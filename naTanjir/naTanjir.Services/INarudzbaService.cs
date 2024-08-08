@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services
 {
-    public interface INarudzbaService:ICRUDService<Model.Narudzba, NarudzbaSearchObject, NarudzbaInsertRequest, NarudzbaUpdateRequest>
+    public interface INarudzbaService:ICRUDServiceAsync<Model.Narudzba, NarudzbaSearchObject, NarudzbaInsertRequest, NarudzbaUpdateRequest>
     {
     }
 }
