@@ -40,6 +40,13 @@ namespace naTanjir.Services
                 query = query.Where(x => x.Prezime.StartsWith(searchObject.PrezimeGTE));
             }
 
+            if(!string.IsNullOrWhiteSpace(searchObject.ImePrezimeGTE)
+                && string.IsNullOrWhiteSpace(searchObject.ImeGTE) 
+                && string.IsNullOrWhiteSpace(searchObject.PrezimeGTE))
+            {
+                query = query.Where(x => (x.Ime + " " + x.Prezime).StartsWith(searchObject.ImePrezimeGTE));
+            }
+
             if (!string.IsNullOrWhiteSpace(searchObject.Email))
             {
                 query = query.Where(x => x.Email == searchObject.Email);
@@ -74,6 +81,24 @@ namespace naTanjir.Services
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.Lozinka);
 
             await base.BeforeInsertAsync(request, entity, cancellationToken);
+        }
+
+        public override async Task AfterInsertAsync(KorisniciInsertRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
+        {
+            if (request.Uloge != null)
+            {
+                foreach(var uloge in request.Uloge)
+                {
+                    Context.KorisniciUloges.Add(new Database.KorisniciUloge
+                    {
+                        KorisnikId=entity.KorisnikId,
+                        UlogaId=uloge
+                    });
+
+                    await Context.SaveChangesAsync(cancellationToken);
+                }
+            }
+            await base.AfterInsertAsync(request, entity, cancellationToken);
         }
 
         public static string GenerateSalt()

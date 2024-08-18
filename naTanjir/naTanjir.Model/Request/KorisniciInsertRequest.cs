@@ -20,6 +20,7 @@ namespace naTanjir.Model.Request
         public string LozinkaPotvrda { get; set; }
 
         public DateTime DatumRodjenja { get; set; }
-
+        
+        public List<int> Uloge { get; set; }
     }
 }

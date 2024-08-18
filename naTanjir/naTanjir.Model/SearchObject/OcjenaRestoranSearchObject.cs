@@ -6,6 +6,7 @@ namespace naTanjir.Model.SearchObject
 {
     public class OcjenaRestoranSearchObject:BaseSearchObject
     {
+        public string? RestoranNazivGTE { get; set; }
         public DateTime? DatumKreiranjaGTE { get; set; }
         public DateTime? DatumKreiranjaLTE { get; set; }
 

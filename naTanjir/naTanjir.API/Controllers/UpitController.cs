@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using naTanjir.API.Controllers.BaseControllers;
-using naTanjir.Model;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services;
@@ -9,12 +8,11 @@ namespace naTanjir.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class KorisniciUlogeController:BaseCRUDController<Model.KorisniciUloge, KorisniciUlogeSearchObject, KorisniciUlogeInsertRequest, KorisniciUlogeUpdateRequest>
+    public class UpitController:BaseCRUDControllerAsync<Model.Upit, UpitSearchObject, UpitInsertRequest, UpitUpdateRequest>
     {
-        public KorisniciUlogeController(IKorisniciUloge service)
-            : base(service)
+        public UpitController(IUpitService service)
+           : base(service)
         {
         }
-        
     }
 }

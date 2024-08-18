@@ -8,6 +8,7 @@ namespace naTanjir.Model.SearchObject
     {
         public string? ImeGTE { get; set; }
         public string? PrezimeGTE { get; set; }
+        public string? ImePrezimeGTE { get; set; }
         public string? Email { get; set; }
         public string? KorisnickoIme { get; set; }
         public bool? IsKorisniciUlogeIncluded { get; set; }     
