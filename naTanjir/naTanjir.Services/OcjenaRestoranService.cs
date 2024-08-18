@@ -29,6 +29,11 @@ namespace naTanjir.Services
         {
             query = base.AddFilter(searchObject, query);
 
+            if (!string.IsNullOrWhiteSpace(searchObject.RestoranNazivGTE))
+            {
+                query = query.Include(x => x.Restoran).Where(x => x.Restoran.Naziv.StartsWith(searchObject.RestoranNazivGTE));
+            }
+
             if(searchObject.DatumKreiranjaGTE!=null)
             {
                 query = query.Where(x => x.DatumKreiranja > searchObject.DatumKreiranjaGTE);

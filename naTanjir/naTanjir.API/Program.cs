@@ -21,11 +21,11 @@ builder.Services.AddTransient<IUlogeService, UlogeService>();
 builder.Services.AddTransient<ILokacijaService, LokacijaService>();
 builder.Services.AddTransient<IRestoranService, RestoranService>();
 builder.Services.AddTransient<IRestoranFavoritService, RestoranFavoritService>();
-builder.Services.AddTransient<IKorisniciUloge, KorisniciUlogeService>();
 builder.Services.AddTransient<IOcjenaRestoranService, OcjenaRestoranService>();
 builder.Services.AddTransient<IOcjenaProizvodService, OcjenaProizvodService>();
 builder.Services.AddTransient<INarudzbaService, NarudzbaService>();
 builder.Services.AddTransient<IStavkeNarudzbe, StavkeNarudzbeService>();
+builder.Services.AddTransient<IUpitService, UpitService>();
 
 builder.Services.AddTransient<IUlogeValidatorService, UlogeValidatorService>();
 builder.Services.AddTransient<IVrstaRestoranaValidatorService, VrstaRestoranaValidatorService>();
@@ -36,6 +36,7 @@ builder.Services.AddTransient<IOcjenaRestoranValidatorService, OcjenaRestoranVal
 builder.Services.AddTransient<IOcjenaProizvodValidatorService, OcjenaProizvodValidatorService>();
 
 builder.Services.AddTransient<IActiveUserService, ActiveUserService>();
+builder.Services.AddTransient<IActiveUserServiceAsync, ActiveUserServiceAsync>();
 
 
 
