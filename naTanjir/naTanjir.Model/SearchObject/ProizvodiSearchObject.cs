@@ -7,6 +7,8 @@ namespace naTanjir.Model.SearchObject
     public class ProizvodiSearchObject : BaseSearchObject
     {
         public string? NazivGTE { get; set; } 
+        //CijenaGTE
+        //CijenaLTE
 
         public int? VrstaProizvodaId { get; set; }
         public bool? IsVrstaIncluded { get; set; }
