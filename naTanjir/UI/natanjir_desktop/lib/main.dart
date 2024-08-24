@@ -28,103 +28,10 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Colors.blue, primary: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginPage(),
-    );
-  }
-}
-
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Login"),
-      ),
-      body: Center(
-        child: Center(
-          child: Container(
-            constraints: BoxConstraints(maxHeight: 400, maxWidth: 400),
-            child: Card(
-              child: Column(
-                children: [
-                  Image.network(
-                    "https://www.fit.ba/student/css/img/logo.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  Container(
-                    height: 200,
-                    child: (Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        TextField(
-                          decoration: InputDecoration(
-                              labelText: "Username",
-                              prefixIcon: Icon(Icons.email)),
-                        ),
-                        SizedBox(height: 10),
-                        TextField(
-                            decoration: InputDecoration(
-                                labelText: "Password",
-                                prefixIcon: Icon(Icons.password))),
-                        ElevatedButton(
-                          onPressed: () {
-                            print("login attempt");
-                          },
-                          child: Text("Login"),
-                        )
-                      ],
-                    )),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class LayoutExamples extends StatelessWidget {
-  const LayoutExamples({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 200,
-          color: Colors.red,
-          child: Center(
-              child: Container(
-            height: 100,
-            width: 50,
-            color: Colors.blue,
-            child: Text("Sample text"),
-          )),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text("1"),
-            Text("2"),
-            Text("3"),
-          ],
-        ),
-        Container(
-            height: 150,
-            color: Colors.red,
-            child: Center(
-              child: Text("Container"),
-            )),
-      ],
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
