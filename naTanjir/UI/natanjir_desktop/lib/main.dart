@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:natanjir_desktop/providers/auth_provider.dart';
 import 'package:natanjir_desktop/providers/product_provider.dart';
 import 'package:natanjir_desktop/screens/product_list_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => ProductProvider())],
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
