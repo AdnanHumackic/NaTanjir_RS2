@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:natanjir_desktop/screens/product_details_screen.dart';
 import 'package:natanjir_desktop/screens/product_list_screen.dart';
 import 'package:natanjir_desktop/screens/user_list_screen.dart';
 
@@ -23,12 +24,20 @@ class _MasterScreenState extends State<MasterScreen> {
               title: Text("Back"),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text("Detalji"),
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => ProductDetailsScreen()));
               },
             ),
             ListTile(
               title: Text("Korisnici"),
               onTap: () {
-                Navigator.of(context).push(
+                Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) => UserListScreen()));
               },
             ),

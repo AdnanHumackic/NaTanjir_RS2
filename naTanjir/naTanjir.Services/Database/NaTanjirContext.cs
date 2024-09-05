@@ -205,7 +205,6 @@ public partial class NaTanjirContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.RestoranId).HasColumnName("RestoranID");
-            entity.Property(e => e.Slika).HasMaxLength(2000);
             entity.Property(e => e.StateMachine)
                 .HasMaxLength(100)
                 .IsUnicode(false);

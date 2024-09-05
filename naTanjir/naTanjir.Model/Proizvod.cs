@@ -16,8 +16,6 @@ namespace naTanjir.Model
 
         public byte[]? Slika { get; set; }
 
-        public bool IsDeleted { get; set; }
-
         public int VrstaProizvodaId { get; set; }
 
         public int RestoranId { get; set; }

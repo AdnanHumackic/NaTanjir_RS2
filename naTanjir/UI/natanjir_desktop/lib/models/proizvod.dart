@@ -8,6 +8,8 @@ class Proizvod {
   String? slika;
   double? cijena;
   int? vrstaProizvodaId;
+  String? opis;
+  int? restoranId;
   Proizvod({this.proizvodId, this.naziv});
 
   factory Proizvod.fromJson(Map<String, dynamic> json) =>
