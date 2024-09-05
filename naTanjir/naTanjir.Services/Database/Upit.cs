@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace naTanjir.Services.Database;
 
-public partial class Upit:ISoftDelete
+public partial class Upit
 {
     public int UpitId { get; set; }
 

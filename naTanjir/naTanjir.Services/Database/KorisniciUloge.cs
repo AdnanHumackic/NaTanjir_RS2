@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace naTanjir.Services.Database;
 
-public partial class KorisniciUloge:ISoftDelete
+public partial class KorisniciUloge
 {
     public int KorisnikUlogaId { get; set; }
 

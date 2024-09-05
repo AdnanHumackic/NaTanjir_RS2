@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace naTanjir.Services.Database;
 
-public partial class StavkeNarudzbe:ISoftDelete
+public partial class StavkeNarudzbe
 {
     public int StavkeNarudzbeId { get; set; }
 

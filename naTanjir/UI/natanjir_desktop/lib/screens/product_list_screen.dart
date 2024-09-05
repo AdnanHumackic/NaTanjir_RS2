@@ -5,6 +5,7 @@ import 'package:natanjir_desktop/models/proizvod.dart';
 import 'package:natanjir_desktop/models/search_result.dart';
 import 'package:natanjir_desktop/providers/product_provider.dart';
 import 'package:natanjir_desktop/providers/utils.dart';
+import 'package:natanjir_desktop/screens/product_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -73,6 +74,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ElevatedButton(
               onPressed: () async {
                 //TODO: add call to API
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => ProductDetailsScreen()));
               },
               child: Text("Dodaj"))
         ],
@@ -82,6 +85,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Widget _buildResultView() {
     return Expanded(
+        child: Container(
+      width: double.infinity,
       child: SingleChildScrollView(
         child: DataTable(
           columns: [
@@ -92,24 +97,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
             DataColumn(label: Text("Slika")),
           ],
           rows: result?.result
-                  .map((e) => DataRow(cells: [
-                        DataCell(Text(e.proizvodId.toString())),
-                        DataCell(Text(e.naziv ?? "")),
-                        DataCell(Text(e.vrstaProizvodaId.toString())),
-                        DataCell(Text(formatNumber(e.cijena))),
-                        DataCell(e.slika != null
-                            ? Container(
-                                width: 100,
-                                height: 100,
-                                child: imageFromString(e.slika!),
-                              )
-                            : Text("")),
-                      ]))
+                  .map((e) => DataRow(
+                          onSelectChanged: (selected) => {
+                                if (selected == true)
+                                  {
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProductDetailsScreen(
+                                                  proizvod: e,
+                                                )))
+                                  }
+                              },
+                          cells: [
+                            DataCell(Text(e.proizvodId.toString())),
+                            DataCell(Text(e.naziv ?? "")),
+                            DataCell(Text(e.vrstaProizvodaId.toString())),
+                            DataCell(Text(formatNumber(e.cijena))),
+                            DataCell(e.slika != null
+                                ? Container(
+                                    width: 100,
+                                    height: 100,
+                                    child: imageFromString(e.slika!),
+                                  )
+                                : Text("")),
+                          ]))
                   .toList()
                   .cast<DataRow>() ??
               [], // Convert Iterable to List
         ),
       ),
-    );
+    ));
   }
 }
