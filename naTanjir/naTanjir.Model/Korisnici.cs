@@ -18,7 +18,7 @@ namespace naTanjir.Model
 
         public string KorisnickoIme { get; set; } = null!;
 
-        public bool IsDeleted { get; set; }
+        //public bool IsDeleted { get; set; }
 
         public DateTime DatumRodjenja { get; set; }
 
