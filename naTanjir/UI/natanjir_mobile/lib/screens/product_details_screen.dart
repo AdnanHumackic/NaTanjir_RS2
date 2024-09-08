@@ -66,11 +66,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MasterScreen(
-        "Detalji",
-        Column(
-          children: [isLoading ? Container() : _buildForm(), _saveRow()],
-        ));
+    return Scaffold(
+      appBar: AppBar(title: Text("Detalji")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Add your form or widgets here
+            Expanded(child: _buildForm()), // Ensure it takes available space
+            _saveRow(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildForm() {

@@ -29,12 +29,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MasterScreen(
-        "Lista proizvoda",
-        Container(
-            child: Column(
-          children: [_buildSearch(), _buildResultView()],
-        )));
+    return Column(children: [_buildSearch(), _buildResultView()]);
   }
 
   TextEditingController _nazivGteEditingController =
@@ -42,44 +37,44 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget _buildSearch() {
     return Padding(
       padding: const EdgeInsets.all(9.0),
-      child: Row(
-        children: [
-          Expanded(
-              child: TextField(
-            controller: _nazivGteEditingController,
-            decoration: InputDecoration(labelText: "Naziv"),
-          )),
-          SizedBox(
-            width: 8,
-          ),
-          Expanded(
-              child: TextField(
-            decoration: InputDecoration(labelText: "Drugi search parametar"),
-          )),
-          ElevatedButton(
-              onPressed: () async {
-                var filter = {
-                  'nazivGte': _nazivGteEditingController.text,
-                };
-                result = await provider.get(filter: filter);
+      // child: Row(
+      //   children: [
+      //     Expanded(
+      //         child: TextField(
+      //       controller: _nazivGteEditingController,
+      //       decoration: InputDecoration(labelText: "Naziv"),
+      //     )),
+      //     SizedBox(
+      //       width: 8,
+      //     ),
+      //     Expanded(
+      //         child: TextField(
+      //       decoration: InputDecoration(labelText: "Drugi search parametar"),
+      //     )),
+      //     ElevatedButton(
+      //         onPressed: () async {
+      //           var filter = {
+      //             'nazivGte': _nazivGteEditingController.text,
+      //           };
+      //           result = await provider.get(filter: filter);
 
-                setState(() {});
+      //           setState(() {});
 
-                //TODO: add call to API
-              },
-              child: Text("Pretraga")),
-          SizedBox(
-            width: 8,
-          ),
-          ElevatedButton(
-              onPressed: () async {
-                //TODO: add call to API
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => ProductDetailsScreen()));
-              },
-              child: Text("Dodaj"))
-        ],
-      ),
+      //           //TODO: add call to API
+      //         },
+      //         child: Text("Pretraga")),
+      //     SizedBox(
+      //       width: 8,
+      //     ),
+      //     ElevatedButton(
+      //         onPressed: () async {
+      //           //TODO: add call to API
+      //           Navigator.of(context).pushReplacement(MaterialPageRoute(
+      //               builder: (context) => ProductDetailsScreen()));
+      //         },
+      //         child: Text("Dodaj"))
+      //   ],
+      // ),
     );
   }
 
@@ -87,6 +82,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Expanded(
         child: Container(
       width: double.infinity,
+      color: Colors.white,
       child: SingleChildScrollView(
         child: DataTable(
           columns: [
