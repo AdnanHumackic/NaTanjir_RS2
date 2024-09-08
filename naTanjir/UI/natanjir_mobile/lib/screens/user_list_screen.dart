@@ -6,6 +6,6 @@ class UserListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MasterScreen("Korisnici", Placeholder());
+    return Placeholder();
   }
 }

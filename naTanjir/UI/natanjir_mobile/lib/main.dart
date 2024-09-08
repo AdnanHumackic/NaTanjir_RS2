@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/korisnici_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
@@ -195,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                                   korisnik.datumRodjenja;
                               print("Authenticated!");
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ProductListScreen()));
+                                  builder: (context) => MasterScreen()));
                             } on Exception catch (e) {
                               QuickAlert.show(
                                   context: context,
