@@ -9,6 +9,7 @@ import 'package:natanjir_mobile/providers/korisnici_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
+import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -19,7 +20,12 @@ void main() {
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => VrstaProizvodumProvider()),
     ChangeNotifierProvider(create: (_) => RestoranProvider()),
-    ChangeNotifierProvider(create: (_) => KorisniciProvider())
+    ChangeNotifierProvider(
+      create: (_) => KorisniciProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (_) => VrstaRestoranaProvider(),
+    )
   ], child: const MyApp()));
 }
 
@@ -194,10 +200,13 @@ class _LoginPageState extends State<LoginPage> {
                               AuthProvider.telefon = korisnik.telefon;
                               AuthProvider.datumRodjenja =
                                   korisnik.datumRodjenja;
+                              AuthProvider.slika = korisnik.slika;
                               print("Authenticated!");
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => MasterScreen()));
                             } on Exception catch (e) {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MasterScreen()));
                               QuickAlert.show(
                                   context: context,
                                   type: QuickAlertType.error,

@@ -35,7 +35,7 @@ namespace naTanjir.Services
 
             if(searchObject.VrstaRestoranaId!=null)
             {
-                query = query.Where(x => x.VrstaRestoranaId == searchObject.VrstaRestoranaId);
+                query = query.Where(x => searchObject.VrstaRestoranaId.Contains(x.VrstaRestoranaId));
             }
 
             if (searchObject.IsVrstaRestoranaIncluded == true)

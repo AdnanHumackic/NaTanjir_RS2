@@ -10,6 +10,7 @@ class Korisnici {
   String? telefon;
   String? korisnickoIme;
   String? datumRodjenja;
+  String? slika;
 
   Korisnici();
 

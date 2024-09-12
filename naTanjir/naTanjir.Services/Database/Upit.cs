@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace naTanjir.Services.Database;
 
-public partial class Upit
+public partial class Upit:ISoftDelete
 {
     public int UpitId { get; set; }
 
     public string Naslov { get; set; } = null!;
 
-    public string Sadržaj { get; set; } = null!;
+    public string Sadrzaj { get; set; } = null!;
 
     public DateTime DatumKreiranja { get; set; }
 

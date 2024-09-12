@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace naTanjir.Services.Database;
 
-public partial class VrstaRestorana
+public partial class VrstaRestorana:ISoftDelete
 {
     public int VrstaId { get; set; }
 

@@ -7,4 +7,5 @@ class AuthProvider {
   static String? email;
   static String? telefon;
   static String? datumRodjenja;
+  static String? slika;
 }

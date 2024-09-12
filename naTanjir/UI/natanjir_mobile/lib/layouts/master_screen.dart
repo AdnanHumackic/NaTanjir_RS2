@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:natanjir_mobile/screens/product_details_screen.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:natanjir_mobile/screens/user_list_screen.dart';
+import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   MasterScreen({super.key});
@@ -14,7 +15,8 @@ class _MasterScreenState extends State<MasterScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    const ProductListScreen(),
+    RestoranListScreen(),
+    ProductListScreen(),
     const UserListScreen(),
   ];
 

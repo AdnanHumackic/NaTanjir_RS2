@@ -17,12 +17,14 @@ namespace naTanjir.Model
         public string Telefon { get; set; } = null!;
 
         public string KorisnickoIme { get; set; } = null!;
+        public byte[] Slika { get; set; }
+
 
         //public bool IsDeleted { get; set; }
 
         public DateTime DatumRodjenja { get; set; }
 
-        public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; } = new List<KorisniciUloge>();
+        public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; }
 
     }
 }
