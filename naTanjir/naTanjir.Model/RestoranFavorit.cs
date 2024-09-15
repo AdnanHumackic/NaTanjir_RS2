@@ -10,13 +10,11 @@ namespace naTanjir.Model
 
         public DateTime DatumDodavanja { get; set; }
 
-        public bool IsDeleted { get; set; }
-
         public int KorisnikId { get; set; }
 
         public int RestoranId { get; set; }
 
-        //public virtual Korisnici Korisnik { get; set; }
+        public virtual Korisnici Korisnik { get; set; }
 
         public virtual Restoran Restoran { get; set; }
     }

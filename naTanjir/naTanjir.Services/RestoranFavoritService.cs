@@ -48,6 +48,10 @@ namespace naTanjir.Services
             {
                 query = query.Include(x => x.Restoran);
             }
+            if (searchObject.IsKorisnikIncluded == true)
+            {
+                query = query.Include(x => x.Korisnik);
+            }
 
             if (searchObject.IsDeleted == true)
             {
@@ -65,6 +69,7 @@ namespace naTanjir.Services
             {
                 entity.DatumDodavanja = DateTime.Now;
             }
+            entity.IsFavorite = true;
 
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace naTanjir.Services.Database;
 
-public partial class RestoranFavorit:ISoftDelete
+public partial class RestoranFavorit
 {
     public int RestoranFavoritId { get; set; }
 
@@ -16,6 +16,8 @@ public partial class RestoranFavorit:ISoftDelete
     public int KorisnikId { get; set; }
 
     public int RestoranId { get; set; }
+
+    public bool? IsFavorite { get; set; }
 
     public virtual Korisnici Korisnik { get; set; } = null!;
 

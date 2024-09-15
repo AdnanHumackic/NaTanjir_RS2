@@ -72,8 +72,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Add your form or widgets here
-            Expanded(child: _buildForm()), // Ensure it takes available space
+            Expanded(child: _buildForm()),
             _saveRow(),
           ],
         ),

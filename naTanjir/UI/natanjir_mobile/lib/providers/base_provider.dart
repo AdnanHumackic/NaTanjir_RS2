@@ -47,6 +47,20 @@ abstract class BaseProvider<T> with ChangeNotifier {
     // print("response: ${response.request} ${response.statusCode}, ${response.body}");
   }
 
+  Future delete(int id) async {
+    var url = "$baseUrl$_endpoint/$id";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.delete(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      return;
+    } else {
+      throw new Exception("Unknown error");
+    }
+  }
+
   Future<T> insert(dynamic request) async {
     var url = "$baseUrl$_endpoint";
     var uri = Uri.parse(url);

@@ -11,6 +11,8 @@ namespace naTanjir.Model.Request
         public int KorisnikId { get; set; }
 
         public int RestoranId { get; set; }
+        public bool IsFavorite { get; set; }
+
 
     }
 }

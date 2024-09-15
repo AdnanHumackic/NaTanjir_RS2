@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:natanjir_mobile/screens/product_details_screen.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
+import 'package:natanjir_mobile/screens/restoran_favorit_list_screen.dart';
 import 'package:natanjir_mobile/screens/user_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
 
@@ -13,11 +14,12 @@ class MasterScreen extends StatefulWidget {
 
 class _MasterScreenState extends State<MasterScreen> {
   int _selectedIndex = 0;
-
   final List<Widget> _pages = [
     RestoranListScreen(),
     ProductListScreen(),
     const UserListScreen(),
+    Text("a"),
+    RestoranFavoritListScreen()
   ];
 
   void _navigateBottomBar(int index) {
@@ -36,9 +38,10 @@ class _MasterScreenState extends State<MasterScreen> {
         onTap: _navigateBottomBar,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Color.fromARGB(255, 0, 83, 86),
-        items: const [
+        items: [
           BottomNavigationBarItem(
             label: 'Početna ',
+            activeIcon: Icon(Icons.home_sharp, color: Colors.white),
             icon: Icon(
               Icons.home_outlined,
               color: Colors.white,
@@ -46,6 +49,7 @@ class _MasterScreenState extends State<MasterScreen> {
           ),
           BottomNavigationBarItem(
             label: 'Narudžbe',
+            activeIcon: Icon(Icons.shopping_bag_sharp),
             icon: Icon(
               Icons.shopping_bag_outlined,
               color: Colors.white,
@@ -53,6 +57,7 @@ class _MasterScreenState extends State<MasterScreen> {
           ),
           BottomNavigationBarItem(
             label: 'Korpa',
+            activeIcon: Icon(Icons.shopping_cart_sharp, color: Colors.white),
             icon: Icon(
               Icons.shopping_cart_outlined,
               color: Colors.white,
@@ -60,6 +65,7 @@ class _MasterScreenState extends State<MasterScreen> {
           ),
           BottomNavigationBarItem(
             label: 'Obavijesti',
+            activeIcon: Icon(Icons.chat_rounded, color: Colors.white),
             icon: Icon(
               Icons.chat_outlined,
               color: Colors.white,
@@ -68,8 +74,9 @@ class _MasterScreenState extends State<MasterScreen> {
           BottomNavigationBarItem(
             backgroundColor: Color.fromARGB(255, 0, 83, 86),
             label: 'Favoriti',
+            activeIcon: Icon(Icons.favorite, color: Colors.white),
             icon: Icon(
-              Icons.favorite,
+              Icons.favorite_outline,
               color: Colors.white,
             ),
           ),

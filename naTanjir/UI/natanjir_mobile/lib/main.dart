@@ -6,7 +6,9 @@ import 'package:flutter/widgets.dart';
 import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/korisnici_provider.dart';
+import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
+import 'package:natanjir_mobile/providers/restoran_favorit_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
@@ -20,12 +22,10 @@ void main() {
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => VrstaProizvodumProvider()),
     ChangeNotifierProvider(create: (_) => RestoranProvider()),
-    ChangeNotifierProvider(
-      create: (_) => KorisniciProvider(),
-    ),
-    ChangeNotifierProvider(
-      create: (_) => VrstaRestoranaProvider(),
-    )
+    ChangeNotifierProvider(create: (_) => KorisniciProvider()),
+    ChangeNotifierProvider(create: (_) => VrstaRestoranaProvider()),
+    ChangeNotifierProvider(create: (_) => OcjenaRestoranProvider()),
+    ChangeNotifierProvider(create: (_) => RestoranFavoritProvider()),
   ], child: const MyApp()));
 }
 

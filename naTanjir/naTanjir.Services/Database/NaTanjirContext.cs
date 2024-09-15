@@ -266,6 +266,9 @@ public partial class NaTanjirContext : DbContext
 
             entity.Property(e => e.RestoranFavoritId).HasColumnName("RestoranFavoritID");
             entity.Property(e => e.DatumDodavanja).HasColumnType("date");
+            entity.Property(e => e.IsFavorite)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("isFavorite");
             entity.Property(e => e.KorisnikId).HasColumnName("KorisnikID");
             entity.Property(e => e.RestoranId).HasColumnName("RestoranID");
             entity.Property(e => e.VrijemeBrisanja).HasColumnType("date");
