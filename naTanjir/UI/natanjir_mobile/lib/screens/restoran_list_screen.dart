@@ -26,6 +26,8 @@ import 'package:natanjir_mobile/providers/restoran_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
+import 'package:natanjir_mobile/screens/product_details_screen.dart';
+import 'package:natanjir_mobile/screens/restoran_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class RestoranListScreen extends StatefulWidget {
@@ -164,7 +166,6 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
               ),
             ),
           ),
-          SizedBox(height: 0),
           Container(
             width: double.infinity,
             child: MultiSelectChipField(
@@ -238,118 +239,128 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
       child: Column(
         children: restoranResult!.result
             .map(
-              (e) => Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                margin: EdgeInsets.symmetric(vertical: 8.0),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 100,
-                        child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                          child: e.slika != null && e.slika!.isNotEmpty
-                              ? imageFromString(e.slika!)
-                              : Image.asset(
-                                  "assets/images/restoranImg.png",
-                                  fit: BoxFit.fill,
-                                ),
+              (e) => GestureDetector(
+                onTap: () async {
+                  dynamic avgOcj = _avgOcjena(e.restoranId).toString();
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => RestoranDetailsScreen(
+                          odabraniRestoran: e, avgOcjena: avgOcj)));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 100,
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                            child: e.slika != null && e.slika!.isNotEmpty
+                                ? imageFromString(e.slika!)
+                                : Image.asset(
+                                    "assets/images/restoranImg.png",
+                                    fit: BoxFit.fill,
+                                  ),
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              e.naziv ?? "",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                e.naziv ?? "",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.yellow),
-                                SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    _avgOcjena(e.restoranId).toString(),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 15),
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Icon(Icons.star, color: Colors.yellow),
+                                  SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      _avgOcjena(e.restoranId).toString(),
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 15),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          InkWell(
-                              child: restoranfavoritResult!.result.any((f) =>
-                                      f.korisnikId == AuthProvider.korisnikId &&
-                                      f.restoranId == e.restoranId)
-                                  ? Icon(Icons.favorite, color: Colors.red)
-                                  : Icon(Icons.favorite_border),
-                              onTap: () async {
-                                bool isFavorite = restoranfavoritResult!.result
-                                    .any((f) =>
+                            InkWell(
+                                child: restoranfavoritResult!.result.any((f) =>
                                         f.korisnikId ==
                                             AuthProvider.korisnikId &&
-                                        f.restoranId == e.restoranId);
-
-                                setState(() {
-                                  isFavorite = !isFavorite;
-                                });
-
-                                if (isFavorite) {
-                                  restFavInsert = {
-                                    'korisnikId': AuthProvider.korisnikId,
-                                    'restoranId': e.restoranId
-                                  };
-                                  await restoranfavoritProvider
-                                      .insert(restFavInsert);
-                                } else {
-                                  var favRest = restoranfavoritResult!.result
-                                      .firstWhere((f) =>
+                                        f.restoranId == e.restoranId)
+                                    ? Icon(Icons.favorite, color: Colors.red)
+                                    : Icon(Icons.favorite_border),
+                                onTap: () async {
+                                  bool isFavorite =
+                                      restoranfavoritResult!.result.any((f) =>
                                           f.korisnikId ==
                                               AuthProvider.korisnikId &&
                                           f.restoranId == e.restoranId);
-                                  await restoranfavoritProvider
-                                      .delete(favRest.restoranFavoritId!);
-                                }
 
-                                restoranfavoritResult =
-                                    await restoranfavoritProvider.get();
-                                setState(() {});
-                              })
-                        ],
-                      ),
-                    )
-                  ],
+                                  setState(() {
+                                    isFavorite = !isFavorite;
+                                  });
+
+                                  if (isFavorite) {
+                                    restFavInsert = {
+                                      'korisnikId': AuthProvider.korisnikId,
+                                      'restoranId': e.restoranId
+                                    };
+                                    await restoranfavoritProvider
+                                        .insert(restFavInsert);
+                                  } else {
+                                    var favRest = restoranfavoritResult!.result
+                                        .firstWhere((f) =>
+                                            f.korisnikId ==
+                                                AuthProvider.korisnikId &&
+                                            f.restoranId == e.restoranId);
+                                    await restoranfavoritProvider
+                                        .delete(favRest.restoranFavoritId!);
+                                  }
+
+                                  restoranfavoritResult =
+                                      await restoranfavoritProvider.get();
+                                  setState(() {});
+                                })
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             )

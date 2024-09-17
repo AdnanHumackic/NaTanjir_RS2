@@ -4,8 +4,10 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:natanjir_mobile/layouts/master_screen.dart';
+import 'package:natanjir_mobile/models/ocjena_proizvod.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/korisnici_provider.dart';
+import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_favorit_provider.dart';
@@ -26,6 +28,7 @@ void main() {
     ChangeNotifierProvider(create: (_) => VrstaRestoranaProvider()),
     ChangeNotifierProvider(create: (_) => OcjenaRestoranProvider()),
     ChangeNotifierProvider(create: (_) => RestoranFavoritProvider()),
+    ChangeNotifierProvider(create: (_) => OcjenaProizvodProvider()),
   ], child: const MyApp()));
 }
 
@@ -205,8 +208,6 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => MasterScreen()));
                             } on Exception catch (e) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MasterScreen()));
                               QuickAlert.show(
                                   context: context,
                                   type: QuickAlertType.error,

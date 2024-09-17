@@ -29,10 +29,13 @@ namespace naTanjir.Services
             {
                 query = query.Where(x => x.Naziv.StartsWith(searchObject.NazivGTE));
             }
-
-            if (searchObject.VrstaProizvodaId!=null)
+            if (searchObject.RestoranId != null)
             {
-                query = query.Where(x => x.VrstaProizvodaId==searchObject.VrstaProizvodaId);
+                query = query.Where(x => x.RestoranId == searchObject.RestoranId);
+            }
+            if (searchObject.VrstaProizvodaId != null)
+            {
+                query = query.Where(x => searchObject.VrstaProizvodaId.Contains(x.VrstaProizvodaId));
             }
 
             if (searchObject.IsVrstaIncluded == true)
