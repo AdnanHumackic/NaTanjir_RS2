@@ -305,13 +305,20 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
                             Expanded(
                               child: Row(
                                 children: [
-                                  Icon(Icons.star, color: Colors.yellow),
+                                  Icon(Icons.star,
+                                      color: Colors.yellow, size: 16),
                                   SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       _avgOcjena(e.restoranId).toString(),
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 15),
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color:
+                                            Color.fromARGB(255, 108, 108, 108),
+                                        fontWeight: FontWeight.w600,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ),
                                 ],

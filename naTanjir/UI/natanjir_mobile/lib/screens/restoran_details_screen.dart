@@ -1,7 +1,9 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_select_flutter/chip_field/multi_select_chip_field.dart';
 import 'package:multi_select_flutter/util/horizontal_scrollbar.dart';
@@ -15,6 +17,7 @@ import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
+import 'package:natanjir_mobile/screens/proizvod_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class RestoranDetailsScreen extends StatefulWidget {
@@ -94,9 +97,9 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
     );
   }
 
-  //right overflow-fix needed
   Widget _buildHeader() {
     return Container(
+      width: double.infinity,
       margin: EdgeInsets.only(top: 15),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -114,18 +117,20 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 90,
-            height: 80,
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              child: widget.odabraniRestoran!.slika != null &&
-                      widget.odabraniRestoran!.slika!.isNotEmpty
-                  ? imageFromString(widget.odabraniRestoran!.slika!)
-                  : Image.asset(
-                      "assets/images/restoranImg.png",
-                      fit: BoxFit.cover,
-                    ),
+          Flexible(
+            child: SizedBox(
+              width: 90,
+              height: 80,
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                child: widget.odabraniRestoran!.slika != null &&
+                        widget.odabraniRestoran!.slika!.isNotEmpty
+                    ? imageFromString(widget.odabraniRestoran!.slika!)
+                    : Image.asset(
+                        "assets/images/restoranImg.png",
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
           ),
           SizedBox(width: 10),
@@ -149,19 +154,22 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                     fontSize: 14,
                     color: Colors.grey[600],
                   ),
-                  overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
                 SizedBox(height: 5),
                 Row(
                   children: [
-                    Icon(Icons.star, color: Colors.orange, size: 16),
+                    Icon(Icons.star, color: Colors.yellow, size: 16),
                     SizedBox(width: 4),
-                    Text(
-                      widget.avgOcjena.toString(),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
+                    Flexible(
+                      child: Text(
+                        widget.avgOcjena.toString(),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
@@ -250,12 +258,14 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   Widget _buildPage() {
     if (proizvodResult == null) {
       return Container(
-          margin: EdgeInsets.only(top: 15),
-          child: Center(child: CircularProgressIndicator()));
+        margin: EdgeInsets.only(top: 15),
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
     if (proizvodResult!.count == 0) {
       return Center(
         child: Container(
+          width: double.infinity,
           margin: EdgeInsets.only(top: 15),
           decoration: BoxDecoration(
             color: Color.fromARGB(255, 0, 83, 86),
@@ -288,110 +298,146 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
       child: Column(
         children: proizvodResult!.result
             .map(
-              (e) => Container(
-                height: 125,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                margin: EdgeInsets.symmetric(vertical: 8.0),
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 125,
-                      height: 115,
-                      child: Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          child: e.slika != null && e.slika!.isNotEmpty
-                              ? imageFromString(e.slika!)
-                              : Image.asset(
-                                  "assets/images/emptyProductImage.png",
-                                  fit: BoxFit.fill,
-                                ),
-                        ),
+              (e) => GestureDetector(
+                onTap: () async {
+                  dynamic avgOcj = _avgOcjena(e.proizvodId).toString();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ProizvodDetailsScreen(
+                        odabraniProizvod: e,
+                        avgOcjena: avgOcj,
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              e.naziv ?? "",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                overflow: TextOverflow.ellipsis,
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 129,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(0),
+                          child: SizedBox(
+                            width: 120,
+                            height: 100,
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                              child: FittedBox(
+                                fit: BoxFit.fill,
+                                child: widget.odabraniRestoran!.slika != null &&
+                                        widget
+                                            .odabraniRestoran!.slika!.isNotEmpty
+                                    ? imageFromString(
+                                        widget.odabraniRestoran!.slika!)
+                                    : Image.asset(
+                                        "assets/images/emptyProductImage.png",
+                                        fit: BoxFit.fill,
+                                      ),
                               ),
                             ),
-                            SizedBox(height: 5),
-                            Text(
-                              e.opis ?? "",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color.fromARGB(255, 108, 108, 108)),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            SizedBox(height: 5),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "${formatNumber(e.cijena)} KM",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Color.fromARGB(255, 108, 108, 108),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                e.naziv ?? "",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                maxLines: 1,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(1.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.star, color: Colors.yellow),
+                                    Expanded(
+                                      child: Text(
+                                        "${_avgOcjena(e.proizvodId)}",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Color.fromARGB(
+                                              255, 108, 108, 108),
+                                          fontWeight: FontWeight.w600,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.star,
-                                            color: Colors.yellow, size: 16),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          _avgOcjena(e.proizvodId).toString(),
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.add_circle,
-                                    color: Color.fromARGB(255, 0, 83, 86),
-                                    size: 33,
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 5),
+                              Text(
+                                e.opis ?? "",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color.fromARGB(255, 108, 108, 108),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              Spacer(),
+                              Padding(
+                                padding: EdgeInsets.all(1),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "${formatNumber(e.cijena)} KM",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Color.fromARGB(
+                                              255, 108, 108, 108),
+                                          fontWeight: FontWeight.w600,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: GestureDetector(
+                                        onTap: () {},
+                                        child: Icon(
+                                          Icons.add_circle_outlined,
+                                          size: 35,
+                                          color: Color.fromARGB(255, 0, 83, 86),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             )

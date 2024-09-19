@@ -136,7 +136,7 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(5),
       child: Column(
         children: restoranFavoritResult!.result
             .where((element) => element.korisnikId == AuthProvider.korisnikId)
@@ -192,13 +192,16 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
                             child: ClipRRect(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(8)),
-                              child: e.restoran!.slika != null &&
-                                      e.restoran!.slika!.isNotEmpty
-                                  ? imageFromString(e.restoran!.slika!)
-                                  : Image.asset(
-                                      "assets/images/restoranImg.png",
-                                      fit: BoxFit.fill,
-                                    ),
+                              child: FittedBox(
+                                fit: BoxFit.cover,
+                                child: e.restoran!.slika != null &&
+                                        e.restoran!.slika!.isNotEmpty
+                                    ? imageFromString(e.restoran!.slika!)
+                                    : Image.asset(
+                                        "assets/images/restoranImg.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
                             ),
                           ),
                         ),
@@ -209,30 +212,51 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                e.restoran!.naziv ?? "",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  overflow: TextOverflow.ellipsis,
+                              Expanded(
+                                child: Text(
+                                  e.restoran!.naziv ?? "",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  e.restoran!.lokacija ?? "",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                               ),
                               Spacer(),
-                              Row(
-                                children: [
-                                  Icon(Icons.star, color: Colors.yellow),
-                                  SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      _avgOcjena(e.restoran!.restoranId)
-                                          .toString(),
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 15),
-                                    ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.all(1.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.star, color: Colors.yellow),
+                                      Expanded(
+                                        child: Text(
+                                          "${_avgOcjena(e.restoranId).toString()}",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Color.fromARGB(
+                                                255, 108, 108, 108),
+                                            fontWeight: FontWeight.w600,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              )
                             ],
                           ),
                         ),
