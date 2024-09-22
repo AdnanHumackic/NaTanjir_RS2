@@ -246,7 +246,40 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
   }
 
   Widget _buildRecommended() {
-    //dio za preporuke
-    return Placeholder();
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Center(
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 20),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 0, 83, 86),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "Uz ${widget.odabraniProizvod!.naziv} kupci naručuju",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

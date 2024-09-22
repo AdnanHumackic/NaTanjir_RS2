@@ -26,6 +26,7 @@ import 'package:natanjir_mobile/providers/restoran_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
+import 'package:natanjir_mobile/screens/korisnik_profile_screen.dart';
 import 'package:natanjir_mobile/screens/product_details_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_details_screen.dart';
 import 'package:provider/provider.dart';
@@ -108,18 +109,24 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
                     Positioned(
                       right: 0,
                       child: InkWell(
-                          onTap: () {
-                            //TODO: navigate to profile edit screen
-                          },
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => KorisnikProfileScreen()));
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
                           child: SizedBox(
-                              width: 50,
-                              height: 40,
-                              child: AuthProvider.slika != null
-                                  ? imageFromString(AuthProvider.slika!)
-                                  : Image.asset(
-                                      "assets/images/noProfileImg.png",
-                                      fit: BoxFit.fill,
-                                    ))),
+                            width: 50,
+                            height: 40,
+                            child: AuthProvider.slika != null
+                                ? imageFromString(AuthProvider.slika!)
+                                : Image.asset(
+                                    "assets/images/noProfileImg.png",
+                                    fit: BoxFit.fill,
+                                  ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
