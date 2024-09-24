@@ -65,7 +65,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//TODO: after logout clean auth data
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});
 

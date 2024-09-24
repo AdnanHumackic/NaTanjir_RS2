@@ -11,14 +11,10 @@ namespace naTanjir.Model.Request
         public string Prezime { get; set; } = null!;
 
         public string? Telefon { get; set; } = null!;
+        public byte[]? Slika { get; set; }
 
-        public string? Lozinka { get; set; }
+        public string? NovaLozinka { get; set; }
         public string? LozinkaPotvrda { get; set; }
 
-        public bool IsDeleted { get; set; }
-        public DateTime? VrijemeBrisanja { get; set; }
-
-
-        public DateTime DatumRodjenja { get; set; }
     }
 }

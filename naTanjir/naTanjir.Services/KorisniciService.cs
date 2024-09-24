@@ -126,14 +126,14 @@ namespace naTanjir.Services
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            if (request.Lozinka != null)
+            if (request.NovaLozinka != null)
             {
-                if (request.Lozinka != request.LozinkaPotvrda)
+                if (request.NovaLozinka != request.LozinkaPotvrda)
                 {
                     throw new UserException("Lozinka i LozinkaPotvrda moraju biti iste.");
                 }
                 entity.LozinkaSalt = GenerateSalt();
-                entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.Lozinka);
+                entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.NovaLozinka);
             }
         }
 

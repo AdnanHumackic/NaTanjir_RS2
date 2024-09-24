@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/main.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
+import 'package:natanjir_mobile/screens/korisnik_profile_edit_screen.dart';
+import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
+import 'package:provider/provider.dart';
 
 class KorisnikProfileScreen extends StatefulWidget {
   KorisnikProfileScreen({super.key});
@@ -40,7 +44,7 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
                 color: Colors.white,
               ),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
             ),
           ),
@@ -223,7 +227,7 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
               child: TextField(
                 enabled: false,
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'Datum rođenja',
                   labelStyle: TextStyle(
                     color: Color.fromARGB(255, 108, 108, 108),
                     fontSize: 18,
@@ -249,9 +253,7 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
                 padding: EdgeInsets.all(5),
                 child: InkWell(
                   focusColor: Colors.transparent,
-                  onTap: () {
-                    //TODO: navigate to historija narudzbi
-                  },
+                  onTap: () {},
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -311,7 +313,17 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
                     ),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => KorisnikProfileEditScreen()),
+                  ).then((value) {
+                    if (value == true) {
+                      setState(() {});
+                    }
+                  });
+                },
               ),
             ),
             Positioned(
