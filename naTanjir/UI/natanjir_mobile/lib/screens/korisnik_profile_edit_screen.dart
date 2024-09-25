@@ -143,9 +143,9 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                     errorText: "Minimalna dužina imena je 2 znaka."),
                 FormBuilderValidators.maxLength(40,
                     errorText: "Maksimalna dužina imena je 40 znakova."),
-                FormBuilderValidators.match(r'^[A-Za-z]+(?:\s[A-Za-z]+)*$',
+                FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
                     errorText:
-                        "Ime mora počinjati sa velikim slovom,\n te smije sadržavati samo slova.")
+                        "Ime mora počinjati sa velikim slovom i smije \nsadržavati samo slova.")
               ]),
             ),
             SizedBox(height: 15),
@@ -172,9 +172,9 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                     errorText: "Minimalna dužina prezimena je 2 znaka."),
                 FormBuilderValidators.maxLength(40,
                     errorText: "Maksimalna dužina prezimena je 40 znakova."),
-                FormBuilderValidators.match(r'^[A-Za-z]+(?:\s[A-Za-z]+)*$',
+                FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
                     errorText:
-                        "Prezime mora počinjati sa velikim slovom,\n te smije sadržavati samo slova.")
+                        "Prezime mora počinjati sa velikim slovom i smije \nsadržavati samo slova.")
               ]),
             ),
             SizedBox(height: 15),
@@ -196,10 +196,10 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
               ),
               name: 'telefon',
               validator: FormBuilderValidators.compose([
-                FormBuilderValidators.required(errorText: "Obavezno polje"),
+                FormBuilderValidators.required(errorText: "Obavezno polje."),
                 FormBuilderValidators.match(r'^\+\d{7,15}$',
                     errorText:
-                        "Telefon mora imati od 7 do 15 cifara \ni počinjati znakom +"),
+                        "Telefon mora imati od 7 do 15 cifara \ni počinjati znakom +."),
               ]),
             ),
             SizedBox(height: 15),
@@ -276,11 +276,11 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                       name: 'lozinka',
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
-                            errorText: "Obavezno polje"),
+                            errorText: "Obavezno polje."),
                       ]),
                       onChanged: (value) {
                         if (value != AuthProvider.password) {
-                          passwordError = "Unesite ispravanu lozinku";
+                          passwordError = "Unesite ispravanu lozinku.";
                         } else {
                           passwordError = null;
                         }
@@ -320,7 +320,7 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                       name: 'novaLozinka',
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
-                            errorText: "Obavezno polje"),
+                            errorText: "Obavezno polje."),
                       ]),
                       onChanged: (value) {
                         if (value != null && value == AuthProvider.password) {
@@ -365,7 +365,7 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                       name: 'lozinkaPotvrda',
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
-                            errorText: "Obavezno polje"),
+                            errorText: "Obavezno polje."),
                       ]),
                       onChanged: (value) {
                         if (value != null &&

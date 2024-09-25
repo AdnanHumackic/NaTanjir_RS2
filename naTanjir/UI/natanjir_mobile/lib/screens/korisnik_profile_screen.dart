@@ -246,7 +246,7 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 5),
             Container(
               margin: EdgeInsets.only(top: 20),
               child: Padding(
@@ -285,7 +285,6 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
 
   Widget _buildFooter() {
     return Align(
-      alignment: Alignment.bottomCenter,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Stack(
