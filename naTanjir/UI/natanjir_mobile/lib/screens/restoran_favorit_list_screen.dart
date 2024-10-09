@@ -12,6 +12,7 @@ import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_favorit_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
+import 'package:natanjir_mobile/screens/restoran_details_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -141,127 +142,136 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
         children: restoranFavoritResult!.result
             .where((element) => element.korisnikId == AuthProvider.korisnikId)
             .map(
-              (e) => Container(
-                height: 95,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                margin: EdgeInsets.symmetric(vertical: 8.0),
-                width: double.infinity,
-                child: Slidable(
-                  startActionPane: ActionPane(
-                    motion: BehindMotion(),
-                    children: [
-                      SlidableAction(
-                        onPressed: (context) async {
-                          await restoranFavoritProvider
-                              .delete(e.restoranFavoritId!);
-                          QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.success,
-                              title:
-                                  "Restoran je uspješno obrisan iz favorita.");
-
-                          restoranFavoritResult = await restoranFavoritProvider
-                              .get(filter: searchRequest);
-                          setState(() {});
-                        },
-                        backgroundColor: Colors.red,
-                        icon: Icons.delete,
-                        label: 'Obriši',
+              (e) => InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => RestoranDetailsScreen(
+                          odabraniRestoran: e.restoran,
+                          avgOcjena: _avgOcjena(e.restoranId).toString())));
+                },
+                child: Container(
+                  height: 95,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
                       ),
                     ],
                   ),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 120,
-                            height: 100,
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                              child: FittedBox(
-                                fit: BoxFit.cover,
-                                child: e.restoran!.slika != null &&
-                                        e.restoran!.slika!.isNotEmpty
-                                    ? imageFromString(e.restoran!.slika!)
-                                    : Image.asset(
-                                        "assets/images/restoranImg.png",
-                                        fit: BoxFit.fill,
-                                      ),
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  width: double.infinity,
+                  child: Slidable(
+                    startActionPane: ActionPane(
+                      motion: BehindMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) async {
+                            await restoranFavoritProvider
+                                .delete(e.restoranFavoritId!);
+                            QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.success,
+                                title:
+                                    "Restoran je uspješno obrisan iz favorita.");
+
+                            restoranFavoritResult =
+                                await restoranFavoritProvider.get(
+                                    filter: searchRequest);
+                            setState(() {});
+                          },
+                          backgroundColor: Colors.red,
+                          icon: Icons.delete,
+                          label: 'Obriši',
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 120,
+                              height: 100,
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                child: FittedBox(
+                                  fit: BoxFit.cover,
+                                  child: e.restoran!.slika != null &&
+                                          e.restoran!.slika!.isNotEmpty
+                                      ? imageFromString(e.restoran!.slika!)
+                                      : Image.asset(
+                                          "assets/images/restoranImg.png",
+                                          fit: BoxFit.fill,
+                                        ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  e.restoran!.naziv ?? "",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                    overflow: TextOverflow.ellipsis,
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    e.restoran!.naziv ?? "",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  e.restoran!.lokacija ?? "",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
+                                Expanded(
+                                  child: Text(
+                                    e.restoran!.lokacija ?? "",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Spacer(),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.all(1.0),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.star, color: Colors.yellow),
-                                      Expanded(
-                                        child: Text(
-                                          "${_avgOcjena(e.restoranId).toString()}",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Color.fromARGB(
-                                                255, 108, 108, 108),
-                                            fontWeight: FontWeight.w600,
-                                            overflow: TextOverflow.ellipsis,
+                                Spacer(),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(1),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.star, color: Colors.yellow),
+                                        Expanded(
+                                          child: Text(
+                                            "${_avgOcjena(e.restoranId).toString()}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Color.fromARGB(
+                                                  255, 108, 108, 108),
+                                              fontWeight: FontWeight.w600,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

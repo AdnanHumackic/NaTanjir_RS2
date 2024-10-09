@@ -11,5 +11,11 @@ namespace naTanjir.Services
 {
     public interface INarudzbaService:ICRUDServiceAsync<Model.Narudzba, NarudzbaSearchObject, NarudzbaInsertRequest, NarudzbaUpdateRequest>
     {
+        Task<Model.Narudzba> PreuzmiAsync(int narudzbaId, CancellationToken cancellationToken = default);
+        Task<Model.Narudzba> UTokuAsync(int narudzbaId, CancellationToken cancellationToken = default);
+        Task<Model.Narudzba> ZavrsiAsync(int narudzbaId, CancellationToken cancellationToken = default);
+
+        Task<Model.Narudzba> PonistiAsync(int narudzbaId, CancellationToken cancellationToken = default);
+
     }
 }

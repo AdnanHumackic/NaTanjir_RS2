@@ -7,6 +7,7 @@ using naTanjir.API.Filters;
 using naTanjir.Services;
 using naTanjir.Services.Auth;
 using naTanjir.Services.Database;
+using naTanjir.Services.NarudzbaStateMachine;
 using naTanjir.Services.Validator.Implementation;
 using naTanjir.Services.Validator.Interfaces;
 
@@ -26,6 +27,14 @@ builder.Services.AddTransient<IOcjenaProizvodService, OcjenaProizvodService>();
 builder.Services.AddTransient<INarudzbaService, NarudzbaService>();
 builder.Services.AddTransient<IStavkeNarudzbe, StavkeNarudzbeService>();
 builder.Services.AddTransient<IUpitService, UpitService>();
+
+builder.Services.AddTransient<BaseNarudzbaState>();
+builder.Services.AddTransient<InitialNarudzbaState>();
+builder.Services.AddTransient<KreiranaNarudzbaState>();
+builder.Services.AddTransient<PreuzetaNarudzbaState>();
+builder.Services.AddTransient<PonistenaNarudzbaState>();
+
+
 
 builder.Services.AddTransient<IUlogeValidatorService, UlogeValidatorService>();
 builder.Services.AddTransient<IVrstaRestoranaValidatorService, VrstaRestoranaValidatorService>();

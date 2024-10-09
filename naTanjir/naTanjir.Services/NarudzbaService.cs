@@ -5,6 +5,7 @@ using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
+using naTanjir.Services.NarudzbaStateMachine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,10 @@ namespace naTanjir.Services
 {
     public class NarudzbaService : BaseCRUDServiceAsync<Model.Narudzba, NarudzbaSearchObject, Database.Narudzba, NarudzbaInsertRequest, NarudzbaUpdateRequest>, INarudzbaService
     {
-        public NarudzbaService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
+        public BaseNarudzbaState BaseNarudzbaState { get; set; }
+        public NarudzbaService(NaTanjirContext context, IMapper mapper, BaseNarudzbaState baseNarudzbaState) : base(context, mapper)
         {
+            BaseNarudzbaState = baseNarudzbaState;
         }
 
         public override IQueryable<Narudzba> AddFilter(NarudzbaSearchObject searchObject, IQueryable<Narudzba> query)
@@ -109,6 +112,67 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unesite stauts narudzbe.");
             }
+        }
+
+        public override async Task<Model.Narudzba> InsertAsync(NarudzbaInsertRequest request, CancellationToken cancellationToken = default)
+        {
+            var state = BaseNarudzbaState.CreateState("initial");
+            return state.Insert(request);
+        }
+
+        public override async Task<Model.Narudzba> UpdateAsync(int id, NarudzbaUpdateRequest request, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetByIdAsync(id);
+            var state =  BaseNarudzbaState.CreateState(entity.StateMachine);
+            return state.Update(id, request);
+        }
+
+        public async Task<Model.Narudzba> PreuzmiAsync(int narudzbaId, CancellationToken cancellationToken = default)
+        {
+            var narudzba = await Context.Narudzbas.FindAsync(narudzbaId, cancellationToken);
+
+            if (narudzba == null)
+                throw new UserException("Pogresan id.");
+
+            var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
+
+            return  state.Preuzeta(narudzbaId);
+        }
+
+        public async Task<Model.Narudzba> UTokuAsync(int narudzbaId, CancellationToken cancellationToken = default)
+        {
+            var narudzba = await Context.Narudzbas.FindAsync(narudzbaId, cancellationToken);
+
+            if (narudzba == null)
+                throw new UserException("Pogresan id.");
+
+            var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
+
+            return state.UToku(narudzbaId);
+        }
+
+        public async Task<Model.Narudzba> PonistiAsync(int narudzbaId, CancellationToken cancellationToken = default)
+        {
+            var narudzba = await Context.Narudzbas.FindAsync(narudzbaId, cancellationToken);
+
+            if (narudzba == null)
+                throw new UserException("Pogresan id.");
+
+            var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
+
+            return state.Ponistena(narudzbaId);
+        }
+
+        public async Task<Model.Narudzba> ZavrsiAsync(int narudzbaId, CancellationToken cancellationToken = default)
+        {
+            var narudzba = await Context.Narudzbas.FindAsync(narudzbaId, cancellationToken);
+
+            if (narudzba == null)
+                throw new UserException("Pogresan id.");
+
+            var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
+
+            return state.Zavrsena(narudzbaId);
         }
     }
 }

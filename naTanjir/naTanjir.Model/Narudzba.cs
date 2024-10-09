@@ -16,6 +16,7 @@ namespace naTanjir.Model
 
         public bool IsDeleted { get; set; }
         public int KorisnikId { get; set; }
+        public string? StateMachine { get; set; }
         public virtual Korisnici Korisnik { get; set; } = null!;
 
         public virtual ICollection<StavkeNarudzbe> StavkeNarudzbes { get; set; } = new List<StavkeNarudzbe>();

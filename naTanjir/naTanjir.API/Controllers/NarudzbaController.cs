@@ -16,5 +16,29 @@ namespace naTanjir.API.Controllers
             : base(service)
         {
         }
+
+        [HttpPut("{id}/preuzmi")]
+        public async Task<Model.Narudzba> Preuzmi(int id, CancellationToken cancellationToken = default)
+        {
+            return await (_service as INarudzbaService).PreuzmiAsync(id, cancellationToken);
+        }
+
+        [HttpPut("{id}/uToku ")]
+        public async Task<Model.Narudzba> UToku(int id, CancellationToken cancellationToken = default)
+        {
+            return await (_service as INarudzbaService).UTokuAsync(id, cancellationToken);
+        }
+
+        [HttpPut("{id}/ponisti")]
+        public async Task<Model.Narudzba> Ponisti(int id, CancellationToken cancellationToken = default)
+        {
+            return await (_service as INarudzbaService).PonistiAsync(id, cancellationToken);
+        }
+
+        [HttpPut("{id}/zavrsi ")]
+        public async Task<Model.Narudzba> Zavrsi(int id, CancellationToken cancellationToken = default)
+        {
+            return await (_service as INarudzbaService).ZavrsiAsync(id, cancellationToken);
+        }
     }
 }
