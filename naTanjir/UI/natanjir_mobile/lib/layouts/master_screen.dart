@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/cart_provider.dart';
+import 'package:natanjir_mobile/screens/korpa_screen.dart';
 import 'package:natanjir_mobile/screens/product_details_screen.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_favorit_list_screen.dart';
-import 'package:natanjir_mobile/screens/user_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -17,7 +19,7 @@ class _MasterScreenState extends State<MasterScreen> {
   final List<Widget> _pages = [
     RestoranListScreen(),
     ProductListScreen(),
-    const UserListScreen(),
+    KorpaScreen(),
     Text("a"),
     RestoranFavoritListScreen()
   ];

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_cart/cart.dart';
 import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/models/ocjena_proizvod.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/korisnici_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
@@ -21,7 +23,9 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-void main() {
+void main() async {
+  var cart = FlutterCart();
+  await cart.initializeCart(isPersistenceSupportEnabled: true);
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => VrstaProizvodumProvider()),

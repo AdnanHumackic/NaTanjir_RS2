@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:natanjir_mobile/models/proizvod.dart';
+import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 
 class ProizvodDetailsScreen extends StatefulWidget {
@@ -15,25 +17,28 @@ class ProizvodDetailsScreen extends StatefulWidget {
 }
 
 class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
+  final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
+
   var quantity = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 25, left: 10),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.only(top: 25, left: 10),
+          //   child: Align(
+          //     alignment: Alignment.topLeft,
+          //     child: IconButton(
+          //       icon: Icon(Icons.arrow_back),
+          //       onPressed: () {
+          //         Navigator.pop(context);
+          //       },
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(10),
@@ -116,6 +121,7 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                             child: InkWell(
                               onTap: () {
                                 quantity != 1 ? quantity-- : quantity;
+
                                 setState(() {});
                               },
                               child: Icon(
@@ -177,7 +183,7 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: 60,
+                  height: 50,
                   padding: EdgeInsets.symmetric(horizontal: 8.0),
                   decoration: BoxDecoration(
                     color: Color.fromARGB(255, 0, 83, 86),
@@ -210,7 +216,7 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                 child: InkWell(
                   onTap: () {},
                   child: Container(
-                    height: 60,
+                    height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     decoration: BoxDecoration(
                       color: Color.fromARGB(255, 60, 47, 47),
@@ -224,14 +230,30 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        "Dodaj u korpu",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                    child: InkWell(
+                      onTap: () async {
+                        await cartProvider.addToCart(
+                            widget.odabraniProizvod as Proizvod, quantity);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                            duration: Duration(seconds: 1),
+                            content: Center(
+                              child: Text("Proizvod je dodan u korpu."),
+                            ),
+                          ),
+                        );
+                        setState(() {});
+                      },
+                      child: Center(
+                        child: Text(
+                          "Dodaj u korpu",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

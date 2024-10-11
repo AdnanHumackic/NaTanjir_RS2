@@ -8,21 +8,20 @@ using System.Threading.Tasks;
 
 namespace naTanjir.Services.NarudzbaStateMachine
 {
-    public class PreuzetaNarudzbaState : BaseNarudzbaState
+    public class UTokuNarudzbaState : BaseNarudzbaState
     {
-        public PreuzetaNarudzbaState(NaTanjirContext context, IMapper mapper, IServiceProvider serviceProvider) : base(context, mapper, serviceProvider)
+        public UTokuNarudzbaState(NaTanjirContext context, IMapper mapper, IServiceProvider serviceProvider) : base(context, mapper, serviceProvider)
         {
         }
 
-        public override Model.Narudzba UToku(int id)
+        public override Model.Narudzba Zavrsena(int id)
         {
             var set = Context.Set<Database.Narudzba>();
             var entity = set.Find(id);
-            entity.StateMachine = "uToku";
+            entity.StateMachine = "zavrsena";
             Context.SaveChanges();
 
             return Mapper.Map<Model.Narudzba>(entity);
         }
-
     }
 }

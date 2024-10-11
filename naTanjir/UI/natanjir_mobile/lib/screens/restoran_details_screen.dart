@@ -13,6 +13,8 @@ import 'package:natanjir_mobile/models/proizvod.dart';
 import 'package:natanjir_mobile/models/restoran.dart';
 import 'package:natanjir_mobile/models/search_result.dart';
 import 'package:natanjir_mobile/models/vrsta_proizvodum.dart';
+import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
@@ -38,6 +40,8 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   SearchResult<Proizvod>? proizvodResult;
   SearchResult<VrstaProizvodum>? vrstaProizvodumResult;
   SearchResult<OcjenaProizvod>? ocjenaProizvodResult;
+
+  final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
 
   Map<String, dynamic> searchRequest = {};
   @override
@@ -67,6 +71,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -74,7 +79,6 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
               padding: const EdgeInsets.all(15.0),
               child: Column(
                 children: [
-                  SizedBox(height: 40),
                   _buildHeader(),
                   _buildSearch(),
                   _buildPage(),
@@ -82,16 +86,16 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
               ),
             ),
           ),
-          Positioned(
-            top: 20,
-            left: 10,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
+          // Positioned(
+          //   top: 20,
+          //   left: 10,
+          //   child: IconButton(
+          //     icon: Icon(Icons.arrow_back),
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );
@@ -421,7 +425,10 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                     ),
                                     Flexible(
                                       child: GestureDetector(
-                                        onTap: () {},
+                                        onTap: () {
+                                          cartProvider.addToCart(e, 1);
+                                          setState(() {});
+                                        },
                                         child: Icon(
                                           Icons.add_circle_outlined,
                                           size: 35,

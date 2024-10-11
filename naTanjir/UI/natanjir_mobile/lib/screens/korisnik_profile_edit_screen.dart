@@ -55,29 +55,30 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Stack(
         children: [
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(
-                children: [SizedBox(height: 40), _buildForm(), _saveRow()],
+                children: [SizedBox(height: 0), _buildForm(), _saveRow()],
               ),
             ),
           ),
-          Positioned(
-            top: 20,
-            left: 10,
-            child: Container(
-              color: Colors.white,
-              child: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-              ),
-            ),
-          ),
+          // Positioned(
+          //   top: 20,
+          //   left: 10,
+          //   child: Container(
+          //     color: Colors.white,
+          //     child: IconButton(
+          //       icon: Icon(Icons.arrow_back),
+          //       onPressed: () {
+          //         Navigator.pop(context, true);
+          //       },
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

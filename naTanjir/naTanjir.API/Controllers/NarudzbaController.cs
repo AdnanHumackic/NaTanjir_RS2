@@ -23,7 +23,7 @@ namespace naTanjir.API.Controllers
             return await (_service as INarudzbaService).PreuzmiAsync(id, cancellationToken);
         }
 
-        [HttpPut("{id}/uToku ")]
+        [HttpPut("{id}/uToku")]
         public async Task<Model.Narudzba> UToku(int id, CancellationToken cancellationToken = default)
         {
             return await (_service as INarudzbaService).UTokuAsync(id, cancellationToken);
@@ -35,7 +35,7 @@ namespace naTanjir.API.Controllers
             return await (_service as INarudzbaService).PonistiAsync(id, cancellationToken);
         }
 
-        [HttpPut("{id}/zavrsi ")]
+        [HttpPut("{id}/zavrsi")]
         public async Task<Model.Narudzba> Zavrsi(int id, CancellationToken cancellationToken = default)
         {
             return await (_service as INarudzbaService).ZavrsiAsync(id, cancellationToken);

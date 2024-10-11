@@ -67,8 +67,12 @@ namespace naTanjir.Services.NarudzbaStateMachine
                     return ServiceProvider.GetService<KreiranaNarudzbaState>();
                 case "preuzeta":
                     return ServiceProvider.GetService<PreuzetaNarudzbaState>();
+                case "uToku":
+                    return ServiceProvider.GetService<UTokuNarudzbaState>();
                 case "ponistena":
-                    return ServiceProvider.GetService<PreuzetaNarudzbaState>();
+                    return ServiceProvider.GetService<PonistenaNarudzbaState>();
+                case "zavrsena":
+                    return ServiceProvider.GetService<ZavrsenaNarudzbaState>();
                 default:throw new UserException("State not recognized");
 
             }

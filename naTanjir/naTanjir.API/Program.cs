@@ -33,6 +33,8 @@ builder.Services.AddTransient<InitialNarudzbaState>();
 builder.Services.AddTransient<KreiranaNarudzbaState>();
 builder.Services.AddTransient<PreuzetaNarudzbaState>();
 builder.Services.AddTransient<PonistenaNarudzbaState>();
+builder.Services.AddTransient<ZavrsenaNarudzbaState>();
+builder.Services.AddTransient<UTokuNarudzbaState>();
 
 
 

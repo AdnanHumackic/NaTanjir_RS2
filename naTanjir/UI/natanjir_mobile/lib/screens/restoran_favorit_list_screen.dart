@@ -173,11 +173,16 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
                           onPressed: (context) async {
                             await restoranFavoritProvider
                                 .delete(e.restoranFavoritId!);
-                            QuickAlert.show(
-                                context: context,
-                                type: QuickAlertType.success,
-                                title:
-                                    "Restoran je uspješno obrisan iz favorita.");
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                                duration: Duration(seconds: 1),
+                                content: Center(
+                                  child:
+                                      Text("Restoran je obrisan iz favorita."),
+                                ),
+                              ),
+                            );
 
                             restoranFavoritResult =
                                 await restoranFavoritProvider.get(

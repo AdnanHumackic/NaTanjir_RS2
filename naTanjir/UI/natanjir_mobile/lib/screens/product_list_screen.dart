@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_cart/cart.dart';
 import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/models/proizvod.dart';
 import 'package:natanjir_mobile/models/search_result.dart';
@@ -17,7 +18,6 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   late ProductProvider provider;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

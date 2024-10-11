@@ -14,6 +14,5 @@ namespace naTanjir.Services.NarudzbaStateMachine
         {
         }
 
-        //Mozda dati mogucnost obnove narudzbe
     }
 }
