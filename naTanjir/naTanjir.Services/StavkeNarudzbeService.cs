@@ -91,25 +91,6 @@ namespace naTanjir.Services
                 throw new UserException("Molimo unesite restoran id.");
             }
 
-            if (request?.NarudzbaId == 0 || request?.NarudzbaId == null)
-            {
-                //test
-                var narudzba = new Narudzba
-                {
-                    BrojNarudzbe = 123,
-                    DatumKreiranja = DateTime.Now,
-                    IsDeleted = false,
-                    KorisnikId = 1,//getCurrentUser
-                    UkupnaCijena = request.Kolicina * request.Cijena,
-                    VrijemeBrisanja = null,
-                };
-                Context.Narudzbas.Add(narudzba);
-                await Context.SaveChangesAsync();
-
-                request.NarudzbaId = narudzba.NarudzbaId;
-            }
-            entity.NarudzbaId = request.NarudzbaId;
-
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
     }

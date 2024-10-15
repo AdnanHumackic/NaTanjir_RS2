@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:natanjir_mobile/models/proizvod.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/base_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 
@@ -27,18 +28,6 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
       appBar: AppBar(),
       body: Column(
         children: [
-          // Padding(
-          //   padding: EdgeInsets.only(top: 25, left: 10),
-          //   child: Align(
-          //     alignment: Alignment.topLeft,
-          //     child: IconButton(
-          //       icon: Icon(Icons.arrow_back),
-          //       onPressed: () {
-          //         Navigator.pop(context);
-          //       },
-          //     ),
-          //   ),
-          // ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(10),
@@ -206,6 +195,7 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
@@ -232,17 +222,29 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                     ),
                     child: InkWell(
                       onTap: () async {
-                        await cartProvider.addToCart(
-                            widget.odabraniProizvod as Proizvod, quantity);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Color.fromARGB(255, 0, 83, 86),
-                            duration: Duration(seconds: 1),
-                            content: Center(
-                              child: Text("Proizvod je dodan u korpu."),
+                        try {
+                          await cartProvider.addToCart(
+                              widget.odabraniProizvod as Proizvod, quantity);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                              duration: Duration(milliseconds: 500),
+                              content: Center(
+                                child: Text("Proizvod je dodan u korpu."),
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } on Exception catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.red,
+                              duration: Duration(seconds: 2),
+                              content: Center(
+                                child: Text(e.toString()),
+                              ),
+                            ),
+                          );
+                        }
                         setState(() {});
                       },
                       child: Center(

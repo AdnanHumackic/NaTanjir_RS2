@@ -66,19 +66,6 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
               ),
             ),
           ),
-          // Positioned(
-          //   top: 20,
-          //   left: 10,
-          //   child: Container(
-          //     color: Colors.white,
-          //     child: IconButton(
-          //       icon: Icon(Icons.arrow_back),
-          //       onPressed: () {
-          //         Navigator.pop(context, true);
-          //       },
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

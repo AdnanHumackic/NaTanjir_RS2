@@ -40,5 +40,11 @@ namespace naTanjir.API.Controllers
         {
             return await (_service as INarudzbaService).ZavrsiAsync(id, cancellationToken);
         }
+
+        [HttpGet("{id}/allowedActions")]
+        public Task<List<string>> AllowedActions(int id, CancellationToken cancellationToken = default)
+        {
+            return (_service as INarudzbaService).AllowedActions(id, cancellationToken);
+        }
     }
 }

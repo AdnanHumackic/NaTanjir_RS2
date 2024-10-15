@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_paypal_payment/flutter_paypal_payment.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
+import 'package:natanjir_mobile/screens/kreiranje_narudzbe_screen.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class KorpaScreen extends StatefulWidget {
   KorpaScreen({super.key});
@@ -31,6 +36,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
     return Scaffold(
       body: Column(
         children: [
+          SizedBox(height: 5),
           Padding(
             padding: EdgeInsets.all(10),
             child: Center(
@@ -74,6 +80,37 @@ class _KorpaScreenState extends State<KorpaScreen> {
   }
 
   Widget _buildPage() {
+    if (cartItems.isEmpty) {
+      return Center(
+        child: Container(
+          width: double.infinity,
+          margin: EdgeInsets.only(top: 15),
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 0, 83, 86),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              "Vaša korpa je prazna.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Column(
       children: cartItems.entries.map((entry) {
         final productDetails = entry.value;
@@ -104,7 +141,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Color.fromARGB(255, 0, 83, 86),
-                        duration: Duration(seconds: 1),
+                        duration: Duration(milliseconds: 500),
                         content: Center(
                           child: Text("Proizvod je obrisan iz korpe."),
                         ),
@@ -174,7 +211,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Flexible(
-                              child: GestureDetector(
+                              child: InkWell(
                                 onTap: () async {
                                   productDetails['kolicina'] =
                                       (productDetails['kolicina'] - 1)
@@ -200,7 +237,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            GestureDetector(
+                            InkWell(
                               onTap: () async {
                                 await cartProvider.updateCart(
                                     productDetails['id'],
@@ -276,7 +313,22 @@ class _KorpaScreenState extends State<KorpaScreen> {
               Expanded(
                 flex: 1,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    if (cartItems.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(milliseconds: 500),
+                          content: Center(child: Text("Korpa je prazna!")),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => KreiranjeNarudzbeScreen(
+                              odabraniProizvodi: cartItems.entries.toList(),
+                              ukupnaCijena: izracunajUkupnuCijenu())));
+                    }
+                  },
                   child: Container(
                     height: 45,
                     padding: EdgeInsets.symmetric(horizontal: 8.0),

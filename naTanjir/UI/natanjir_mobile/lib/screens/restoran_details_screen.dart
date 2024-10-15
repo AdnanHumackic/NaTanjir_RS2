@@ -86,16 +86,6 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
               ),
             ),
           ),
-          // Positioned(
-          //   top: 20,
-          //   left: 10,
-          //   child: IconButton(
-          //     icon: Icon(Icons.arrow_back),
-          //     onPressed: () {
-          //       Navigator.pop(context);
-          //     },
-          //   ),
-          // ),
         ],
       ),
     );
@@ -286,7 +276,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
           child: Padding(
             padding: EdgeInsets.all(10),
             child: Text(
-              "Odabrani restoran nema proizvoda!",
+              "Odabrani restoran nema proizvoda.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -424,9 +414,35 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                       ),
                                     ),
                                     Flexible(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          cartProvider.addToCart(e, 1);
+                                      child: InkWell(
+                                        onTap: () async {
+                                          try {
+                                            await cartProvider.addToCart(e, 1);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                backgroundColor: Color.fromARGB(
+                                                    255, 0, 83, 86),
+                                                duration: Duration(seconds: 2),
+                                                content: Center(
+                                                  child: Text(
+                                                      "Proizvod je dodan u korpu."),
+                                                ),
+                                              ),
+                                            );
+                                          } on Exception catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                backgroundColor: Colors.red,
+                                                duration:
+                                                    Duration(milliseconds: 500),
+                                                content: Center(
+                                                  child: Text(e.toString()),
+                                                ),
+                                              ),
+                                            );
+                                          }
                                           setState(() {});
                                         },
                                         child: Icon(

@@ -10,10 +10,7 @@ namespace naTanjir.Model.Request
 
         public decimal Cijena { get; set; }
 
-        public int NarudzbaId { get; set; }
-
-        //public List<int> Proizvod {get;set;}
-        public int ProizvodId { get; set; }
+        public int ProizvodId {get;set;}
 
         public int RestoranId { get; set; }
     }

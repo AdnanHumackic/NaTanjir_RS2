@@ -24,35 +24,40 @@ namespace naTanjir.Services.NarudzbaStateMachine
             ServiceProvider = serviceProvider;
         }
 
-        public virtual Model.Narudzba Insert(NarudzbaInsertRequest request)
+        public virtual async Task<Model.Narudzba> Insert(NarudzbaInsertRequest request)
         {
             throw new UserException("Method not allowed");
         }
 
-        public virtual Model.Narudzba Update(int id, NarudzbaUpdateRequest request)
+        public virtual async Task<Model.Narudzba> Update(int id, NarudzbaUpdateRequest request)
         {
             throw new UserException("Method not allowed");
         }
 
-        public virtual Model.Narudzba Kreirana(int id)
+        public virtual async Task<Model.Narudzba> Kreirana(int id)
         {
             throw new UserException("Method not allowed");
         }
 
-        public virtual Model.Narudzba Ponistena(int id)
+        public virtual async Task<Model.Narudzba> Ponistena(int id)
         {
             throw new UserException("Method not allowed");
         }
 
-        public virtual Model.Narudzba Preuzeta(int id)
+        public virtual async Task<Model.Narudzba> Preuzeta(int id)
         {
             throw new UserException("Method not allowed");
         }
-        public virtual Model.Narudzba UToku(int id)
+        public virtual async Task<Model.Narudzba> UToku(int id)
         {
             throw new UserException("Method not allowed");
         }
-        public virtual Model.Narudzba Zavrsena(int id)
+        public virtual async Task<Model.Narudzba> Zavrsena(int id)
+        {
+            throw new UserException("Method not allowed");
+        }
+
+        public virtual List<string> AllowedActions(Database.Narudzba entity)
         {
             throw new UserException("Method not allowed");
         }

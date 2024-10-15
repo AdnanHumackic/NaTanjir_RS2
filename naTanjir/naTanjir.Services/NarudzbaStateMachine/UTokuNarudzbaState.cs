@@ -14,14 +14,18 @@ namespace naTanjir.Services.NarudzbaStateMachine
         {
         }
 
-        public override Model.Narudzba Zavrsena(int id)
+        public override async Task<Model.Narudzba> Zavrsena(int id)
         {
             var set = Context.Set<Database.Narudzba>();
             var entity = set.Find(id);
             entity.StateMachine = "zavrsena";
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
 
             return Mapper.Map<Model.Narudzba>(entity);
+        }
+        public override List<string> AllowedActions(Database.Narudzba entity)
+        {
+            return new List<string>() { nameof(Zavrsena) };
         }
     }
 }

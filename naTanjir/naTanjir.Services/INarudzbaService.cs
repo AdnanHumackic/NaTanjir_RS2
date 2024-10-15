@@ -17,5 +17,6 @@ namespace naTanjir.Services
 
         Task<Model.Narudzba> PonistiAsync(int narudzbaId, CancellationToken cancellationToken = default);
 
+        Task<List<string>> AllowedActions(int narudzbaId, CancellationToken cancellationToken = default);
     }
 }

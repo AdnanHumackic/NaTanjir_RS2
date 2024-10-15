@@ -12,8 +12,6 @@ namespace naTanjir.Model
 
         public decimal Cijena { get; set; }
 
-        public bool IsDeleted { get; set; }
-
         public int NarudzbaId { get; set; }
 
         public int ProizvodId { get; set; }

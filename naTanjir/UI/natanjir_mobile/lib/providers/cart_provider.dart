@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:natanjir_mobile/providers/base_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:natanjir_mobile/models/proizvod.dart';
 
@@ -33,7 +34,15 @@ class CartProvider {
         cart = Map<String, dynamic>.from(json.decode(cartData));
       } catch (e) {}
     }
+    if (cart.isNotEmpty) {
+      String firstProductKey = cart.keys.first;
+      int existingRestoranId = cart[firstProductKey]['restoranId'];
 
+      if (existingRestoranId != proizvod.restoranId) {
+        throw new UserException(
+            "Korpa može sadržavati proizvode iz samo jednog restorana.");
+      }
+    }
     String productId = proizvod.proizvodId.toString();
 
     if (cart.containsKey(productId)) {

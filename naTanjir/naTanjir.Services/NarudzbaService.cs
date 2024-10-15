@@ -3,14 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
+using naTanjir.Services.Auth;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
 using naTanjir.Services.NarudzbaStateMachine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StavkeNarudzbe = naTanjir.Services.Database.StavkeNarudzbe;
 
 namespace naTanjir.Services
 {
@@ -58,7 +61,7 @@ namespace naTanjir.Services
 
             if (searchObject.RestoranId != null)
             {
-                query = query.Include(x => x.StavkeNarudzbes.Where(x => x.RestoranId == searchObject.RestoranId)) ;
+                query = query.Include(x => x.StavkeNarudzbes.Where(x => x.RestoranId == searchObject.RestoranId));
             }
 
             if (searchObject.IsKorisnikIncluded == true)
@@ -103,7 +106,6 @@ namespace naTanjir.Services
 
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
-
         public override async Task BeforeUpdateAsync(NarudzbaUpdateRequest request, Narudzba entity, CancellationToken cancellationToken = default)
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
@@ -117,14 +119,14 @@ namespace naTanjir.Services
         public override async Task<Model.Narudzba> InsertAsync(NarudzbaInsertRequest request, CancellationToken cancellationToken = default)
         {
             var state = BaseNarudzbaState.CreateState("initial");
-            return state.Insert(request);
+            return await state.Insert(request);
         }
 
         public override async Task<Model.Narudzba> UpdateAsync(int id, NarudzbaUpdateRequest request, CancellationToken cancellationToken = default)
         {
             var entity = await GetByIdAsync(id);
-            var state =  BaseNarudzbaState.CreateState(entity.StateMachine);
-            return state.Update(id, request);
+            var state = BaseNarudzbaState.CreateState(entity.StateMachine);
+            return await state.Update(id, request);
         }
 
         public async Task<Model.Narudzba> PreuzmiAsync(int narudzbaId, CancellationToken cancellationToken = default)
@@ -134,11 +136,11 @@ namespace naTanjir.Services
             if (narudzba == null)
                 throw new UserException("Pogresan id.");
 
-            var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
+            var state =BaseNarudzbaState.CreateState(narudzba.StateMachine);
 
-            return  state.Preuzeta(narudzbaId);
+            return await state.Preuzeta(narudzbaId);
         }
-
+      
         public async Task<Model.Narudzba> UTokuAsync(int narudzbaId, CancellationToken cancellationToken = default)
         {
             var narudzba = await Context.Narudzbas.FindAsync(narudzbaId, cancellationToken);
@@ -148,7 +150,7 @@ namespace naTanjir.Services
 
             var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
 
-            return state.UToku(narudzbaId);
+            return await state.UToku(narudzbaId);
         }
 
         public async Task<Model.Narudzba> PonistiAsync(int narudzbaId, CancellationToken cancellationToken = default)
@@ -160,7 +162,7 @@ namespace naTanjir.Services
 
             var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
 
-            return state.Ponistena(narudzbaId);
+            return await state.Ponistena(narudzbaId);
         }
 
         public async Task<Model.Narudzba> ZavrsiAsync(int narudzbaId, CancellationToken cancellationToken = default)
@@ -172,7 +174,18 @@ namespace naTanjir.Services
 
             var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
 
-            return state.Zavrsena(narudzbaId);
+            return await state.Zavrsena(narudzbaId);
         }
+
+        public async Task<List<string>> AllowedActions(int narudzbaId, CancellationToken cancellationToken = default)
+        {
+            var narudzba = await Context.Narudzbas.FindAsync(narudzbaId, cancellationToken);
+            if (narudzba == null)
+                throw new UserException("Pogresan id.");
+
+            var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
+            return state.AllowedActions(narudzba);
+        }
+
     }
 }

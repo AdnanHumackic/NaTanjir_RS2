@@ -13,5 +13,9 @@ namespace naTanjir.Services.NarudzbaStateMachine
         public ZavrsenaNarudzbaState(NaTanjirContext context, IMapper mapper, IServiceProvider serviceProvider) : base(context, mapper, serviceProvider)
         {
         }
+        public override List<string> AllowedActions(Database.Narudzba entity)
+        {
+            return new List<string>() { };
+        }
     }
 }

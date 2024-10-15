@@ -5,16 +5,19 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cart/cart.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/models/ocjena_proizvod.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/korisnici_provider.dart';
+import 'package:natanjir_mobile/providers/narudzba_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_favorit_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_provider.dart';
+import 'package:natanjir_mobile/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
@@ -24,8 +27,12 @@ import 'package:quickalert/quickalert.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   var cart = FlutterCart();
   await cart.initializeCart(isPersistenceSupportEnabled: true);
+
+  await dotenv.load(fileName: ".env");
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => VrstaProizvodumProvider()),
@@ -35,6 +42,8 @@ void main() async {
     ChangeNotifierProvider(create: (_) => OcjenaRestoranProvider()),
     ChangeNotifierProvider(create: (_) => RestoranFavoritProvider()),
     ChangeNotifierProvider(create: (_) => OcjenaProizvodProvider()),
+    ChangeNotifierProvider(create: (_) => NarudzbaProvider()),
+    ChangeNotifierProvider(create: (_) => StavkeNarudzbeProvider()),
   ], child: const MyApp()));
 }
 
