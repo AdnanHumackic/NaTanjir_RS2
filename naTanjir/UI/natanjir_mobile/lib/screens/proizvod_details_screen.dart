@@ -238,7 +238,7 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: Colors.red,
-                              duration: Duration(seconds: 2),
+                              duration: Duration(seconds: 1),
                               content: Center(
                                 child: Text(e.toString()),
                               ),

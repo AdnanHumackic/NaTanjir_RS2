@@ -423,7 +423,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                               SnackBar(
                                                 backgroundColor: Color.fromARGB(
                                                     255, 0, 83, 86),
-                                                duration: Duration(seconds: 2),
+                                                duration: Duration(seconds: 1),
                                                 content: Center(
                                                   child: Text(
                                                       "Proizvod je dodan u korpu."),
@@ -438,7 +438,10 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                                 duration:
                                                     Duration(milliseconds: 500),
                                                 content: Center(
-                                                  child: Text(e.toString()),
+                                                  child: Text(
+                                                    e.toString(),
+                                                    textAlign: TextAlign.center,
+                                                  ),
                                                 ),
                                               ),
                                             );

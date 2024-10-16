@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -37,8 +38,6 @@ class _NarudzbeListScreenState extends State<NarudzbeListScreen> {
   void initState() {
     super.initState();
     searchRequest = {
-      'korisnikId': AuthProvider.korisnikId!,
-      'stateMachine': "kreirana",
       'isStavkeNarudzbeIncluded': true,
     };
     narudzbaProvider = context.read<NarudzbaProvider>();
@@ -47,9 +46,7 @@ class _NarudzbeListScreenState extends State<NarudzbeListScreen> {
 
   Future _initForm() async {
     narudzbaResult = await narudzbaProvider.get(
-        filter: searchRequest,
-        orderBy: 'DatumKreiranja',
-        sortDirection: 'desc');
+        orderBy: 'DatumKreiranja', sortDirection: 'desc');
     if (mounted) {
       setState(() {});
     }
@@ -57,44 +54,50 @@ class _NarudzbeListScreenState extends State<NarudzbeListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return DefaultTabController(
+      length: 2,
+      child: Column(
         children: [
-          SizedBox(height: 5),
+          Container(
+            padding: EdgeInsets.all(16.0),
+            child: TabBar(
+              tabs: [
+                Tab(text: "Aktivne"),
+                Tab(text: "Preuzete"),
+              ],
+            ),
+          ),
           Padding(
             padding: EdgeInsets.all(10),
-            child: Center(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 0, 83, 86),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "Vaše aktivne narudžbe",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 0, 83, 86),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "Vaše narudžbe",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(10),
-              child: _buildPage(),
+            child: TabBarView(
+              children: [_buildAktivne(), _buildPreuzete()],
             ),
           ),
         ],
@@ -102,11 +105,16 @@ class _NarudzbeListScreenState extends State<NarudzbeListScreen> {
     );
   }
 
-  Widget _buildPage() {
+  Widget _buildAktivne() {
     if (narudzbaResult == null) {
       return Center(child: CircularProgressIndicator());
     }
-    if (narudzbaResult!.result.isEmpty) {
+
+    if (narudzbaResult!.result
+        .where((element) =>
+            element.stateMachine == "kreirana" &&
+            element.korisnikId == AuthProvider.korisnikId)
+        .isEmpty) {
       return Center(
         child: Container(
           width: 250,
@@ -135,20 +143,244 @@ class _NarudzbeListScreenState extends State<NarudzbeListScreen> {
         ),
       );
     }
-    return Padding(
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(97, 158, 158, 158),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              "Napomena: Narudžbu možete otkazati u roku od 3 minute nakon kreiranja.",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          ...narudzbaResult!.result
+              .where((element) =>
+                  element.stateMachine == "kreirana" &&
+                  element.korisnikId == AuthProvider.korisnikId)
+              .map(
+                (e) => InkWell(
+                  onTap: () async {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            DetaljiNarudzbeScreen(narudzba: e)));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 135,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Slidable(
+                      startActionPane: ActionPane(
+                        motion: BehindMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) async {
+                              String? datumKreiranja = e.datumKreiranja;
+                              var dateNow = DateTime.now();
+                              if (datumKreiranja != null) {
+                                DateTime datum = DateTime.parse(datumKreiranja);
+                                if (dateNow.difference(datum).inMinutes < 3) {
+                                  await narudzbaProvider.ponisti(e.narudzbaId!);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 0, 83, 86),
+                                      duration: Duration(seconds: 1),
+                                      content: Center(
+                                        child: Text(
+                                            "Narudžba je uspješno poništena."),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 2),
+                                      content: Center(
+                                        child: Text(
+                                          "Prošlo je 3 minute od kreiranja narudžbe, te je ne možete poništiti.",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {}
+
+                              narudzbaResult = await narudzbaProvider.get(
+                                  filter: searchRequest);
+                              setState(() {});
+                            },
+                            backgroundColor: Colors.red,
+                            icon: Icons.close,
+                            label: 'Otkaži',
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.all(0),
+                              child: SizedBox(
+                                width: 120,
+                                height: 100,
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
+                                  child: FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: Image.asset(
+                                      "assets/images/emptyProductImage.png",
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Broj narudžbe: #${e.brojNarudzbe}",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(1.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Plaćeno: ${formatNumber(e.ukupnaCijena)} KM",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Color.fromARGB(
+                                                  255, 108, 108, 108),
+                                              fontWeight: FontWeight.w600,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Datum kreiranja: \n${formatDateTime(e.datumKreiranja.toString())}",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Color.fromARGB(255, 108, 108, 108),
+                                      fontWeight: FontWeight.w600,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreuzete() {
+    if (narudzbaResult == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+    if (narudzbaResult!.result
+        .where((element) =>
+            element.stateMachine == "preuzeta" &&
+            element.korisnikId == AuthProvider.korisnikId)
+        .isEmpty) {
+      return Center(
+        child: Container(
+          width: 250,
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 0, 83, 86),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              "Nemate preuzetih narudžbi.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return SingleChildScrollView(
       padding: EdgeInsets.all(10),
       child: Column(
         children: narudzbaResult!.result
+            .where((element) =>
+                element.stateMachine == "preuzeta" &&
+                element.korisnikId == AuthProvider.korisnikId)
             .map(
               (e) => InkWell(
-                onTap: () async {
+                onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
                           DetaljiNarudzbeScreen(narudzba: e)));
                 },
                 child: Container(
                   width: double.infinity,
-                  height: 129,
+                  height: 135,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),

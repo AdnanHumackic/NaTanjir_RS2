@@ -248,7 +248,7 @@ class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Narudžbu kreirao: ${widget.narudzba!.korisnik!.ime} ${widget.narudzba!.korisnik!.prezime}",
+                "Narudžbu kreirao/la: ${widget.narudzba!.korisnik!.ime} ${widget.narudzba!.korisnik!.prezime}",
                 style: TextStyle(
                   fontSize: 15,
                   color: Color.fromARGB(255, 108, 108, 108),

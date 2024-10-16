@@ -7,6 +7,7 @@ import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/main.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
+import 'package:natanjir_mobile/screens/historija_narudzbi_screen.dart';
 import 'package:natanjir_mobile/screens/korisnik_profile_edit_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
 import 'package:provider/provider.dart';
@@ -246,32 +247,37 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 20),
-              child: Padding(
-                padding: EdgeInsets.all(5),
-                child: InkWell(
-                  focusColor: Colors.transparent,
-                  onTap: () {},
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(width: 8.0),
-                      Flexible(
-                        child: Text(
-                          "Historija narudžbi",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 108, 108, 108),
-                              fontWeight: FontWeight.w600),
+            InkWell(
+              child: Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => HistorijaNarudzbiScreen()));
+                    },
+                    focusColor: Colors.transparent,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 8.0),
+                        Flexible(
+                          child: Text(
+                            "Historija narudžbi",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 108, 108, 108),
+                                fontWeight: FontWeight.w600),
+                          ),
                         ),
-                      ),
-                      Flexible(
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Color.fromARGB(255, 108, 108, 108),
+                        Flexible(
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Color.fromARGB(255, 108, 108, 108),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
