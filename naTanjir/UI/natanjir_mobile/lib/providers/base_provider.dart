@@ -13,14 +13,30 @@ abstract class BaseProvider<T> with ChangeNotifier {
   BaseProvider(String endpoint) {
     _endpoint = endpoint;
     baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "http://10.0.2.2:5212/");
+        defaultValue: "http://localhost:5212/");
   }
 
-  Future<SearchResult<T>> get({dynamic filter}) async {
+  Future<SearchResult<T>> get({
+    dynamic filter,
+    String? orderBy,
+    String? sortDirection,
+  }) async {
     var url = "$baseUrl$_endpoint";
 
+    Map<String, dynamic> queryParams = {};
     if (filter != null) {
-      var queryString = getQueryString(filter);
+      queryParams.addAll(filter);
+    }
+
+    if (orderBy != null) {
+      queryParams['orderBy'] = orderBy;
+    }
+    if (sortDirection != null) {
+      queryParams['sortDirection'] = sortDirection;
+    }
+
+    if (queryParams.isNotEmpty) {
+      var queryString = getQueryString(queryParams);
       url = "$url?$queryString";
     }
 
@@ -28,7 +44,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     var headers = createHeaders();
 
     var response = await http.get(uri, headers: headers);
-
+    // throw new Exception("Greška");
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
 

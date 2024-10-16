@@ -14,10 +14,9 @@ namespace naTanjir.Model.SearchObject
         public int? ProizvodId { get; set; }
 
         public int? RestoranId { get; set; }
-        public bool? IsNarudzbaIncluded { get; set; }
-        public bool? IsProizvodIncluded { get; set; }
-        public bool? IsKorisnikIncluded { get; set; }
         public bool? IsDeleted { get; set; }
+        public bool? IsProizvodIncluded { get; set; }
+        public bool? IsRestoranIncluded { get; set; }
 
     }
 }

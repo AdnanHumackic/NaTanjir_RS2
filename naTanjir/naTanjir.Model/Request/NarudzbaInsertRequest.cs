@@ -13,6 +13,6 @@ namespace naTanjir.Model.Request
         public DateTime DatumKreiranja { get; set; }
 
         public int KorisnikId { get; set; }
-        public List<StavkeNarudzbe> StavkeNarudzbe { get; set; }
+        public List<StavkeNarudzbeInsertRequest> StavkeNarudzbe { get; set; }
     }
 }

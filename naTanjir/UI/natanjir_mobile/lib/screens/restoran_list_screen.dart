@@ -239,7 +239,7 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
           child: Padding(
             padding: EdgeInsets.all(10),
             child: Text(
-              "Nema rezultata vaše pretrage!",
+              "Nema rezultata vaše pretrage.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,

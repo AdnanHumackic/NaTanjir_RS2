@@ -1,4 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:natanjir_mobile/models/korisnici.dart';
+import 'package:natanjir_mobile/models/narudzba.dart';
+import 'package:natanjir_mobile/models/proizvod.dart';
+import 'package:natanjir_mobile/models/restoran.dart';
 
 part 'stavke_narudzbe.g.dart';
 
@@ -11,7 +15,8 @@ class StavkeNarudzbe {
   int? proizvodId;
   int? korisnikId;
   int? restoranId;
-
+  Proizvod? proizvod;
+  Restoran? restoran;
   StavkeNarudzbe();
 
   factory StavkeNarudzbe.fromJson(Map<String, dynamic> json) =>

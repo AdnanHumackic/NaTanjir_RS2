@@ -48,21 +48,14 @@ namespace naTanjir.Services
                 query = query.Where(x => x.RestoranId == searchObject.RestoranId);
             }
 
-            if (searchObject.IsNarudzbaIncluded == true)
-            {
-                query = query.Include(x => x.Narudzba);
-            }
-
-            if (searchObject.IsProizvodIncluded == true)
+            if (searchObject.IsProizvodIncluded != null)
             {
                 query = query.Include(x => x.Proizvod);
             }
-
-            if (searchObject.IsKorisnikIncluded == true)
+            if (searchObject.IsRestoranIncluded != null)
             {
-                query = query.Include(x => x.Proizvod);
+                query = query.Include(x => x.Restoran);
             }
-
             if (searchObject.IsDeleted == true)
             {
                 query = query.Include(x => x.IsDeleted);

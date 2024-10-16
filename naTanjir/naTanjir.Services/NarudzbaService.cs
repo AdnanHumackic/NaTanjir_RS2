@@ -53,7 +53,10 @@ namespace naTanjir.Services
             {
                 query = query.Where(x => x.DatumKreiranja < searchObject.DatumKreiranjaLTE);
             }
-
+            if (!string.IsNullOrWhiteSpace(searchObject.StateMachine))
+            {
+                query = query.Where(x => x.StateMachine.StartsWith(searchObject.StateMachine));
+            }
             if (searchObject.KorisnikId != null)
             {
                 query = query.Where(x => x.KorisnikId == searchObject.KorisnikId);

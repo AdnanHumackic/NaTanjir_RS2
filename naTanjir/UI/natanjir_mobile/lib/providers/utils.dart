@@ -16,5 +16,9 @@ Image imageFromString(String input) {
 }
 
 String formatDate(String date) {
-  return DateFormat('dd.MM.yyyy').format(DateTime.parse(date));
+  return DateFormat('dd.MM.yyyy').format(DateTime.parse(date).toLocal());
+}
+
+String formatDateTime(String date) {
+  return DateFormat('dd.MM.yyyy HH:mm').format(DateTime.parse(date).toLocal());
 }

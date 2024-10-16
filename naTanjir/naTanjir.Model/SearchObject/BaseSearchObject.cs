@@ -8,5 +8,7 @@ namespace naTanjir.Model.SearchObject
     {
         public int? Page { get; set; }
         public int? PageSize { get; set; }
+        public string? OrderBy { get; set; }
+        public string? SortDirection { get; set; }
     }
 }

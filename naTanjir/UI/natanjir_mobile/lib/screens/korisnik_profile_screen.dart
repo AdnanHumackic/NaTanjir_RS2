@@ -246,7 +246,6 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 5),
             Container(
               margin: EdgeInsets.only(top: 20),
               child: Padding(

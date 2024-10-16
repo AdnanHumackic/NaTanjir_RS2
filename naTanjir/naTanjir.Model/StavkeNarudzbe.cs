@@ -17,11 +17,8 @@ namespace naTanjir.Model
         public int ProizvodId { get; set; }
 
         public int RestoranId { get; set; }
+        public Proizvod Proizvod { get; set; }
+        public Restoran Restoran { get; set; }
 
-        //public virtual Narudzba Narudzba { get; set; } 
-
-        //public virtual Proizvod Proizvod { get; set; } 
-
-        //public virtual Restoran Restoran { get; set; } 
     }
 }
