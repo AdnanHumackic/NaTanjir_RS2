@@ -319,7 +319,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
                         SnackBar(
                           backgroundColor: Colors.red,
                           duration: Duration(milliseconds: 500),
-                          content: Center(child: Text("Korpa je prazna!")),
+                          content: Center(child: Text("Korpa je prazna.")),
                         ),
                       );
                     } else {

@@ -3,6 +3,7 @@ import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/screens/korpa_screen.dart';
 import 'package:natanjir_mobile/screens/narudzbe_list_screen.dart';
+import 'package:natanjir_mobile/screens/obavijesti_list_screen.dart';
 import 'package:natanjir_mobile/screens/product_details_screen.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_favorit_list_screen.dart';
@@ -21,7 +22,7 @@ class _MasterScreenState extends State<MasterScreen> {
     RestoranListScreen(),
     NarudzbeListScreen(),
     KorpaScreen(),
-    Text("a"),
+    ObavijestListScreen(),
     RestoranFavoritListScreen()
   ];
 

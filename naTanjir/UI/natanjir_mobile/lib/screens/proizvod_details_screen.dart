@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:natanjir_mobile/models/ocjena_proizvod.dart';
 import 'package:natanjir_mobile/models/proizvod.dart';
+import 'package:natanjir_mobile/models/search_result.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/base_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
+import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
+import 'package:provider/provider.dart';
 
 class ProizvodDetailsScreen extends StatefulWidget {
   final Proizvod? odabraniProizvod;
@@ -18,26 +23,52 @@ class ProizvodDetailsScreen extends StatefulWidget {
 }
 
 class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
+  late OcjenaProizvodProvider ocjenaProizvodProvider;
+
+  SearchResult<OcjenaProizvod>? ocjenaProizvodResult;
+
   final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
 
   var quantity = 1;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ocjenaProizvodProvider = context.read<OcjenaProizvodProvider>();
+    _initForm();
+  }
+
+  Future _initForm() async {
+    ocjenaProizvodResult = await ocjenaProizvodProvider.get();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [_buildPage(), _buildRecommended()],
+    return WillPopScope(
+      onWillPop: () async {
+        return await _showDialog(context) ?? false;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [_buildPage(), _buildRecommended()],
+                ),
               ),
             ),
-          ),
-          _buildFooter(),
-        ],
+            _buildFooter(),
+          ],
+        ),
       ),
     );
   }
@@ -94,17 +125,6 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          // Expanded(
-                          //   child: Text(
-                          //     "Dio za ocj proizv",
-                          //     style: TextStyle(
-                          //       fontSize: 15,
-                          //       color: Color.fromARGB(255, 108, 108, 108),
-                          //       fontWeight: FontWeight.w600,
-                          //       overflow: TextOverflow.ellipsis,
-                          //     ),
-                          //   ),
-                          // ),
                           SizedBox(width: 8.0),
                           Flexible(
                             child: InkWell(
@@ -304,6 +324,191 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<bool?> _showDialog(BuildContext context) async {
+    var ocjenaKorisnik;
+    if (ocjenaProizvodResult != null) {
+      try {
+        ocjenaKorisnik = await ocjenaProizvodResult!.result.firstWhere(
+          (e) =>
+              e.korisnikId == AuthProvider.korisnikId &&
+              e.ocjena != null &&
+              e.proizvodId == widget.odabraniProizvod!.proizvodId,
+        );
+      } catch (e) {
+        ocjenaKorisnik = null;
+      }
+    }
+
+    double? vrijednost;
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        if (ocjenaKorisnik == null) {
+          return AlertDialog(
+            title: Text(
+              'Niste ocijenili proizvod?',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            content: RatingBar.builder(
+              initialRating: 0,
+              minRating: 0.5,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 50.0,
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (value) {
+                vrijednost = value;
+              },
+              unratedColor: Colors.grey[300],
+              glow: false,
+              glowColor: Colors.amber.withOpacity(0.5),
+              ignoreGestures: false,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Nemoj ocjeniti'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (vrijednost != null) {
+                    DateTime datum = DateTime.now();
+                    var dateNow = datum.toIso8601String().split('T')[0];
+                    var request = {
+                      'ocjena': vrijednost,
+                      'proizvodId': widget.odabraniProizvod!.proizvodId,
+                      'korisnikId': AuthProvider.korisnikId,
+                      'datumKreiranja': dateNow,
+                    };
+
+                    try {
+                      await ocjenaProizvodProvider.insert(request);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Proizvod uspješno ocijenjen.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Došlo je do greške prilikom spremanja ocjene.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                  Navigator.of(context).pop(true);
+                },
+                child: Text('Ocjeni'),
+              ),
+            ],
+          );
+        } else {
+          return AlertDialog(
+            title: Text(
+              'Da li želite ažurirati ocjenu?',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            content: RatingBar.builder(
+              initialRating: ocjenaKorisnik.ocjena,
+              minRating: 0.5,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 50.0,
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (value) {
+                vrijednost = value;
+              },
+              unratedColor: Colors.grey[300],
+              glow: false,
+              glowColor: Colors.amber.withOpacity(0.5),
+              ignoreGestures: false,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Ne'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (vrijednost != null) {
+                    DateTime datum = DateTime.now();
+                    var dateNow = datum.toIso8601String().split('T')[0];
+                    var request = {
+                      'ocjena': vrijednost,
+                      'proizvodId': widget.odabraniProizvod!.proizvodId,
+                      'korisnikId': AuthProvider.korisnikId,
+                      'datumKreiranja': dateNow,
+                    };
+                    try {
+                      var ocjId = await ocjenaProizvodResult!.result.firstWhere(
+                        (e) =>
+                            e.korisnikId == AuthProvider.korisnikId &&
+                            e.proizvodId == widget.odabraniProizvod!.proizvodId,
+                      );
+                      await ocjenaProizvodProvider.update(
+                          ocjId.ocjenaProizvodId!, request);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Ocjena je uspješno ažurirana.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Došlo je do greške prilikom ažuriranja ocjene.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                  Navigator.of(context).pop(true);
+                },
+                child: Text('Ažuriraj ocjenu'),
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 }

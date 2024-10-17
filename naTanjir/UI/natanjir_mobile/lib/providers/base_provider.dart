@@ -18,6 +18,8 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   Future<SearchResult<T>> get({
     dynamic filter,
+    int? page,
+    int? pageSize,
     String? orderBy,
     String? sortDirection,
   }) async {
@@ -27,7 +29,12 @@ abstract class BaseProvider<T> with ChangeNotifier {
     if (filter != null) {
       queryParams.addAll(filter);
     }
-
+    if (page != null) {
+      queryParams['page'] = page;
+    }
+    if (pageSize != null) {
+      queryParams['pageSize'] = pageSize;
+    }
     if (orderBy != null) {
       queryParams['orderBy'] = orderBy;
     }

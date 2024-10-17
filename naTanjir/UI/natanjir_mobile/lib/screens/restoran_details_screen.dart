@@ -5,17 +5,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:multi_select_flutter/chip_field/multi_select_chip_field.dart';
 import 'package:multi_select_flutter/util/horizontal_scrollbar.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:natanjir_mobile/models/ocjena_proizvod.dart';
+import 'package:natanjir_mobile/models/ocjena_restoran.dart';
 import 'package:natanjir_mobile/models/proizvod.dart';
 import 'package:natanjir_mobile/models/restoran.dart';
 import 'package:natanjir_mobile/models/search_result.dart';
 import 'package:natanjir_mobile/models/vrsta_proizvodum.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/base_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
+import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
@@ -36,10 +40,12 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   late ProductProvider proizvodProvider;
   late VrstaProizvodumProvider vrstaProizvodumProvider;
   late OcjenaProizvodProvider ocjenaProizvodProvider;
+  late OcjenaRestoranProvider ocjenaRestoranProvider;
 
   SearchResult<Proizvod>? proizvodResult;
   SearchResult<VrstaProizvodum>? vrstaProizvodumResult;
   SearchResult<OcjenaProizvod>? ocjenaProizvodResult;
+  SearchResult<OcjenaRestoran>? ocjenaRestoranResult;
 
   final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
 
@@ -58,6 +64,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
     proizvodProvider = context.read<ProductProvider>();
     vrstaProizvodumProvider = context.read<VrstaProizvodumProvider>();
     ocjenaProizvodProvider = context.read<OcjenaProizvodProvider>();
+    ocjenaRestoranProvider = context.read<OcjenaRestoranProvider>();
     _initForm();
   }
 
@@ -65,28 +72,34 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
     proizvodResult = await proizvodProvider.get(filter: searchRequest);
     vrstaProizvodumResult = await vrstaProizvodumProvider.get();
     ocjenaProizvodResult = await ocjenaProizvodProvider.get();
+    ocjenaRestoranResult = await ocjenaRestoranProvider.get();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  _buildSearch(),
-                  _buildPage(),
-                ],
+    return WillPopScope(
+      onWillPop: () async {
+        return await _showDialog(context) ?? false;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    _buildSearch(),
+                    _buildPage(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -491,5 +504,193 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
       proizvodResult = await proizvodProvider.get(filter: searchRequest);
     }
     setState(() {});
+  }
+
+  Future<bool?> _showDialog(BuildContext context) async {
+    var ocjenaKorisnik;
+    if (ocjenaRestoranResult != null) {
+      try {
+        ocjenaKorisnik = await ocjenaRestoranResult!.result.firstWhere(
+          (e) =>
+              e.korisnikId == AuthProvider.korisnikId &&
+              e.ocjena != null &&
+              e.restoranId == widget.odabraniRestoran!.restoranId,
+        );
+      } catch (e) {
+        ocjenaKorisnik = null;
+      }
+    }
+
+    double? vrijednost;
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        if (ocjenaKorisnik == null) {
+          return AlertDialog(
+            title: Text(
+              'Kako ste zadovoljni uslugom?',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            content: RatingBar.builder(
+              initialRating: 0,
+              minRating: 0.5,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 50.0,
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (value) {
+                vrijednost = value;
+              },
+              unratedColor: Colors.grey[300],
+              glow: false,
+              glowColor: Colors.amber.withOpacity(0.5),
+              ignoreGestures: false,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Nemoj ocjeniti'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (vrijednost != null) {
+                    DateTime datum = DateTime.now();
+                    var dateNow = datum.toIso8601String().split('T')[0];
+                    var request = {
+                      'ocjena': vrijednost,
+                      'restoranId': widget.odabraniRestoran!.restoranId,
+                      'korisnikId': AuthProvider.korisnikId,
+                      'datumKreiranja': dateNow,
+                    };
+
+                    try {
+                      await ocjenaRestoranProvider.insert(request);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Usluga uspješno ocjenjena.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Došlo je do greške prilikom spremanja ocjene.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  Navigator.of(context).pop(true);
+                },
+                child: Text('Ocjeni'),
+              ),
+            ],
+          );
+        } else {
+          return AlertDialog(
+            title: Text(
+              'Da li želite ažurirati ocjenu?',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            content: RatingBar.builder(
+              initialRating: ocjenaKorisnik.ocjena,
+              minRating: 0.5,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 50.0,
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (value) {
+                vrijednost = value;
+              },
+              unratedColor: Colors.grey[300],
+              glow: false,
+              glowColor: Colors.amber.withOpacity(0.5),
+              ignoreGestures: false,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Ne'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (vrijednost != null) {
+                    DateTime datum = DateTime.now();
+                    var dateNow = datum.toIso8601String().split('T')[0];
+                    var request = {
+                      'ocjena': vrijednost,
+                      'restoranId': widget.odabraniRestoran!.restoranId,
+                      'korisnikId': AuthProvider.korisnikId,
+                      'datumKreiranja': dateNow,
+                    };
+
+                    try {
+                      var ocjId = await ocjenaRestoranResult!.result.firstWhere(
+                        (e) =>
+                            e.korisnikId == AuthProvider.korisnikId &&
+                            e.restoranId == widget.odabraniRestoran!.restoranId,
+                      );
+                      await ocjenaRestoranProvider.update(
+                          ocjId.ocjenaRestoranId!, request);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Ocjena je uspješno ažurirana.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            'Došlo je do greške prilikom ažuriranja ocjene.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  Navigator.of(context).pop(true);
+                },
+                child: Text('Ažuriraj ocjenu'),
+              ),
+            ],
+          );
+        }
+      },
+    );
   }
 }
