@@ -36,7 +36,7 @@ namespace naTanjir.Services.BaseServices.Implementation
 
             if (search?.Page.HasValue == true && search?.PageSize.HasValue == true)
             {
-                query = query.Skip(search.Page.Value * search.PageSize.Value).Take(search.PageSize.Value);
+                query = query.Skip((search.Page.Value - 1) * search.PageSize.Value).Take(search.PageSize.Value);
             }
 
             if (!string.IsNullOrEmpty(search?.OrderBy) && !string.IsNullOrEmpty(search?.SortDirection))
