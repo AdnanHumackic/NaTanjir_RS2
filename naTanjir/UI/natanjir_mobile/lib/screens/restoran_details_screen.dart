@@ -42,7 +42,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   late OcjenaProizvodProvider ocjenaProizvodProvider;
   late OcjenaRestoranProvider ocjenaRestoranProvider;
 
-  SearchResult<Proizvod>? proizvodResult;
+  //SearchResult<Proizvod>? proizvodResult;
   SearchResult<VrstaProizvodum>? vrstaProizvodumResult;
   SearchResult<OcjenaProizvod>? ocjenaProizvodResult;
   SearchResult<OcjenaRestoran>? ocjenaRestoranResult;
@@ -50,6 +50,18 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
 
   Map<String, dynamic> searchRequest = {};
+
+  List<Proizvod> proizvodList = [];
+  int page = 1;
+
+  final int limit = 20;
+  int total = 0;
+  bool isFirstLoadRunning = false;
+  bool hasNextPage = true;
+  bool showbtn = false;
+
+  bool isLoadMoreRunning = false;
+  late ScrollController scrollController = ScrollController();
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -65,11 +77,92 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
     vrstaProizvodumProvider = context.read<VrstaProizvodumProvider>();
     ocjenaProizvodProvider = context.read<OcjenaProizvodProvider>();
     ocjenaRestoranProvider = context.read<OcjenaRestoranProvider>();
+    _firstLoad();
+    scrollController.addListener(() {
+      double showoffset = 10.0;
+
+      if (scrollController.offset > showoffset) {
+        showbtn = true;
+        setState(() {});
+      } else {
+        showbtn = false;
+        setState(() {});
+      }
+    });
+    scrollController.addListener(() {
+      if (scrollController.position.maxScrollExtent ==
+          scrollController.position.pixels) {
+        _loadMore();
+      }
+    });
     _initForm();
   }
 
+  void _firstLoad() async {
+    setState(() {
+      isFirstLoadRunning = true;
+      proizvodList = [];
+      page = 1;
+      hasNextPage = true;
+      isLoadMoreRunning = false;
+    });
+
+    var proizvodResult = await proizvodProvider.get(
+      filter: searchRequest,
+      page: page,
+      pageSize: 10,
+    );
+
+    proizvodList = proizvodResult!.result;
+    total = proizvodResult!.count;
+
+    setState(() {
+      isFirstLoadRunning = false;
+      total = proizvodResult!.count;
+      if (10 * page > total) {
+        hasNextPage = false;
+      }
+    });
+  }
+
+  void _loadMore() async {
+    if (hasNextPage &&
+        !isFirstLoadRunning &&
+        !isLoadMoreRunning &&
+        scrollController.position.extentAfter < 300) {
+      setState(() {
+        isLoadMoreRunning = true;
+      });
+
+      try {
+        page += 1;
+
+        var proizvodResult = await proizvodProvider.get(
+          filter: searchRequest,
+          page: page,
+          pageSize: 10,
+        );
+
+        if (proizvodResult?.result.isNotEmpty ?? false) {
+          setState(() {
+            proizvodList.addAll(proizvodResult!.result);
+          });
+        } else {
+          setState(() {
+            hasNextPage = false;
+          });
+        }
+      } catch (e) {
+      } finally {
+        setState(() {
+          isLoadMoreRunning = false;
+        });
+      }
+    }
+  }
+
   Future _initForm() async {
-    proizvodResult = await proizvodProvider.get(filter: searchRequest);
+    //proizvodResult = await proizvodProvider.get(filter: searchRequest);
     vrstaProizvodumResult = await vrstaProizvodumProvider.get();
     ocjenaProizvodResult = await ocjenaProizvodProvider.get();
     ocjenaRestoranResult = await ocjenaRestoranProvider.get();
@@ -87,6 +180,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
         body: Stack(
           children: [
             SingleChildScrollView(
+              controller: scrollController,
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
@@ -99,6 +193,22 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
               ),
             ),
           ],
+        ),
+        floatingActionButton: AnimatedOpacity(
+          duration: Duration(milliseconds: 1000),
+          opacity: showbtn ? 1.0 : 0.0,
+          child: FloatingActionButton(
+            onPressed: () {
+              scrollController.animateTo(0,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.fastOutSlowIn);
+            },
+            child: Icon(
+              Icons.arrow_upward,
+              color: Colors.white,
+            ),
+            backgroundColor: Color.fromARGB(255, 0, 83, 86),
+          ),
         ),
       ),
     );
@@ -263,19 +373,19 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   }
 
   Widget _buildPage() {
-    if (proizvodResult == null) {
+    if (proizvodList == null) {
       return Container(
         margin: EdgeInsets.only(top: 15),
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    if (proizvodResult!.count == 0) {
+    if (proizvodList.isEmpty) {
       return Center(
         child: Container(
           width: double.infinity,
           margin: EdgeInsets.only(top: 15),
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 0, 83, 86),
+            color: Color.fromARGB(97, 158, 158, 158),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -289,7 +399,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
           child: Padding(
             padding: EdgeInsets.all(10),
             child: Text(
-              "Odabrani restoran nema proizvoda.",
+              "Restoran nema proizvoda u ponudi.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -303,189 +413,228 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Column(
-        children: proizvodResult!.result
-            .map(
-              (e) => GestureDetector(
-                onTap: () async {
-                  dynamic avgOcj = _avgOcjena(e.proizvodId).toString();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ProizvodDetailsScreen(
-                        odabraniProizvod: e,
-                        avgOcjena: avgOcj,
+        children: [
+          ...proizvodList
+              .map(
+                (e) => GestureDetector(
+                  onTap: () async {
+                    dynamic avgOcj = _avgOcjena(e.proizvodId).toString();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProizvodDetailsScreen(
+                          odabraniProizvod: e,
+                          avgOcjena: avgOcj,
+                        ),
                       ),
+                    );
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 129,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
-                  );
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 129,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(0),
-                          child: SizedBox(
-                            width: 120,
-                            height: 100,
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                              child: FittedBox(
-                                fit: BoxFit.fill,
-                                child: widget.odabraniRestoran!.slika != null &&
-                                        widget
-                                            .odabraniRestoran!.slika!.isNotEmpty
-                                    ? imageFromString(
-                                        widget.odabraniRestoran!.slika!)
-                                    : Image.asset(
-                                        "assets/images/emptyProductImage.png",
-                                        fit: BoxFit.fill,
-                                      ),
+                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.all(0),
+                            child: SizedBox(
+                              width: 120,
+                              height: 100,
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child:
+                                      widget.odabraniRestoran!.slika != null &&
+                                              widget.odabraniRestoran!.slika!
+                                                  .isNotEmpty
+                                          ? imageFromString(
+                                              widget.odabraniRestoran!.slika!)
+                                          : Image.asset(
+                                              "assets/images/emptyProductImage.png",
+                                              fit: BoxFit.fill,
+                                            ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                e.naziv ?? "",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  e.naziv ?? "",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(1.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.star, color: Colors.yellow),
+                                      Expanded(
+                                        child: Text(
+                                          "${_avgOcjena(e.proizvodId)}",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Color.fromARGB(
+                                                255, 108, 108, 108),
+                                            fontWeight: FontWeight.w600,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  e.opis ?? "",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color.fromARGB(255, 108, 108, 108),
+                                  ),
                                   overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
-                                maxLines: 1,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(1.0),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.star, color: Colors.yellow),
-                                    Expanded(
-                                      child: Text(
-                                        "${_avgOcjena(e.proizvodId)}",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color.fromARGB(
-                                              255, 108, 108, 108),
-                                          fontWeight: FontWeight.w600,
-                                          overflow: TextOverflow.ellipsis,
+                                Spacer(),
+                                Padding(
+                                  padding: EdgeInsets.all(1),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "${formatNumber(e.cijena)} KM",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Color.fromARGB(
+                                                255, 108, 108, 108),
+                                            fontWeight: FontWeight.w600,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                e.opis ?? "",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color.fromARGB(255, 108, 108, 108),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              Spacer(),
-                              Padding(
-                                padding: EdgeInsets.all(1),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "${formatNumber(e.cijena)} KM",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color.fromARGB(
-                                              255, 108, 108, 108),
-                                          fontWeight: FontWeight.w600,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: InkWell(
-                                        onTap: () async {
-                                          try {
-                                            await cartProvider.addToCart(e, 1);
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                backgroundColor: Color.fromARGB(
-                                                    255, 0, 83, 86),
-                                                duration: Duration(seconds: 1),
-                                                content: Center(
-                                                  child: Text(
-                                                      "Proizvod je dodan u korpu."),
-                                                ),
-                                              ),
-                                            );
-                                          } on Exception catch (e) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                backgroundColor: Colors.red,
-                                                duration:
-                                                    Duration(milliseconds: 500),
-                                                content: Center(
-                                                  child: Text(
-                                                    e.toString(),
-                                                    textAlign: TextAlign.center,
+                                      Flexible(
+                                        child: InkWell(
+                                          onTap: () async {
+                                            try {
+                                              await cartProvider.addToCart(
+                                                  e, 1);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 0, 83, 86),
+                                                  duration:
+                                                      Duration(seconds: 1),
+                                                  content: Center(
+                                                    child: Text(
+                                                        "Proizvod je dodan u korpu."),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          }
-                                          setState(() {});
-                                        },
-                                        child: Icon(
-                                          Icons.add_circle_outlined,
-                                          size: 35,
-                                          color: Color.fromARGB(255, 0, 83, 86),
+                                              );
+                                            } on Exception catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  backgroundColor: Colors.red,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  content: Center(
+                                                    child: Text(
+                                                      e.toString(),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            setState(() {});
+                                          },
+                                          child: Icon(
+                                            Icons.add_circle_outlined,
+                                            size: 35,
+                                            color:
+                                                Color.fromARGB(255, 0, 83, 86),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+          if (hasNextPage) CircularProgressIndicator(),
+          if (!hasNextPage)
+            Container(
+              width: 250,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(97, 158, 158, 158),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "Nema više proizvoda za prikazati.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                 ),
               ),
-            )
-            .toList(),
+            ),
+        ],
       ),
     );
   }
 
   dynamic _avgOcjena(int? proizvodId) {
+    if (ocjenaRestoranResult == null || ocjenaRestoranResult!.result == null) {
+      return 0;
+    }
+
     var ocjenaProizvod = ocjenaProizvodResult!.result
         .where((e) => e.proizvodId == proizvodId)
         .toList();
@@ -500,10 +649,25 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   }
 
   void _loadFiltered() async {
-    if (proizvodResult != null) {
-      proizvodResult = await proizvodProvider.get(filter: searchRequest);
+    setState(() {
+      isLoadMoreRunning = true;
+    });
+
+    var proizvodResult = await proizvodProvider.get(
+      filter: searchRequest,
+      pageSize: limit,
+      page: 1,
+    );
+
+    if (proizvodResult != null && proizvodResult.result.isNotEmpty) {
+      proizvodList = proizvodResult.result;
+    } else {
+      proizvodList = [];
     }
-    setState(() {});
+
+    setState(() {
+      isLoadMoreRunning = false;
+    });
   }
 
   Future<bool?> _showDialog(BuildContext context) async {

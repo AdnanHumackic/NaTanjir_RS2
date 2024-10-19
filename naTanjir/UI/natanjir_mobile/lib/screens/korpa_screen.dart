@@ -19,10 +19,24 @@ class KorpaScreen extends StatefulWidget {
 class _KorpaScreenState extends State<KorpaScreen> {
   final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
   Map<String, dynamic> cartItems = {};
+  late ScrollController scrollController = ScrollController();
+  bool showbtn = false;
 
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(() {
+      double showOffset = 10.0;
+      if (scrollController.offset > showOffset) {
+        showbtn = true;
+      } else {
+        showbtn = false;
+      }
+      setState(() {});
+
+      if (scrollController.position.maxScrollExtent ==
+          scrollController.position.pixels) {}
+    });
     _loadCart();
   }
 
@@ -69,12 +83,29 @@ class _KorpaScreenState extends State<KorpaScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
+              controller: scrollController,
               padding: const EdgeInsets.all(10),
               child: _buildPage(),
             ),
           ),
           _buildFooter(),
         ],
+      ),
+      floatingActionButton: AnimatedOpacity(
+        duration: Duration(milliseconds: 1000),
+        opacity: showbtn ? 1.0 : 0.0,
+        child: FloatingActionButton(
+          onPressed: () {
+            scrollController.animateTo(0,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.fastOutSlowIn);
+          },
+          child: Icon(
+            Icons.arrow_upward,
+            color: Colors.white,
+          ),
+          backgroundColor: Color.fromARGB(255, 0, 83, 86),
+        ),
       ),
     );
   }
@@ -86,7 +117,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
           width: double.infinity,
           margin: EdgeInsets.only(top: 15),
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 0, 83, 86),
+            color: Color.fromARGB(97, 158, 158, 158),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(

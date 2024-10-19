@@ -340,7 +340,7 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
         child: Container(
           width: 250,
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 0, 83, 86),
+            color: Color.fromARGB(97, 158, 158, 158),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -533,7 +533,7 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
                 child: Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    "Nema više podataka za prikazati.",
+                    "Nema više restorana za prikazati.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
