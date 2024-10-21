@@ -349,3 +349,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 naTanjir/UI/natanjir_mobile/.env
+naTanjir/UI/natanjir_desktop/.env

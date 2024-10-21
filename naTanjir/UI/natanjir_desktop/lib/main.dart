@@ -1,16 +1,48 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_cart/cart.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:natanjir_desktop/layouts/master_screen.dart';
+import 'package:natanjir_desktop/models/ocjena_proizvod.dart';
+import 'package:natanjir_desktop/models/uloga.dart';
 import 'package:natanjir_desktop/providers/auth_provider.dart';
+import 'package:natanjir_desktop/providers/korisnici_provider.dart';
+import 'package:natanjir_desktop/providers/narudzba_provider.dart';
+import 'package:natanjir_desktop/providers/ocjena_proizvod_provider.dart';
+import 'package:natanjir_desktop/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_desktop/providers/product_provider.dart';
+import 'package:natanjir_desktop/providers/restoran_favorit_provider.dart';
 import 'package:natanjir_desktop/providers/restoran_provider.dart';
+import 'package:natanjir_desktop/providers/stavke_narudzbe_provider.dart';
+import 'package:natanjir_desktop/providers/uloga_provider.dart';
 import 'package:natanjir_desktop/providers/vrsta_proizvodum_provider.dart';
+import 'package:natanjir_desktop/providers/vrsta_restorana_provider.dart';
+import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/product_list_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => VrstaProizvodumProvider()),
-    ChangeNotifierProvider(create: (_) => RestoranProvider())
+    ChangeNotifierProvider(create: (_) => RestoranProvider()),
+    ChangeNotifierProvider(create: (_) => KorisniciProvider()),
+    ChangeNotifierProvider(create: (_) => VrstaRestoranaProvider()),
+    ChangeNotifierProvider(create: (_) => OcjenaRestoranProvider()),
+    ChangeNotifierProvider(create: (_) => RestoranFavoritProvider()),
+    ChangeNotifierProvider(create: (_) => OcjenaProizvodProvider()),
+    ChangeNotifierProvider(create: (_) => NarudzbaProvider()),
+    ChangeNotifierProvider(create: (_) => StavkeNarudzbeProvider()),
+    ChangeNotifierProvider(create: (_) => UlogeProvider()),
   ], child: const MyApp()));
 }
 
@@ -47,206 +79,219 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
-  TextEditingController _usernameController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _isHidden = true;
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Login"),
-      ),
-      body: Center(
-        child: Center(
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 400, maxWidth: 400),
-            child: Card(
-              child: Column(
-                children: [
-                  Image.asset(
-                    "assets/images/logo.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                        labelText: "Username",
-                        prefixIcon: Icon(Icons.account_circle_outlined)),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                        labelText: "Password",
-                        prefixIcon: Icon(Icons.password)),
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        ProductProvider provider = new ProductProvider();
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Color.fromARGB(100, 0, 83, 86),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 190,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/images/naTanjirLogo.png"),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _usernameController,
+                              decoration: InputDecoration(
+                                errorStyle: TextStyle(
+                                    color: Color.fromARGB(255, 255, 99, 71),
+                                    fontSize: 13),
+                                filled: true,
+                                fillColor: Colors.white,
+                                prefixIcon: Icon(Icons.account_circle_outlined),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                hintText: "Korisničko ime",
+                                hintStyle: TextStyle(
+                                  color: Color.fromARGB(255, 158, 158, 158),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Molimo da unesete korisničko ime.";
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: _isHidden,
+                              decoration: InputDecoration(
+                                errorStyle: TextStyle(
+                                    color: Color.fromARGB(255, 255, 99, 71),
+                                    fontSize: 13),
+                                filled: true,
+                                fillColor: Colors.white,
+                                prefixIcon: Icon(Icons.password),
+                                suffixIcon: GestureDetector(
+                                  onTap: () => {
+                                    setState(() {
+                                      _isHidden = !_isHidden;
+                                    })
+                                  },
+                                  child: Icon(_isHidden
+                                      ? Icons.visibility_off
+                                      : Icons.visibility),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                hintText: "Lozinka",
+                                hintStyle: TextStyle(
+                                  color: Color.fromARGB(255, 158, 158, 158),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Molimo da unesete lozinku.";
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color.fromARGB(97, 158, 158, 158),
+                        ),
+                        child: InkWell(
+                          onTap: () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              var provider = KorisniciProvider();
+                              AuthProvider.username = _usernameController.text;
+                              AuthProvider.password = _passwordController.text;
+                            }
 
-                        print(
-                            "credentials: ${_usernameController.text} : ${_passwordController.text}");
-                        AuthProvider.username = _usernameController.text;
-                        AuthProvider.password = _passwordController.text;
-                        try {
-                          var data = await provider.get();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProductListScreen()));
-                        } on Exception catch (e) {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: Text("Error"),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Text("OK"))
-                                    ],
-                                    content: Text(e.toString()),
-                                  ));
-                        }
-                      },
-                      child: Text("Login"))
-                ],
+                            try {
+                              KorisniciProvider korisniciProvider =
+                                  new KorisniciProvider();
+
+                              var korisnik = await korisniciProvider.login(
+                                  AuthProvider.username!,
+                                  AuthProvider.password!);
+                              AuthProvider.korisnikId = korisnik.korisnikId;
+                              AuthProvider.ime = korisnik.ime;
+                              AuthProvider.prezime = korisnik.prezime;
+                              AuthProvider.email = korisnik.email;
+                              AuthProvider.telefon = korisnik.telefon;
+                              AuthProvider.datumRodjenja =
+                                  korisnik.datumRodjenja;
+                              AuthProvider.slika = korisnik.slika;
+                              if (korisnik.korisniciUloges != null) {
+                                AuthProvider.korisnikUloge =
+                                    korisnik.korisniciUloges;
+                              }
+
+                              print("Authenticated!");
+                              if (AuthProvider.korisnikUloge != null &&
+                                  AuthProvider.korisnikUloge!
+                                      .any((x) => x.uloga?.naziv == "Admin"))
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        AdminDashboardScreen()));
+                            } on Exception catch (e) {
+                              QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.error,
+                                  title: e.toString());
+                            }
+                          },
+                          child: Center(
+                            child: Text(
+                              "Prijavi se",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 150,
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  left: 0,
+                                  child: SizedBox(
+                                    width: 150,
+                                    height: 150,
+                                    child: Image.asset(
+                                      "assets/images/firstImg.png",
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 100,
+                                  child: SizedBox(
+                                    width: 150,
+                                    height: 150,
+                                    child: Image.asset(
+                                      "assets/images/secondImg.png",
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
-    );
-  }
-}
-
-class LayoutExamples extends StatelessWidget {
-  const LayoutExamples({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 200,
-          color: Colors.red,
-          child: Center(
-              child: Container(
-            height: 100,
-            width: 50,
-            color: Colors.blue,
-            child: Text("Sample text"),
-          )),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text("1"),
-            Text("2"),
-            Text("3"),
-          ],
-        ),
-        Container(
-            height: 150,
-            color: Colors.red,
-            child: Center(
-              child: Text("Container"),
-            )),
-      ],
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

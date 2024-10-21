@@ -7,20 +7,43 @@ import 'package:natanjir_desktop/models/search_result.dart';
 import 'package:natanjir_desktop/providers/auth_provider.dart';
 
 abstract class BaseProvider<T> with ChangeNotifier {
-  static String? _baseUrl;
+  static String? baseUrl;
   String _endpoint = "";
 
   BaseProvider(String endpoint) {
     _endpoint = endpoint;
-    _baseUrl = const String.fromEnvironment("baseUrl",
+    baseUrl = const String.fromEnvironment("baseUrl",
         defaultValue: "http://localhost:5212/");
   }
 
-  Future<SearchResult<T>> get({dynamic filter}) async {
-    var url = "$_baseUrl$_endpoint";
+  Future<SearchResult<T>> get({
+    dynamic filter,
+    int? page,
+    int? pageSize,
+    String? orderBy,
+    String? sortDirection,
+  }) async {
+    var url = "$baseUrl$_endpoint";
 
+    Map<String, dynamic> queryParams = {};
     if (filter != null) {
-      var queryString = getQueryString(filter);
+      queryParams.addAll(filter);
+    }
+    if (page != null) {
+      queryParams['page'] = page;
+    }
+    if (pageSize != null) {
+      queryParams['pageSize'] = pageSize;
+    }
+    if (orderBy != null) {
+      queryParams['orderBy'] = orderBy;
+    }
+    if (sortDirection != null) {
+      queryParams['sortDirection'] = sortDirection;
+    }
+
+    if (queryParams.isNotEmpty) {
+      var queryString = getQueryString(queryParams);
       url = "$url?$queryString";
     }
 
@@ -28,7 +51,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     var headers = createHeaders();
 
     var response = await http.get(uri, headers: headers);
-
+    // throw new Exception("Greška");
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
 
@@ -47,8 +70,22 @@ abstract class BaseProvider<T> with ChangeNotifier {
     // print("response: ${response.request} ${response.statusCode}, ${response.body}");
   }
 
+  Future delete(int id) async {
+    var url = "$baseUrl$_endpoint/$id";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.delete(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      return;
+    } else {
+      throw new Exception("Unknown error");
+    }
+  }
+
   Future<T> insert(dynamic request) async {
-    var url = "$_baseUrl$_endpoint";
+    var url = "$baseUrl$_endpoint";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
@@ -64,7 +101,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<T> update(int id, [dynamic request]) async {
-    var url = "$_baseUrl$_endpoint/$id";
+    var url = "$baseUrl$_endpoint/$id";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
@@ -142,4 +179,13 @@ abstract class BaseProvider<T> with ChangeNotifier {
     });
     return query;
   }
+}
+
+class UserException implements Exception {
+  final String exMessage;
+
+  UserException(this.exMessage);
+
+  @override
+  String toString() => exMessage;
 }
