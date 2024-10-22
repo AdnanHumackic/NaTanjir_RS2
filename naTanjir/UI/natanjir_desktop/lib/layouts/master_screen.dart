@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:natanjir_desktop/main.dart';
 import 'package:natanjir_desktop/providers/auth_provider.dart';
 import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
+import 'package:natanjir_desktop/screens/admin_upravljanje_restoranima_screen.dart';
+import 'package:natanjir_desktop/screens/korisnik_profile_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   MasterScreen(this.title, this.child, {super.key});
@@ -95,7 +97,11 @@ class _MasterScreenState extends State<MasterScreen> {
                                     fontSize: 18,
                                   ),
                                 ),
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          AdminUpravljanjeRestoranimaScreen()));
+                                },
                               ),
                             if (AuthProvider.korisnikUloge != null &&
                                 AuthProvider.korisnikUloge!
@@ -143,7 +149,11 @@ class _MasterScreenState extends State<MasterScreen> {
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 18),
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        KorisnikProfileScreen()));
+                              },
                             ),
                             ListTile(
                               leading:

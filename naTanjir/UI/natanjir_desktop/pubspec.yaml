@@ -51,6 +51,8 @@ dependencies:
   flutter_paypal_payment: ^1.0.6
   flutter_rating_bar: ^4.0.1
   fl_chart: ^0.69.0
+  pdf: ^3.11.1
+  printing: ^5.12.0
 
 dev_dependencies:
   flutter_test:
