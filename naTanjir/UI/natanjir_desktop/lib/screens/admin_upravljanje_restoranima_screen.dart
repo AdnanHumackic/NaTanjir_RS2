@@ -10,8 +10,12 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:natanjir_desktop/layouts/master_screen.dart';
 import 'package:natanjir_desktop/models/korisnici.dart';
+import 'package:natanjir_desktop/models/restoran.dart';
 import 'package:natanjir_desktop/models/search_result.dart';
+import 'package:natanjir_desktop/models/vrsta_restorana.dart';
 import 'package:natanjir_desktop/providers/korisnici_provider.dart';
+import 'package:natanjir_desktop/providers/restoran_provider.dart';
+import 'package:natanjir_desktop/providers/vrsta_restorana_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
@@ -29,15 +33,24 @@ class _AdminUpravljanjeRestoranimaScreenState
     extends State<AdminUpravljanjeRestoranimaScreen>
     with SingleTickerProviderStateMixin {
   late KorisniciProvider korisniciProvider;
+  late VrstaRestoranaProvider vrstaRestoranaProvider;
+  late RestoranProvider restoranProvider;
 
   SearchResult<Korisnici>? korisniciResult;
+  SearchResult<VrstaRestorana>? vrstaRestoranaResult;
+  SearchResult<Restoran>? restoranResult;
+  Map<String, dynamic> searchRequest = {
+    'isKorisniciUlogeIncluded': true,
+  };
 
-  final _formKey = GlobalKey<FormBuilderState>();
+  final _formKeyVlas = GlobalKey<FormBuilderState>();
+  final _formKeyRest = GlobalKey<FormBuilderState>();
 
   late TabController _tabController;
   String? dateError;
   String? usernameError;
   String? confirmPasswordError;
+  String? restNameErr;
 
   @override
   void initState() {
@@ -51,12 +64,15 @@ class _AdminUpravljanjeRestoranimaScreenState
       }
     });
     korisniciProvider = context.read<KorisniciProvider>();
-
+    vrstaRestoranaProvider = context.read<VrstaRestoranaProvider>();
+    restoranProvider = context.read<RestoranProvider>();
     _initForm();
   }
 
   Future _initForm() async {
-    korisniciResult = await korisniciProvider.get();
+    korisniciResult = await korisniciProvider.get(filter: searchRequest);
+    vrstaRestoranaResult = await vrstaRestoranaProvider.get();
+    restoranResult = await restoranProvider.get();
   }
 
   @override
@@ -102,7 +118,7 @@ class _AdminUpravljanjeRestoranimaScreenState
   Widget _buildDodavanjeVlasnika() {
     return SingleChildScrollView(
       child: FormBuilder(
-        key: _formKey,
+        key: _formKeyVlas,
         child: Padding(
           padding: EdgeInsets.all(15),
           child: Column(
@@ -209,7 +225,8 @@ class _AdminUpravljanjeRestoranimaScreenState
                       ]),
                       onChanged: (value) {
                         if (value != null &&
-                            _formKey.currentState!.fields['lozinka']?.value !=
+                            _formKeyVlas
+                                    .currentState!.fields['lozinka']?.value !=
                                 value) {
                           confirmPasswordError =
                               "Lozinka potvrda se mora podudarati sa unesenom lozinkom.";
@@ -232,15 +249,16 @@ class _AdminUpravljanjeRestoranimaScreenState
                         ),
                         child: InkWell(
                           onTap: () async {
-                            if (_formKey.currentState!.fields['lozinka'] !=
+                            if (_formKeyVlas.currentState!.fields['lozinka'] !=
                                     null &&
-                                _formKey.currentState!
+                                _formKeyVlas.currentState!
                                         .fields['lozinkaPotvrda'] !=
                                     null) {
                               var pw = generateRandomCharacters(10);
-                              _formKey.currentState!.fields['lozinka']!
+                              _formKeyVlas.currentState!.fields['lozinka']!
                                   .didChange(pw);
-                              _formKey.currentState!.fields['lozinkaPotvrda']!
+                              _formKeyVlas
+                                  .currentState!.fields['lozinkaPotvrda']!
                                   .didChange(pw);
                             }
                           },
@@ -446,7 +464,226 @@ class _AdminUpravljanjeRestoranimaScreenState
   }
 
   Widget _buildDodavanjeRestorana() {
-    return Center(child: Text("Dodavanje restorana  "));
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formKeyRest,
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: FormBuilderTextField(
+                      name: 'naziv',
+                      decoration: InputDecoration(
+                        labelText: 'Naziv restorana',
+                        hintText: 'Naziv restorana',
+                        errorText: restNameErr,
+                        labelStyle: TextStyle(
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: "Obavezno polje."),
+                        FormBuilderValidators.minLength(2,
+                            errorText: "Minimalna dužina naziva je 2 znaka."),
+                        FormBuilderValidators.maxLength(40,
+                            errorText: "Maksimalna dužina naziva je 40 znaka."),
+                      ]),
+                      onChanged: (value) async {
+                        if (value != null && korisniciResult != null) {
+                          var username = await restoranResult!.result
+                              .map((e) => e.naziv == value)
+                              .toList();
+
+                          if (username.contains(true)) {
+                            restNameErr = "Restoran s tim imenom već postoji.";
+                            setState(() {});
+                          } else {
+                            usernameError = null;
+                          }
+                        }
+
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: buildFormBuilderTextField(
+                      name: 'radnoVrijemeOd',
+                      labelText: 'Radno vrijeme OD',
+                      hintText: "Radno vrijeme OD",
+                      validators: [
+                        FormBuilderValidators.required(
+                            errorText: "Obavezno polje."),
+                        FormBuilderValidators.match(
+                            r'^(?:[01]\d|2[0-3]):[0-5]\d$',
+                            errorText: "Neispravan format vremena. (HH:mm)"),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: buildFormBuilderTextField(
+                      name: 'radnoVrijemeDo',
+                      labelText: 'Radno vrijeme DO',
+                      hintText: "Radno vrijeme DO",
+                      validators: [
+                        FormBuilderValidators.required(
+                            errorText: "Obavezno polje."),
+                        FormBuilderValidators.match(
+                          r'^(?:[01]\d|2[0-3]):[0-5]\d$',
+                          errorText: "Neispravan format vremena. (HH:mm)",
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: FormBuilderDropdown(
+                      name: 'vrstaRestoranaId',
+                      items: vrstaRestoranaResult?.result != null
+                          ? vrstaRestoranaResult!.result
+                              .map((item) => DropdownMenuItem(
+                                    value: item.vrstaId.toString(),
+                                    child: Text(item.naziv ?? ""),
+                                  ))
+                              .toList()
+                          : [],
+                      decoration: InputDecoration(
+                        labelText: 'Vrsta restorana',
+                        labelStyle: TextStyle(
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        hintText: "Odaberite vrstu restorana",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  Expanded(
+                    child: FormBuilderDropdown(
+                      name: 'vlasnikId',
+                      items: (korisniciResult?.result ?? [])
+                              .where((e) =>
+                                  e.korisniciUloges?.any(
+                                      (u) => u.uloga?.naziv == "Vlasnik") ??
+                                  false)
+                              .map((item) => DropdownMenuItem(
+                                  value: item.korisnikId.toString(),
+                                  child: Text(item.korisnickoIme ?? "")))
+                              .toList() ??
+                          [],
+                      decoration: InputDecoration(
+                        labelText: 'Vlasnik restorana',
+                        labelStyle: TextStyle(
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        hintText: "Odaberite vlasnika restorana",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: buildFormBuilderTextField(
+                      name: 'lokacija',
+                      labelText: 'Lokacija restorana',
+                      hintText: "Lokacija restorana",
+                      validators: [
+                        FormBuilderValidators.required(
+                            errorText: "Obavezno polje."),
+                        FormBuilderValidators.minLength(2,
+                            errorText: "Minimalna dužina lokacije je 2 znaka."),
+                        FormBuilderValidators.maxLength(40,
+                            errorText:
+                                "Maksimalna dužina lokacije je 40 znaka."),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: FormBuilderField(
+                      name: "slikaRest",
+                      builder: (field) {
+                        return InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'Odaberite sliku',
+                            labelStyle: TextStyle(
+                              color: Color.fromARGB(255, 108, 108, 108),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          child: ListTile(
+                            leading: Icon(Icons.image),
+                            title: Text("Select image"),
+                            trailing: Icon(Icons.file_upload),
+                            onTap: getImage,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(child: _saveRestoranRow()),
+                  SizedBox(width: 15),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildBrisanjeRestorana() {
@@ -464,9 +701,9 @@ class _AdminUpravljanjeRestoranimaScreenState
         ),
         child: InkWell(
           onTap: () async {
-            var isValid = _formKey.currentState!.saveAndValidate();
+            var isValid = _formKeyVlas.currentState!.saveAndValidate();
             if (isValid == true) {
-              var req = Map.from(_formKey.currentState!.value);
+              var req = Map.from(_formKeyVlas.currentState!.value);
               DateTime dob = req['datumRodjenja'];
               req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
               req['uloge'] = [2];
@@ -500,6 +737,55 @@ class _AdminUpravljanjeRestoranimaScreenState
           child: Center(
             child: Text(
               "Dodaj vlasnika",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _saveRestoranRow() {
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Color.fromARGB(97, 158, 158, 158),
+        ),
+        child: InkWell(
+          onTap: () async {
+            var isValid = _formKeyRest.currentState!.saveAndValidate();
+            if (isValid == true) {
+              var req = Map.from(_formKeyRest.currentState!.value);
+              req['slika'] = _base64Image;
+
+              await restoranProvider.insert(req);
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.success,
+                title: "Uspješno dodan restoran!",
+              );
+              if (mounted) setState(() {});
+              setState(() {
+                resetFields();
+              });
+            } else {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.error,
+                title: "Greška prilikom dodavanja restorana.",
+              );
+            }
+          },
+          child: Center(
+            child: Text(
+              "Dodaj restoran",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black,
@@ -552,11 +838,14 @@ class _AdminUpravljanjeRestoranimaScreenState
   }
 
   void resetFields() {
-    _formKey.currentState?.reset();
+    _formKeyVlas.currentState?.reset();
     usernameError = null;
     dateError = null;
     confirmPasswordError = null;
     _base64Image = null;
+
+    _formKeyRest.currentState?.reset();
+    restNameErr = null;
   }
 
   String generateRandomCharacters(int length) {
