@@ -56,7 +56,9 @@ namespace naTanjir.Services.BaseServices.Implementation
 
         public virtual async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
+
             var entity = await Context.Set<TDbEntity>().FindAsync(id, cancellationToken);
+            await BeforeDeleteAsync(entity, cancellationToken);
             if (entity == null)
             {
                 throw new UserException("Unesite postojeći id.");
@@ -74,7 +76,12 @@ namespace naTanjir.Services.BaseServices.Implementation
             }
 
             await Context.SaveChangesAsync(cancellationToken);
+            await AfterDeleteAsync(entity, cancellationToken);
+
         }
+        public virtual async Task BeforeDeleteAsync(TDbEntity entity, CancellationToken cancellationToken) { }
+        public virtual async Task AfterDeleteAsync(TDbEntity entity, CancellationToken cancellationToken) { }
+
 
     }
 }

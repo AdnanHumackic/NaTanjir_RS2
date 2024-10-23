@@ -9,6 +9,7 @@ using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -96,6 +97,98 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unesite status restorana.");
             }
+        }
+
+        public override async Task BeforeDeleteAsync(Restoran entity, CancellationToken cancellationToken)
+        {
+            await base.BeforeDeleteAsync(entity, cancellationToken);
+
+            try
+            {
+                var stavkeNarudzbe = await Context.StavkeNarudzbes
+                .Include(s => s.Narudzba)
+                .Where(s => s.RestoranId == entity.RestoranId)
+                .ToListAsync();
+
+                if (stavkeNarudzbe != null && stavkeNarudzbe.Any())
+                {
+                    Context.RemoveRange(stavkeNarudzbe);
+
+                    var narudzbe = stavkeNarudzbe.Select(s => s.Narudzba).Where(n => n != null).Distinct().ToList();
+                    if (narudzbe.Any())
+                    {
+                        Context.RemoveRange(narudzbe);
+                    }
+                }
+
+
+                var restFav = await Context.RestoranFavorits
+                    .Where(e => e.RestoranId == entity.RestoranId)
+                    .ToListAsync();
+
+                if (restFav != null && restFav.Any())
+                {
+                    Context.RemoveRange(restFav);
+                }
+
+                var ocjRestoran = await Context.OcjenaRestorans
+                    .Where(e => e.RestoranId == entity.RestoranId)
+                    .ToListAsync();
+
+                if (ocjRestoran != null && ocjRestoran.Any())
+                {
+                    Context.RemoveRange(ocjRestoran);
+                }
+
+                var ocjProiz = await Context.OcjenaProizvods
+                    .Include(o => o.Proizvod)
+                    .Where(o => o.Proizvod.RestoranId == entity.RestoranId)
+                    .ToListAsync();
+
+                if (ocjProiz != null && ocjProiz.Any())
+                {
+                    Context.RemoveRange(ocjProiz);
+                }
+
+                var proizvodi = await Context.Proizvods
+                    .Where(p => p.RestoranId == entity.RestoranId)
+                    .ToListAsync();
+
+                if (proizvodi != null && proizvodi.Any())
+                {
+                    Context.RemoveRange(proizvodi);
+                }
+               
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new UserException("Greska prilikom brisanja.");
+            }
+        }
+        public override async Task AfterDeleteAsync(Restoran entity, CancellationToken cancellationToken)
+        {
+            var vlasnik = await Context.Korisnicis
+                .Where(x => x.KorisnikId == entity.VlasnikId)
+                   .FirstOrDefaultAsync();
+
+            if (vlasnik != null)
+            {
+                Context.Remove(vlasnik);
+            }
+            var radniciRest = new[] { "RadnikRestorana", "Dostavljac", "Vlasnik" };
+
+            var radniciZaObrisati = await Context.KorisniciUloges
+                .Where(x => x.KorisnikId == entity.VlasnikId ||
+                            radniciRest.Contains(x.Uloga.Naziv))
+                .ToListAsync();
+
+            if (radniciZaObrisati != null && radniciZaObrisati.Count > 0)
+            {
+                Context.KorisniciUloges.RemoveRange(radniciZaObrisati);
+            }
+            await Context.SaveChangesAsync();
+            await base.AfterDeleteAsync(entity, cancellationToken);
         }
     }
 }

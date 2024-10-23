@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:advanced_datatable/advanced_datatable_source.dart';
+import 'package:advanced_datatable/datatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +12,17 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:natanjir_desktop/layouts/master_screen.dart';
 import 'package:natanjir_desktop/models/korisnici.dart';
+import 'package:natanjir_desktop/models/ocjena_restoran.dart';
 import 'package:natanjir_desktop/models/restoran.dart';
 import 'package:natanjir_desktop/models/search_result.dart';
 import 'package:natanjir_desktop/models/vrsta_restorana.dart';
 import 'package:natanjir_desktop/providers/korisnici_provider.dart';
+import 'package:natanjir_desktop/providers/narudzba_provider.dart';
+import 'package:natanjir_desktop/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_desktop/providers/restoran_provider.dart';
+import 'package:natanjir_desktop/providers/utils.dart';
 import 'package:natanjir_desktop/providers/vrsta_restorana_provider.dart';
+import 'package:natanjir_desktop/screens/restoran_details_screen.dart';
 import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
@@ -35,10 +42,26 @@ class _AdminUpravljanjeRestoranimaScreenState
   late KorisniciProvider korisniciProvider;
   late VrstaRestoranaProvider vrstaRestoranaProvider;
   late RestoranProvider restoranProvider;
+  late OcjenaRestoranProvider ocjenaRestoranProvider;
 
   SearchResult<Korisnici>? korisniciResult;
   SearchResult<VrstaRestorana>? vrstaRestoranaResult;
   SearchResult<Restoran>? restoranResult;
+  SearchResult<OcjenaRestoran>? ocjenaRestoranResult;
+  late RestoranDataSource _source;
+  int page = 1;
+  int pageSize = 10;
+  int count = 10;
+  bool _isLoading = false;
+
+  @override
+  BuildContext get context => super.context;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
   Map<String, dynamic> searchRequest = {
     'isKorisniciUlogeIncluded': true,
   };
@@ -61,11 +84,14 @@ class _AdminUpravljanjeRestoranimaScreenState
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         resetFields();
+        _initForm();
       }
     });
     korisniciProvider = context.read<KorisniciProvider>();
     vrstaRestoranaProvider = context.read<VrstaRestoranaProvider>();
     restoranProvider = context.read<RestoranProvider>();
+    ocjenaRestoranProvider = context.read<OcjenaRestoranProvider>();
+    _source = RestoranDataSource(provider: restoranProvider, context: context);
     _initForm();
   }
 
@@ -73,6 +99,7 @@ class _AdminUpravljanjeRestoranimaScreenState
     korisniciResult = await korisniciProvider.get(filter: searchRequest);
     vrstaRestoranaResult = await vrstaRestoranaProvider.get();
     restoranResult = await restoranProvider.get();
+    ocjenaRestoranResult = await ocjenaRestoranProvider.get();
   }
 
   @override
@@ -93,7 +120,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                     tabs: [
                       Tab(text: "Dodavanje vlasnika"),
                       Tab(text: "Dodavanje restorana"),
-                      Tab(text: "Brisanje restorana"),
+                      Tab(text: "Pregled/brisanje restorana"),
                     ],
                   ),
                 ),
@@ -103,7 +130,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                     children: [
                       _buildDodavanjeVlasnika(),
                       _buildDodavanjeRestorana(),
-                      _buildBrisanjeRestorana()
+                      _buildBrisanjeRestorana(),
                     ],
                   ),
                 ),
@@ -111,6 +138,40 @@ class _AdminUpravljanjeRestoranimaScreenState
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  TextEditingController _nazivRestoranaController = TextEditingController();
+
+  Widget _buildSearch() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+              child: TextField(
+            controller: _nazivRestoranaController,
+            decoration: InputDecoration(
+              labelText: 'Naziv restorana',
+              hintText: 'Naziv restorana',
+              labelStyle: TextStyle(
+                color: Color.fromARGB(255, 108, 108, 108),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            onChanged: (value) async {
+              _source.filterServerSide(value, _nazivRestoranaController.text);
+            },
+          )),
+        ],
       ),
     );
   }
@@ -687,7 +748,30 @@ class _AdminUpravljanjeRestoranimaScreenState
   }
 
   Widget _buildBrisanjeRestorana() {
-    return Center(child: Text("Brisanje restorana  "));
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildSearch(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: AdvancedPaginatedDataTable(
+                columns: const [
+                  DataColumn(label: Text("Naziv")),
+                  DataColumn(label: Text("Lokacija")),
+                  DataColumn(label: Text("Radno vrijeme OD")),
+                  DataColumn(label: Text("Radno vrijeme DO")),
+                  DataColumn(label: Text("Obriši restoran")),
+                ],
+                source: _source,
+                addEmptyRows: false,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _saveVlasnikaRow() {
@@ -934,5 +1018,133 @@ class _AdminUpravljanjeRestoranimaScreenState
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+  }
+}
+
+class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
+  List<Restoran>? data = [];
+  final RestoranProvider provider;
+  int count = 10;
+  int page = 1;
+  int pageSize = 10;
+  String nazivRestorana = "";
+  dynamic filter;
+  BuildContext context;
+  bool isDeleted = false;
+  RestoranDataSource({required this.provider, required this.context});
+
+  @override
+  DataRow? getRow(int index) {
+    if (index >= (count - ((page - 1) * pageSize))) {
+      return null;
+    }
+
+    final item = data?[index];
+
+    return DataRow(
+        onSelectChanged: (selected) => {
+              if (selected == true)
+                {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => RestoranDetailsScreen(
+                            odabraniRestoran: item,
+                            avgOcjena: "",
+                          ))),
+                }
+            },
+        cells: [
+          DataCell(Text(
+            item!.naziv.toString(),
+            style: TextStyle(fontSize: 15),
+          )),
+          DataCell(Text(
+            item.lokacija.toString(),
+            style: TextStyle(fontSize: 15),
+          )),
+          DataCell(Text(item.radnoVrijemeOd.toString(),
+              style: TextStyle(fontSize: 15))),
+          DataCell(Text(item.radnoVrijemeDo.toString(),
+              style: TextStyle(fontSize: 15))),
+          DataCell(
+            TextButton(
+              onPressed: () async {
+                try {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.confirm,
+                    title: "Da li ste sigurni da želite obrisati restoran?",
+                    text:
+                        "Ovo će obrisati restoran, odnosno sve stavke vezano za restoran, kao što su narudžbe, ocjene, radnici, dostavljači i vlasnik restorana.",
+                    confirmBtnText: "Da",
+                    cancelBtnText: "Ne",
+                    onConfirmBtnTap: () async {
+                      Navigator.of(context).pop();
+
+                      await provider.delete(item.restoranId!);
+
+                      Future.delayed(Duration(milliseconds: 100), () {
+                        QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Restoran uspješno obrisan!",
+                        );
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  );
+                } on Exception catch (e) {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.error,
+                    title: "Greška prilikom brisanja restorana!",
+                  );
+                }
+              },
+              child: Container(
+                child: Text(
+                  "Obriši",
+                  style: TextStyle(fontSize: 15, color: Colors.red),
+                ),
+              ),
+            ),
+          ),
+        ]);
+  }
+
+  void filterServerSide(nazivGTE, vrstaRestoranaId) {
+    nazivRestorana = nazivGTE;
+    setNextView();
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => count;
+
+  @override
+  int get selectedRowCount => 0;
+
+  @override
+  Future<RemoteDataSourceDetails<Restoran>> getNextPage(
+      NextPageRequest pageRequest) async {
+    page = (pageRequest.offset ~/ pageSize).toInt() + 1;
+    filter = {'nazivGTE': nazivRestorana};
+
+    try {
+      var result =
+          await provider.get(filter: filter, page: page, pageSize: pageSize);
+
+      data = result!.result;
+      count = result!.count;
+    } on Exception catch (e) {
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: e.toString(),
+          width: 300);
+    }
+
+    return RemoteDataSourceDetails(count, data!);
   }
 }
