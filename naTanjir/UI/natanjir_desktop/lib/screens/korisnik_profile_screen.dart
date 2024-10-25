@@ -283,41 +283,6 @@ class _KorisnikProfileScreenState extends State<KorisnikProfileScreen> {
                 },
               ),
             ),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 0, 83, 86),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  fixedSize: Size(double.infinity, 40),
-                ),
-                icon: Icon(Icons.logout, color: Colors.white),
-                label: Center(
-                  child: Text(
-                    "Odjavi se",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                onPressed: () {
-                  AuthProvider.datumRodjenja?.isEmpty;
-                  AuthProvider.email = null;
-                  AuthProvider.ime = null;
-                  AuthProvider.korisnikId = null;
-                  AuthProvider.prezime = null;
-                  AuthProvider.slika = null;
-                  AuthProvider.telefon = null;
-                  AuthProvider.username = null;
-                  AuthProvider.password = null;
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => MyApp()));
-
-                  setState(() {});
-                },
-              ),
-            ),
           ],
         ),
       ),

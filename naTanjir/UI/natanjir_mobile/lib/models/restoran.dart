@@ -11,6 +11,7 @@ class Restoran {
   String? lokacija;
   int? vrstaRestoranaId;
   int? vlasnikId;
+  bool? isDeleted;
 
   Restoran();
   factory Restoran.fromJson(Map<String, dynamic> json) =>

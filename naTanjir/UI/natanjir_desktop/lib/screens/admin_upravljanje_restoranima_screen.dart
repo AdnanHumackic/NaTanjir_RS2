@@ -91,7 +91,11 @@ class _AdminUpravljanjeRestoranimaScreenState
     vrstaRestoranaProvider = context.read<VrstaRestoranaProvider>();
     restoranProvider = context.read<RestoranProvider>();
     ocjenaRestoranProvider = context.read<OcjenaRestoranProvider>();
-    _source = RestoranDataSource(provider: restoranProvider, context: context);
+    _source = RestoranDataSource(
+        provider: restoranProvider,
+        context: context,
+        nazivGTE: _nazivRestoranaController.text,
+        isDeleted: isDeleted);
     _initForm();
   }
 
@@ -143,34 +147,114 @@ class _AdminUpravljanjeRestoranimaScreenState
   }
 
   TextEditingController _nazivRestoranaController = TextEditingController();
-
+  bool? isDeleted;
   Widget _buildSearch() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
           Expanded(
-              child: TextField(
-            controller: _nazivRestoranaController,
-            decoration: InputDecoration(
-              labelText: 'Naziv restorana',
-              hintText: 'Naziv restorana',
-              labelStyle: TextStyle(
-                color: Color.fromARGB(255, 108, 108, 108),
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+            child: TextField(
+              controller: _nazivRestoranaController,
+              decoration: InputDecoration(
+                labelText: 'Naziv restorana',
+                hintText: 'Naziv restorana',
+                labelStyle: TextStyle(
+                  color: Color.fromARGB(255, 108, 108, 108),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                filled: true,
+                fillColor: Colors.white,
               ),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              filled: true,
-              fillColor: Colors.white,
+              onChanged: (value) async {
+                _source.nazivRestorana = _nazivRestoranaController.text;
+                _source.filterServerSide();
+                setState(() {});
+              },
             ),
-            onChanged: (value) async {
-              _source.filterServerSide(value, _nazivRestoranaController.text);
-            },
-          )),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Expanded(
+            child: DropdownButtonFormField<bool>(
+              decoration: InputDecoration(
+                labelText: 'Obrisan',
+                hintText: 'Obrisan',
+                labelStyle: TextStyle(
+                  color: Color.fromARGB(255, 108, 108, 108),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              items: [
+                DropdownMenuItem<bool>(
+                  value: null,
+                  child: Text('---'),
+                ),
+                DropdownMenuItem<bool>(
+                  value: true,
+                  child: Text('Da'),
+                ),
+                DropdownMenuItem<bool>(
+                  value: false,
+                  child: Text('Ne'),
+                ),
+              ],
+              onChanged: (bool? newValue) async {
+                isDeleted = newValue;
+                _source.isDeleted = newValue;
+                _source.filterServerSide();
+                setState(() {});
+              },
+            ),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Expanded(
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Color.fromARGB(97, 158, 158, 158),
+              ),
+              child: InkWell(
+                onTap: () async {
+                  _nazivRestoranaController.clear();
+
+                  setState(() {
+                    isDeleted = null;
+                  });
+                  _source.nazivRestorana = '';
+                  _source.isDeleted = null;
+                  _source.filterServerSide();
+                  setState(() {});
+                },
+                child: Center(
+                  child: Text(
+                    "Očisti filtere",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -621,6 +705,8 @@ class _AdminUpravljanjeRestoranimaScreenState
                 children: [
                   Expanded(
                     child: FormBuilderDropdown(
+                      validator: FormBuilderValidators.required(
+                          errorText: "Obavezno polje."),
                       name: 'vrstaRestoranaId',
                       items: vrstaRestoranaResult?.result != null
                           ? vrstaRestoranaResult!.result
@@ -653,6 +739,8 @@ class _AdminUpravljanjeRestoranimaScreenState
                   Expanded(
                     child: FormBuilderDropdown(
                       name: 'vlasnikId',
+                      validator: FormBuilderValidators.required(
+                          errorText: "Obavezno polje."),
                       items: (korisniciResult?.result ?? [])
                               .where((e) =>
                                   e.korisniciUloges?.any(
@@ -801,7 +889,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                 text: "Da li želite isprintati podatke o vlasniku?",
                 confirmBtnText: "Da",
                 cancelBtnText: "Ne",
-                onConfirmBtnTap: () {
+                onConfirmBtnTap: () async {
                   createPdfFile(req);
                   Navigator.pop(context);
                 },
@@ -1029,9 +1117,13 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
   int pageSize = 10;
   String nazivRestorana = "";
   dynamic filter;
+  bool? isDeleted;
   BuildContext context;
-  bool isDeleted = false;
-  RestoranDataSource({required this.provider, required this.context});
+  RestoranDataSource(
+      {required this.provider,
+      required this.context,
+      required String nazivGTE,
+      bool? isDeleted});
 
   @override
   DataRow? getRow(int index) {
@@ -1065,54 +1157,108 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
               style: TextStyle(fontSize: 15))),
           DataCell(Text(item.radnoVrijemeDo.toString(),
               style: TextStyle(fontSize: 15))),
-          DataCell(
-            TextButton(
-              onPressed: () async {
-                try {
-                  QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.confirm,
-                    title: "Da li ste sigurni da želite obrisati restoran?",
-                    text:
-                        "Ovo će obrisati restoran, odnosno sve stavke vezano za restoran, kao što su narudžbe, ocjene, radnici, dostavljači i vlasnik restorana.",
-                    confirmBtnText: "Da",
-                    cancelBtnText: "Ne",
-                    onConfirmBtnTap: () async {
-                      Navigator.of(context).pop();
+          if (item.isDeleted == false)
+            DataCell(
+              TextButton(
+                onPressed: () async {
+                  try {
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.confirm,
+                      title: "Da li ste sigurni da želite obrisati restoran?",
+                      text:
+                          "Ovo će obrisati restoran kao i sve njegove proizvode iz ponude.",
+                      confirmBtnText: "Da",
+                      cancelBtnText: "Ne",
+                      onConfirmBtnTap: () async {
+                        Navigator.of(context).pop();
 
-                      await provider.delete(item.restoranId!);
+                        await provider.delete(item.restoranId!);
 
-                      Future.delayed(Duration(milliseconds: 100), () {
-                        QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.success,
-                          title: "Restoran uspješno obrisan!",
-                        );
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  );
-                } on Exception catch (e) {
-                  QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.error,
-                    title: "Greška prilikom brisanja restorana!",
-                  );
-                }
-              },
-              child: Container(
-                child: Text(
-                  "Obriši",
-                  style: TextStyle(fontSize: 15, color: Colors.red),
+                        Future.delayed(Duration(milliseconds: 100), () {
+                          QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.success,
+                            title: "Restoran uspješno obrisan!",
+                          );
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  } on Exception catch (e) {
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.error,
+                      title: "Greška prilikom brisanja restorana!",
+                    );
+                  }
+                },
+                child: Container(
+                  child: Text(
+                    "Obriši",
+                    style: TextStyle(fontSize: 15, color: Colors.red),
+                  ),
                 ),
               ),
             ),
-          ),
+          if (item.isDeleted == true)
+            DataCell(
+              TextButton(
+                onPressed: () async {
+                  try {
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.confirm,
+                      title:
+                          "Da li ste sigurni da želite vratiti restoran u ponudu?",
+                      text:
+                          "Ovo će vratiti restoran u ponudu kao i sve njegove proizvode iz ponude.",
+                      confirmBtnText: "Da",
+                      cancelBtnText: "Ne",
+                      onConfirmBtnTap: () async {
+                        var upd = {
+                          'radnoVrijemeOd': item.radnoVrijemeOd,
+                          'radnoVrijemeDo': item.radnoVrijemeDo,
+                          'slika': item.slika,
+                          'lokacija': item.lokacija,
+                          'isDeleted': false,
+                          'vrijemeBrisanja': null
+                        };
+                        await provider.update(item.restoranId!, upd);
+
+                        Future.delayed(Duration(milliseconds: 100), () {
+                          QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.success,
+                            title: "Restoran uspješno vraćen u ponudu!",
+                          );
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  } on Exception catch (e) {
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.error,
+                      title: "Greška prilikom vraćanja restorana u ponudu!",
+                    );
+                  }
+                },
+                child: Container(
+                  child: Text(
+                    "Vrati u ponudu",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Color.fromARGB(255, 0, 83, 86),
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ]);
   }
 
-  void filterServerSide(nazivGTE, vrstaRestoranaId) {
-    nazivRestorana = nazivGTE;
+  void filterServerSide() {
     setNextView();
   }
 
@@ -1129,7 +1275,7 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
   Future<RemoteDataSourceDetails<Restoran>> getNextPage(
       NextPageRequest pageRequest) async {
     page = (pageRequest.offset ~/ pageSize).toInt() + 1;
-    filter = {'nazivGTE': nazivRestorana};
+    filter = {'nazivGTE': nazivRestorana, 'isDeleted': isDeleted};
 
     try {
       var result =

@@ -370,6 +370,7 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
         child: Column(
           children: [
             ...restoranList!
+                .where((x) => x.isDeleted == false)
                 .map(
                   (e) => GestureDetector(
                     onTap: () async {

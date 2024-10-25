@@ -20,7 +20,7 @@ namespace naTanjir.Model
         public byte[] Slika { get; set; }
 
 
-        //public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
 
         public DateTime DatumRodjenja { get; set; }
 

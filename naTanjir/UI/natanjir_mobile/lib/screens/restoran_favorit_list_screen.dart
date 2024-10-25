@@ -213,9 +213,10 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
     if (restoranFavoritList == null) {
       return Center(child: CircularProgressIndicator());
     }
-    if (restoranFavoritList!
-        .where((element) => element.korisnikId == AuthProvider.korisnikId)
-        .isEmpty) {
+    if (restoranFavoritList != null &&
+        restoranFavoritList
+            .where((element) => element.korisnikId == AuthProvider.korisnikId)
+            .isEmpty) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -253,7 +254,10 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
       child: Column(
         children: [
           ...restoranFavoritList!
-              .where((element) => element.korisnikId == AuthProvider.korisnikId)
+              .where((element) =>
+                  element.korisnikId == AuthProvider.korisnikId &&
+                  element.restoran != null &&
+                  element.restoran!.isDeleted == false)
               .map(
                 (e) => InkWell(
                   onTap: () {

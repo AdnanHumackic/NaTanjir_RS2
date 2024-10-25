@@ -19,6 +19,7 @@ namespace naTanjir.Model
         public string Lokacija { get; set; } = null!;
 
         public int VrstaRestoranaId { get; set; }
+        public bool? IsDeleted { get; set; }
 
         public int VlasnikId { get; set; }
 

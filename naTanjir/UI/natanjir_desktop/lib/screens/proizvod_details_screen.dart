@@ -91,31 +91,29 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(top: 15),
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.odabraniProizvod!.naziv!,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.odabraniProizvod!.naziv!,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    widget.odabraniProizvod!.opis!,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 108, 108, 108),
                     ),
-                    SizedBox(height: 10),
-                    Text(
-                      widget.odabraniProizvod!.opis!,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 108, 108, 108),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -210,6 +210,17 @@ class _LoginPageState extends State<LoginPage> {
                               var korisnik = await korisniciProvider.login(
                                   AuthProvider.username!,
                                   AuthProvider.password!);
+
+                              if (korisnik.isDeleted!) {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.error,
+                                  title: 'Račun deaktiviran',
+                                  text: 'Vaš korisnički račun je deaktiviran.',
+                                );
+                                return;
+                              }
+
                               AuthProvider.korisnikId = korisnik.korisnikId;
                               AuthProvider.ime = korisnik.ime;
                               AuthProvider.prezime = korisnik.prezime;

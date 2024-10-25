@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:natanjir_desktop/main.dart';
 import 'package:natanjir_desktop/providers/auth_provider.dart';
 import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
+import 'package:natanjir_desktop/screens/admin_upravljanje_korisnickim_nalozima_screen.dart';
 import 'package:natanjir_desktop/screens/admin_upravljanje_restoranima_screen.dart';
 import 'package:natanjir_desktop/screens/korisnik_profile_screen.dart';
 
@@ -118,7 +119,11 @@ class _MasterScreenState extends State<MasterScreen> {
                                     fontSize: 18,
                                   ),
                                 ),
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          AdminUpravljanjeKorisnickimNalozimaScreen()));
+                                },
                               ),
                             Spacer(),
                             ListTile(

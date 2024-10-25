@@ -47,14 +47,19 @@ namespace naTanjir.Services
                 query = query.Where(x => (x.Ime + " " + x.Prezime).StartsWith(searchObject.ImePrezimeGTE));
             }
 
-            if (!string.IsNullOrWhiteSpace(searchObject.Email))
+            if (!string.IsNullOrWhiteSpace(searchObject.EmailGTE))
             {
-                query = query.Where(x => x.Email == searchObject.Email);
+                query = query.Where(x => x.Email.ToLower().StartsWith(searchObject.EmailGTE.ToLower()));
             }
 
+            if (!string.IsNullOrWhiteSpace(searchObject.Uloga))
+            {
+                query = query.Include(x => x.KorisniciUloges)
+                    .Where(x => x.KorisniciUloges.Any(x => x.Uloga.Naziv == searchObject.Uloga));
+            }
             if (!string.IsNullOrWhiteSpace(searchObject.KorisnickoIme))
             {
-                query = query.Where(x => x.KorisnickoIme == searchObject.KorisnickoIme);
+                query = query.Where(x => x.KorisnickoIme.StartsWith(searchObject.KorisnickoIme));
             }
 
             if (searchObject.IsKorisniciUlogeIncluded == true)
@@ -62,11 +67,18 @@ namespace naTanjir.Services
                 query = query.Include(x => x.KorisniciUloges).ThenInclude(x => x.Uloga);
             }
 
-            if (searchObject.IsDeleted == true)
+            if (searchObject?.IsDeleted != null)
             {
-                query = query.Where(x => x.IsDeleted == searchObject.IsDeleted);
+                if (searchObject.IsDeleted == false)
+                {
+                    query = query.Where(x => x.IsDeleted == false || x.IsDeleted == null);
+                }
+                else
+                {
+                    query = query.Where(x => x.IsDeleted == true);
+                }
             }
-            
+
             return query;
         }
 
@@ -135,8 +147,9 @@ namespace naTanjir.Services
                 entity.LozinkaSalt = GenerateSalt();
                 entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.NovaLozinka);
             }
+            entity.IsDeleted = false;
         }
-
+      
         public Model.Korisnici Login(string username, string password)
         {
             var entity = Context.Korisnicis.Include(x=>x.KorisniciUloges).ThenInclude(y=>y.Uloga).FirstOrDefault(x => x.KorisnickoIme == username);

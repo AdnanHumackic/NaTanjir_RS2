@@ -12,6 +12,8 @@ namespace naTanjir.Model.Request
 
         public string? Telefon { get; set; } = null!;
         public byte[]? Slika { get; set; }
+        public bool? isDeleted { get; set; }
+        public DateTime? VrijemeBrisanja { get; set; }
 
         public string? NovaLozinka { get; set; }
         public string? LozinkaPotvrda { get; set; }

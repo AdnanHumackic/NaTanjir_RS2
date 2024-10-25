@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace naTanjir.Services.Database;
 
-public partial class OcjenaProizvod
+public partial class OcjenaProizvod:ISoftDelete
 {
     public int OcjenaProizvodId { get; set; }
 

@@ -12,6 +12,7 @@ class Korisnici {
   String? korisnickoIme;
   String? datumRodjenja;
   String? slika;
+  bool? isDeleted;
   List<KorisnikUloga>? korisniciUloges;
 
   Korisnici();

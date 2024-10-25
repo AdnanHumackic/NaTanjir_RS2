@@ -11,7 +11,7 @@ class Korisnici {
   String? korisnickoIme;
   String? datumRodjenja;
   String? slika;
-
+  bool? isDeleted;
   Korisnici();
 
   factory Korisnici.fromJson(Map<String, dynamic> json) =>

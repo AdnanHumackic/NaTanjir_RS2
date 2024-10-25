@@ -207,8 +207,20 @@ class _LoginPageState extends State<LoginPage> {
                                   new KorisniciProvider();
 
                               var korisnik = await korisniciProvider.login(
-                                  AuthProvider.username!,
-                                  AuthProvider.password!);
+                                AuthProvider.username!,
+                                AuthProvider.password!,
+                              );
+
+                              if (korisnik.isDeleted!) {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.error,
+                                  title: 'Račun deaktiviran',
+                                  text: 'Vaš korisnički račun je deaktiviran!',
+                                );
+                                return;
+                              }
+
                               AuthProvider.korisnikId = korisnik.korisnikId;
                               AuthProvider.ime = korisnik.ime;
                               AuthProvider.prezime = korisnik.prezime;
@@ -217,23 +229,27 @@ class _LoginPageState extends State<LoginPage> {
                               AuthProvider.datumRodjenja =
                                   korisnik.datumRodjenja;
                               AuthProvider.slika = korisnik.slika;
+
                               if (korisnik.korisniciUloges != null) {
                                 AuthProvider.korisnikUloge =
                                     korisnik.korisniciUloges;
                               }
 
                               print("Authenticated!");
+
                               if (AuthProvider.korisnikUloge != null &&
                                   AuthProvider.korisnikUloge!
-                                      .any((x) => x.uloga?.naziv == "Admin"))
+                                      .any((x) => x.uloga?.naziv == "Admin")) {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        AdminDashboardScreen()));
+                                  builder: (context) => AdminDashboardScreen(),
+                                ));
+                              }
                             } on Exception catch (e) {
                               QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.error,
-                                  title: e.toString());
+                                context: context,
+                                type: QuickAlertType.error,
+                                title: e.toString(),
+                              );
                             }
                           },
                           child: Center(
