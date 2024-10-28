@@ -10,6 +10,7 @@ import 'package:natanjir_desktop/models/uloga.dart';
 import 'package:natanjir_desktop/providers/korisnici_provider.dart';
 import 'package:natanjir_desktop/providers/uloga_provider.dart';
 import 'package:natanjir_desktop/providers/utils.dart';
+import 'package:natanjir_desktop/screens/admin_uredi_korisnicki_profil.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
@@ -113,6 +114,7 @@ class _AdminUpravljanjeKorisnickimNalozimaScreenState
               ),
               Expanded(
                 child: DropdownButtonFormField<bool>(
+                  value: isDeleted,
                   decoration: InputDecoration(
                     labelText: 'Obrisan',
                     hintText: 'Obrisan',
@@ -268,7 +270,6 @@ class _AdminUpravljanjeKorisnickimNalozimaScreenState
                         selectedItem = null;
                         isDeleted = null;
                       });
-
                       _source.imePrezime = '';
                       _source.isDeleted = null;
                       _source.korisnickoIme = '';
@@ -314,7 +315,7 @@ class _AdminUpravljanjeKorisnickimNalozimaScreenState
                     DataColumn(label: Text("Email")),
                     DataColumn(label: Text("Telefon")),
                     DataColumn(label: Text("Datum rođenja")),
-                    DataColumn(label: Text("Dugme")),
+                    DataColumn(label: Text("Aktivacija/Deaktivacija")),
                   ],
                   source: _source,
                   addEmptyRows: false,
@@ -362,11 +363,17 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
         onSelectChanged: (selected) => {
               if (selected == true)
                 {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => RestoranDetailsScreen(
-                  //           odabraniRestoran: item,
-                  //           avgOcjena: "",
-                  //         ))),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AdminUrediKorisnickiProfilScreen(
+                              odabraniKorisnik: item,
+                            )),
+                  ).then((value) {
+                    if (value == true) {
+                      filterServerSide();
+                    }
+                  })
                 }
             },
         cells: [
@@ -400,17 +407,16 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
                       cancelBtnText: "Ne",
                       onConfirmBtnTap: () async {
                         Navigator.of(context).pop();
-
                         await provider.delete(item.korisnikId!);
 
-                        Future.delayed(Duration(milliseconds: 100), () {
-                          QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Korisnik uspješno obrisan!",
-                          );
-                        });
-                        Navigator.of(context).pop();
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Korisnik uspješno obrisan!",
+                        );
+                        filterServerSide();
+
+                        //Navigator.of(context).pop();
                       },
                     );
                   } on Exception catch (e) {
@@ -450,17 +456,18 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
                           'slika': item.slika,
                           'isDeleted': false,
                           'vrijemeBrisanja': null,
+                          'korisnickoIme': item.korisnickoIme,
+                          'email': item.email,
                         };
                         await provider.update(item.korisnikId!, upd);
-
-                        Future.delayed(Duration(milliseconds: 100), () {
-                          QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Korisnikov račun uspješno aktiviran!",
-                          );
-                        });
                         Navigator.of(context).pop();
+
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Korisnikov račun uspješno aktiviran!",
+                        );
+                        filterServerSide();
                       },
                     );
                   } on Exception catch (e) {

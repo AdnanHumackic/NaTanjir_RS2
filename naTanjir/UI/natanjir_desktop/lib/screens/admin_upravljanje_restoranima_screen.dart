@@ -183,6 +183,7 @@ class _AdminUpravljanjeRestoranimaScreenState
           ),
           Expanded(
             child: DropdownButtonFormField<bool>(
+              value: isDeleted,
               decoration: InputDecoration(
                 labelText: 'Obrisan',
                 hintText: 'Obrisan',
@@ -1175,14 +1176,13 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
 
                         await provider.delete(item.restoranId!);
 
-                        Future.delayed(Duration(milliseconds: 100), () {
-                          QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Restoran uspješno obrisan!",
-                          );
-                        });
-                        Navigator.of(context).pop();
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Restoran uspješno obrisan!",
+                        );
+
+                        filterServerSide();
                       },
                     );
                   } on Exception catch (e) {
@@ -1225,15 +1225,14 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
                           'vrijemeBrisanja': null
                         };
                         await provider.update(item.restoranId!, upd);
-
-                        Future.delayed(Duration(milliseconds: 100), () {
-                          QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Restoran uspješno vraćen u ponudu!",
-                          );
-                        });
                         Navigator.of(context).pop();
+
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Restoran uspješno vraćen u ponudu!",
+                        );
+                        filterServerSide();
                       },
                     );
                   } on Exception catch (e) {

@@ -402,7 +402,8 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
               if (isValid == true) {
                 var req = Map.from(_formKey.currentState!.value);
                 req['slika'] = _base64Image;
-
+                req['email'] = AuthProvider.email;
+                req['korisnickoIme'] = AuthProvider.username;
                 await korisniciProvider.update(AuthProvider.korisnikId!, req);
 
                 QuickAlert.show(
