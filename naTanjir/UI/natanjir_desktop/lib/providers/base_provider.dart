@@ -16,13 +16,13 @@ abstract class BaseProvider<T> with ChangeNotifier {
         defaultValue: "http://localhost:5212/");
   }
 
-  Future<SearchResult<T>> get({
-    dynamic filter,
-    int? page,
-    int? pageSize,
-    String? orderBy,
-    String? sortDirection,
-  }) async {
+  Future<SearchResult<T>> get(
+      {dynamic filter,
+      int? page,
+      int? pageSize,
+      String? orderBy,
+      String? sortDirection,
+      String? includeTables}) async {
     var url = "$baseUrl$_endpoint";
 
     Map<String, dynamic> queryParams = {};
@@ -41,7 +41,9 @@ abstract class BaseProvider<T> with ChangeNotifier {
     if (sortDirection != null) {
       queryParams['sortDirection'] = sortDirection;
     }
-
+    if (includeTables != null) {
+      queryParams['includeTables'] = includeTables;
+    }
     if (queryParams.isNotEmpty) {
       var queryString = getQueryString(queryParams);
       url = "$url?$queryString";

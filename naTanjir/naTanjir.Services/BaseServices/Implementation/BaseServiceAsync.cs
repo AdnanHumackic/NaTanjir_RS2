@@ -1,6 +1,7 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using naTanjir.Model;
+using naTanjir.Model.Exceptions;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.BaseServices.Interfaces;
 using naTanjir.Services.Database;
@@ -29,6 +30,12 @@ namespace naTanjir.Services.BaseServices.Implementation
             List<TModel> result = new List<TModel>();
 
             var query = Context.Set<TDbEntity>().AsQueryable();
+
+            if (!string.IsNullOrEmpty(search?.IncludeTables))
+            {
+                query = ApplyIncludes(query, search.IncludeTables);
+            }
+
 
             query = AddFilter(search, query);
 
@@ -89,7 +96,20 @@ namespace naTanjir.Services.BaseServices.Implementation
             }
         }
 
+        private IQueryable<TDbEntity> ApplyIncludes(IQueryable<TDbEntity> query, string includes)
+        {
+            try
+            {
+                var tableIncludes = includes.Split(',');
+                query = tableIncludes.Aggregate(query, (current, inc) => current.Include(inc));
+            }
+            catch (Exception)
+            {
+                throw new UserException("Pogrešna include lista!");
+            }
 
+            return query;
+        }
         public virtual IQueryable<TDbEntity> AddFilter(TSearch search, IQueryable<TDbEntity> query)
         {
             return query;

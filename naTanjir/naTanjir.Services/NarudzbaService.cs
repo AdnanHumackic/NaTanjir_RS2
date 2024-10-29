@@ -64,7 +64,7 @@ namespace naTanjir.Services
 
             if (searchObject.RestoranId != null)
             {
-                query = query.Include(x => x.StavkeNarudzbes.Where(x => x.RestoranId == searchObject.RestoranId));
+                query=query.Where(x=>x.StavkeNarudzbes.Any(e=>e.RestoranId==searchObject.RestoranId));
             }
 
             if (searchObject.IsKorisnikIncluded == true)
@@ -189,6 +189,5 @@ namespace naTanjir.Services
             var state = BaseNarudzbaState.CreateState(narudzba.StateMachine);
             return state.AllowedActions(narudzba);
         }
-
     }
 }

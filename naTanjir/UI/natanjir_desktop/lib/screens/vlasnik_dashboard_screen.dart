@@ -1,39 +1,48 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:natanjir_desktop/layouts/master_screen.dart';
 import 'package:natanjir_desktop/models/korisnici.dart';
 import 'package:natanjir_desktop/models/narudzba.dart';
 import 'package:natanjir_desktop/models/restoran.dart';
 import 'package:natanjir_desktop/models/search_result.dart';
+import 'package:natanjir_desktop/models/stavke_narudzbe.dart';
+import 'package:natanjir_desktop/providers/auth_provider.dart';
 import 'package:natanjir_desktop/providers/korisnici_provider.dart';
 import 'package:natanjir_desktop/providers/narudzba_provider.dart';
 import 'package:natanjir_desktop/providers/restoran_provider.dart';
+import 'package:natanjir_desktop/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_desktop/providers/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
 
-class AdminDashboardScreen extends StatefulWidget {
-  const AdminDashboardScreen({super.key});
+class VlasnikDashboardScreen extends StatefulWidget {
+  const VlasnikDashboardScreen({Key? key}) : super(key: key);
 
   @override
-  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
+  _VlasnikDashboardScreenState createState() => _VlasnikDashboardScreenState();
 }
 
-class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+class _VlasnikDashboardScreenState extends State<VlasnikDashboardScreen> {
   late KorisniciProvider korisniciProvider;
   late RestoranProvider restoranProvider;
   late NarudzbaProvider narudzbaProvider;
+  late StavkeNarudzbeProvider stavkeNarudzbeProvider;
 
   SearchResult<Korisnici>? korisniciResult;
   SearchResult<Restoran>? restoranResult;
   SearchResult<Narudzba>? narudzbaResult;
-
+  SearchResult<StavkeNarudzbe>? stavkeNarudzbeResult;
+  int? brojNarudzbi;
+  double? ukupnaZarada;
   void initState() {
     super.initState();
     korisniciProvider = context.read<KorisniciProvider>();
     restoranProvider = context.read<RestoranProvider>();
     narudzbaProvider = context.read<NarudzbaProvider>();
+    stavkeNarudzbeProvider = context.read<StavkeNarudzbeProvider>();
 
     _initForm();
   }
@@ -41,7 +50,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Future _initForm() async {
     restoranResult = await restoranProvider.get();
     korisniciResult = await korisniciProvider.get();
-    narudzbaResult = await narudzbaProvider.get();
+    narudzbaResult = await narudzbaProvider.get(
+      includeTables: 'StavkeNarudzbes',
+    );
+    stavkeNarudzbeResult = await stavkeNarudzbeProvider.get(
+      includeTables: 'Restoran',
+    );
+
     setState(() {});
   }
 
@@ -59,19 +74,170 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ),
         child: SingleChildScrollView(
           child: Column(
-            children: [_buildPage(), _buildStats()],
+            children: [_buildSearch(), _buildPage(), _buildStats()],
           ),
         ),
       ),
     );
   }
 
+  String? selectedItem;
+
+  Widget _buildSearch() {
+    return Padding(
+      padding: EdgeInsets.all(25),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Naziv restorana",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: selectedItem,
+                  decoration: InputDecoration(
+                    hintText: 'Naziv restorana',
+                    labelStyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('---'),
+                    ),
+                    ...?restoranResult?.result
+                        .where((element) =>
+                            element.vlasnikId == AuthProvider.korisnikId)
+                        .map((Restoran restoran) {
+                      return DropdownMenuItem<String>(
+                        value: restoran.naziv,
+                        child: Text(restoran.naziv!),
+                      );
+                    }),
+                  ],
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedItem = newValue;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 15),
+              Expanded(
+                child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color.fromARGB(255, 0, 83, 86),
+                  ),
+                  child: InkWell(
+                    onTap: () async {
+                      selectedItem = null;
+                      setState(() {});
+                    },
+                    child: Center(
+                      child: Text(
+                        "Očisti filter",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPage() {
-    var otkazane = (narudzbaResult?.result ?? [])
-        .where((e) => e.stateMachine == "ponistena")
-        .length;
-    var ukupno = (narudzbaResult?.result ?? []).length;
-    var stopaOtkazivanja = ukupno > 0 ? (otkazane / ukupno) * 100 : 0;
+    var restoranId = restoranResult?.result
+            ?.where((e) =>
+                e.vlasnikId == AuthProvider.korisnikId && e.restoranId != null)
+            .map((e) => e.restoranId!)
+            .toList() ??
+        [];
+
+    var stavke = (stavkeNarudzbeResult?.result ?? [])
+        .where((x) =>
+            x.restoran != null &&
+            x.restoran!.vlasnikId == AuthProvider.korisnikId &&
+            (selectedItem == null || x.restoran!.naziv == selectedItem))
+        .map((e) => e.narudzbaId)
+        .toList();
+
+    List<Narudzba> narudzbeList = [];
+    for (var i in stavke) {
+      var filtrirane = narudzbaResult!.result
+          .where((element) => element.narudzbaId == i)
+          .toList();
+
+      narudzbeList.addAll(filtrirane);
+    }
+    double ukupnaZar = 0;
+    for (var i in stavke) {
+      var zarada = narudzbaResult!.result
+          .where((element) => element.narudzbaId == i)
+          .map((e) => e.ukupnaCijena)
+          .where((cijena) => cijena != null)
+          .cast<double>()
+          .toList();
+
+      if (zarada.isNotEmpty) {
+        ukupnaZar += zarada.reduce((a, b) => a + b);
+      }
+    }
+
+    var dostavljeneNarudzbe = 0;
+    for (var i in stavke) {
+      var dost = narudzbaResult!.result
+          .where((element) =>
+              element.narudzbaId == i && element.stateMachine == "zavrsena")
+          .map((e) => e.stavkeNarudzbe != null
+              ? e.stavkeNarudzbe!.where((element) =>
+                  element.restoranId == restoranId &&
+                  element.restoran!.naziv == selectedItem)
+              : [])
+          .length;
+      dostavljeneNarudzbe += dost;
+    }
+
+    var otkazaneNarudzbe = 0;
+    for (var i in stavke) {
+      var otk = narudzbaResult!.result
+          .where((element) =>
+              element.narudzbaId == i && element.stateMachine == "ponistena")
+          .map((e) => e.stavkeNarudzbe != null
+              ? e.stavkeNarudzbe!.where((element) =>
+                  element.restoranId == restoranId &&
+                  element.restoran!.naziv == selectedItem)
+              : [])
+          .length;
+      otkazaneNarudzbe += otk;
+    }
     return Container(
       child: Padding(
         padding: EdgeInsets.all(15),
@@ -99,9 +265,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         text: TextSpan(
                           style: TextStyle(color: Colors.white, fontSize: 16),
                           children: [
-                            TextSpan(text: "Broj korisnika\n aplikacije: "),
+                            TextSpan(text: "Broj narudžbi: "),
                             TextSpan(
-                              text: "${korisniciResult?.count ?? 0}",
+                              text: "${narudzbeList.length ?? 0}",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -131,9 +297,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         text: TextSpan(
                           style: TextStyle(color: Colors.white, fontSize: 16),
                           children: [
-                            TextSpan(text: "Broj restorana\n korisnika: "),
+                            TextSpan(text: "Broj dostavljenih\n narudžbi: "),
                             TextSpan(
-                              text: "${restoranResult?.count ?? 0}",
+                              text: "${dostavljeneNarudzbe ?? 0}",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -163,9 +329,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         text: TextSpan(
                           style: TextStyle(color: Colors.white, fontSize: 16),
                           children: [
-                            TextSpan(text: "Stopa otkazivanja\n narudžbi: "),
+                            TextSpan(text: "Broj otkazanih\n narudžbi: "),
                             TextSpan(
-                              text: "${formatNumber(stopaOtkazivanja)} %",
+                              text: "${otkazaneNarudzbe ?? 0}",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -195,9 +361,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         text: TextSpan(
                           style: TextStyle(color: Colors.white, fontSize: 16),
                           children: [
-                            TextSpan(text: "Ukupan broj\n narudžbi: "),
+                            TextSpan(text: "Ukupna zarada:\n "),
                             TextSpan(
-                              text: "${narudzbaResult?.count ?? 0}",
+                              text: "${formatNumber(ukupnaZar ?? 0)} KM",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -223,10 +389,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
       ));
     }
-
-    List<Narudzba> narudzbeList = narudzbaResult!.result
-        .where((element) => element.stateMachine != "ponistena")
+    var stavke = stavkeNarudzbeResult!.result
+        .where((x) =>
+            x.restoran!.vlasnikId == AuthProvider.korisnikId &&
+            (selectedItem == null || x.restoran?.naziv == selectedItem))
+        .map((e) => e.narudzbaId)
         .toList();
+
+    List<Narudzba> narudzbeList = [];
+    for (var i in stavke) {
+      var filtrirane = narudzbaResult!.result
+          .where((element) =>
+              element.stateMachine != "ponistena" && element.narudzbaId == i)
+          .toList();
+
+      narudzbeList.addAll(filtrirane);
+    }
 
     List<int> narudzbePoMjesecima = List.filled(12, 0);
 

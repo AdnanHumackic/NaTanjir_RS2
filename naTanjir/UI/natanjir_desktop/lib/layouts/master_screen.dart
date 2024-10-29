@@ -5,6 +5,7 @@ import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/admin_upravljanje_korisnickim_nalozima_screen.dart';
 import 'package:natanjir_desktop/screens/admin_upravljanje_restoranima_screen.dart';
 import 'package:natanjir_desktop/screens/korisnik_profile_screen.dart';
+import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   MasterScreen(this.title, this.child, {super.key});
@@ -81,6 +82,27 @@ class _MasterScreenState extends State<MasterScreen> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
                                           AdminDashboardScreen()));
+                                },
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!
+                                    .any((x) => x.uloga?.naziv == "Vlasnik"))
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.home_outlined,
+                                  color: Colors.white,
+                                ),
+                                title: const Text(
+                                  "Dashboard",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          VlasnikDashboardScreen()));
                                 },
                               ),
                             if (AuthProvider.korisnikUloge != null &&

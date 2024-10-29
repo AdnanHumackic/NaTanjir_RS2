@@ -23,6 +23,7 @@ import 'package:natanjir_desktop/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_desktop/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/product_list_screen.dart';
+import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
@@ -242,6 +243,13 @@ class _LoginPageState extends State<LoginPage> {
                                       .any((x) => x.uloga?.naziv == "Admin")) {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => AdminDashboardScreen(),
+                                ));
+                              } else if (AuthProvider.korisnikUloge != null &&
+                                  AuthProvider.korisnikUloge!.any(
+                                      (x) => x.uloga?.naziv == "Vlasnik")) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      VlasnikDashboardScreen(),
                                 ));
                               }
                             } on Exception catch (e) {

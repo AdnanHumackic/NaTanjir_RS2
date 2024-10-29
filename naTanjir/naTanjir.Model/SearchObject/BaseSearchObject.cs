@@ -10,5 +10,7 @@ namespace naTanjir.Model.SearchObject
         public int? PageSize { get; set; }
         public string? OrderBy { get; set; }
         public string? SortDirection { get; set; }
+        public string? IncludeTables { get; set; }
+
     }
 }
