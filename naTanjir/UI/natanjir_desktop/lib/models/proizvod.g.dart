@@ -14,7 +14,15 @@ Proizvod _$ProizvodFromJson(Map<String, dynamic> json) => Proizvod(
       ..cijena = (json['cijena'] as num?)?.toDouble()
       ..vrstaProizvodaId = (json['vrstaProizvodaId'] as num?)?.toInt()
       ..opis = json['opis'] as String?
-      ..restoranId = (json['restoranId'] as num?)?.toInt();
+      ..restoranId = (json['restoranId'] as num?)?.toInt()
+      ..vrstaProizvoda = json['vrstaProizvoda'] == null
+          ? null
+          : VrstaProizvodum.fromJson(
+              json['vrstaProizvoda'] as Map<String, dynamic>)
+      ..restoran = json['restoran'] == null
+          ? null
+          : Restoran.fromJson(json['restoran'] as Map<String, dynamic>)
+      ..isDeleted = json['isDeleted'] as bool?;
 
 Map<String, dynamic> _$ProizvodToJson(Proizvod instance) => <String, dynamic>{
       'proizvodId': instance.proizvodId,
@@ -24,4 +32,7 @@ Map<String, dynamic> _$ProizvodToJson(Proizvod instance) => <String, dynamic>{
       'vrstaProizvodaId': instance.vrstaProizvodaId,
       'opis': instance.opis,
       'restoranId': instance.restoranId,
+      'vrstaProizvoda': instance.vrstaProizvoda,
+      'restoran': instance.restoran,
+      'isDeleted': instance.isDeleted,
     };

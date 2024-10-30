@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:natanjir_desktop/models/restoran.dart';
+import 'package:natanjir_desktop/models/vrsta_proizvodum.dart';
 part 'proizvod.g.dart';
 
 @JsonSerializable()
@@ -10,6 +12,9 @@ class Proizvod {
   int? vrstaProizvodaId;
   String? opis;
   int? restoranId;
+  VrstaProizvodum? vrstaProizvoda;
+  Restoran? restoran;
+  bool? isDeleted;
   Proizvod({this.proizvodId, this.naziv});
 
   factory Proizvod.fromJson(Map<String, dynamic> json) =>

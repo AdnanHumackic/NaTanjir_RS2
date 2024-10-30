@@ -31,21 +31,42 @@ namespace naTanjir.Services
             }
             if (searchObject.RestoranId != null)
             {
-                query = query.Where(x => x.RestoranId == searchObject.RestoranId);
+                query = query.Where(x => searchObject.RestoranId.Contains(x.RestoranId));
+            }
+            if (searchObject.VlasnikRestoranaId != null)
+            {
+                query = query.Where(x => x.Restoran.VlasnikId == searchObject.VlasnikRestoranaId);
             }
             if (searchObject.VrstaProizvodaId != null)
             {
                 query = query.Where(x => searchObject.VrstaProizvodaId.Contains(x.VrstaProizvodaId));
             }
-
+            if (!string.IsNullOrWhiteSpace(searchObject.NazivRestoranaGTE))
+            {
+                query = query.Where(x => x.Restoran.Naziv.Contains(searchObject.NazivRestoranaGTE));
+            }
+            if (!string.IsNullOrWhiteSpace(searchObject.VrstaProizvodaNazivGTE))
+            {
+                query = query.Where(x => x.VrstaProizvoda.Naziv.Contains(searchObject.VrstaProizvodaNazivGTE));
+            }
             if (searchObject.IsVrstaIncluded == true)
             {
                 query = query.Include(x=>x.VrstaProizvoda);
             }
-
-            if (searchObject.IsDeleted == true)
+            if (searchObject.IsRestoranIncluded == true)
             {
-                query = query.Where(x=>x.IsDeleted==searchObject.IsDeleted);
+                query = query.Include(x => x.Restoran);
+            }
+            if (searchObject?.IsDeleted != null)
+            {
+                if (searchObject.IsDeleted == false)
+                {
+                    query = query.Where(x => x.IsDeleted == false || x.IsDeleted == null);
+                }
+                else
+                {
+                    query = query.Where(x => x.IsDeleted == true);
+                }
             }
             return query;
         }

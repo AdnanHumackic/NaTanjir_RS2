@@ -17,9 +17,11 @@ namespace naTanjir.Model
         public byte[]? Slika { get; set; }
 
         public int VrstaProizvodaId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public int RestoranId { get; set; }
-        public virtual VrstaProizvodum VrstaProizvoda { get; set; } = null!;
+        public virtual VrstaProizvodum VrstaProizvoda { get; set; } 
+        public virtual Restoran Restoran { get; set; } 
 
 
     }

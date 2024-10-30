@@ -8,6 +8,7 @@ namespace naTanjir.Model.SearchObject
     {
         public string? NazivGTE { get; set; } 
         public List<int>? VrstaRestoranaId { get; set; }
+        public int? VlasnikId { get; set; }
         public bool? IsVrstaRestoranaIncluded { get; set; }
         public bool? IsDeleted { get; set; }
     }

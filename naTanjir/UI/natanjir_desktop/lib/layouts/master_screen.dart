@@ -6,6 +6,7 @@ import 'package:natanjir_desktop/screens/admin_upravljanje_korisnickim_nalozima_
 import 'package:natanjir_desktop/screens/admin_upravljanje_restoranima_screen.dart';
 import 'package:natanjir_desktop/screens/korisnik_profile_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
+import 'package:natanjir_desktop/screens/vlasnik_upravljanje_menijem_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   MasterScreen(this.title, this.child, {super.key});
@@ -52,6 +53,20 @@ class _MasterScreenState extends State<MasterScreen> {
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text(
                                   "Admin panel",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!
+                                    .any((x) => x.uloga?.naziv == "Vlasnik"))
+                              Padding(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Text(
+                                  "Vlasnik panel",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -107,10 +122,73 @@ class _MasterScreenState extends State<MasterScreen> {
                               ),
                             if (AuthProvider.korisnikUloge != null &&
                                 AuthProvider.korisnikUloge!
+                                    .any((x) => x.uloga?.naziv == "Vlasnik"))
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.menu_book_outlined,
+                                  color: Colors.white,
+                                ),
+                                title: const Text(
+                                  "Upravljanje menijem",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          VlasnikUpravljanjeMenijemScreen()));
+                                },
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!
+                                    .any((x) => x.uloga?.naziv == "Vlasnik"))
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.person_outline,
+                                  color: Colors.white,
+                                ),
+                                title: const Text(
+                                  "Upravljanje zaposlenicima",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          VlasnikUpravljanjeMenijemScreen()));
+                                },
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!
+                                    .any((x) => x.uloga?.naziv == "Vlasnik"))
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.restaurant_outlined,
+                                  color: Colors.white,
+                                ),
+                                title: const Text(
+                                  "Upravljanje restoranom",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          VlasnikUpravljanjeMenijemScreen()));
+                                },
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!
                                     .any((x) => x.uloga?.naziv == "Admin"))
                               ListTile(
                                 leading: const Icon(
-                                  Icons.restaurant,
+                                  Icons.restaurant_outlined,
                                   color: Colors.white,
                                 ),
                                 title: const Text(
@@ -131,7 +209,7 @@ class _MasterScreenState extends State<MasterScreen> {
                                     .any((x) => x.uloga?.naziv == "Admin"))
                               ListTile(
                                 leading: const Icon(
-                                  Icons.person,
+                                  Icons.person_outline,
                                   color: Colors.white,
                                 ),
                                 title: const Text(
@@ -169,8 +247,8 @@ class _MasterScreenState extends State<MasterScreen> {
                               child: Divider(),
                             ),
                             ListTile(
-                              leading:
-                                  const Icon(Icons.edit, color: Colors.white),
+                              leading: const Icon(Icons.edit_outlined,
+                                  color: Colors.white),
                               title: const Text(
                                 "Uredi profil",
                                 style: TextStyle(
