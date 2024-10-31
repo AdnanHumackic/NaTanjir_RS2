@@ -92,7 +92,8 @@ class _VlasnikDodajProizvodScreenState
   }
 
   Widget _buildForm() {
-    return FormBuilder(
+    return SingleChildScrollView(
+      child: FormBuilder(
         key: _formKey,
         initialValue: _initialValue,
         child: Padding(
@@ -129,80 +130,74 @@ class _VlasnikDodajProizvodScreenState
                   ),
                 ),
               ),
-              SizedBox(
-                height: 25,
-              ),
-              SingleChildScrollView(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: FormBuilderTextField(
-                        name: 'naziv',
-                        decoration: InputDecoration(
-                          labelText: 'Naziv proizvoda',
-                          hintText: 'Naziv proizvoda',
-                          errorText: proizvodError,
-                          labelStyle: TextStyle(
-                            color: Color.fromARGB(255, 108, 108, 108),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
+              SizedBox(height: 25),
+              Row(
+                children: [
+                  Expanded(
+                    child: FormBuilderTextField(
+                      name: 'naziv',
+                      decoration: InputDecoration(
+                        labelText: 'Naziv proizvoda',
+                        hintText: 'Naziv proizvoda',
+                        errorText: proizvodError,
+                        labelStyle: TextStyle(
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(
-                              errorText: "Obavezno polje."),
-                        ]),
-                        onChanged: (value) async {
-                          if (value != null && proizvodResult != null) {
-                            final selectedRestoranId = await _formKey
-                                .currentState?.fields['restoranId']?.value;
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: "Obavezno polje."),
+                      ]),
+                      onChanged: (value) async {
+                        if (value != null && proizvodResult != null) {
+                          final selectedRestoranId = await _formKey
+                              .currentState?.fields['restoranId']?.value;
 
-                            var nazivPostoji = proizvodResult!.result.any(
-                                (proizvod) =>
-                                    proizvod.restoranId.toString() ==
-                                        selectedRestoranId &&
-                                    proizvod.naziv == value);
+                          var nazivPostoji = proizvodResult!.result.any(
+                              (proizvod) =>
+                                  proizvod.restoranId.toString() ==
+                                      selectedRestoranId &&
+                                  proizvod.naziv == value);
 
-                            if (nazivPostoji) {
-                              proizvodError =
-                                  "Proizvod s tim imenom već postoji u odabranom restoranu.";
-                            } else {
-                              proizvodError = null;
-                            }
-                            setState(() {});
+                          if (nazivPostoji) {
+                            proizvodError =
+                                "Proizvod s tim imenom već postoji u odabranom restoranu.";
+                          } else {
+                            proizvodError = null;
                           }
-                        },
-                      ),
+                          setState(() {});
+                        }
+                      },
                     ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: buildFormBuilderTextField(
-                        name: 'cijena',
-                        labelText: 'Cijena (npr. 34 ili 34.00)',
-                        hintText: 'Cijena',
-                        validators: [
-                          FormBuilderValidators.required(
-                              errorText: 'Cijena je obavezna'),
-                          FormBuilderValidators.match(
-                            r'^\d+([.]\d{2})?$',
-                            errorText:
-                                'Unesite ispravnu cijenu, npr. 34 ili 34.00',
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: buildFormBuilderTextField(
+                      name: 'cijena',
+                      labelText: 'Cijena (npr. 34 ili 34.00)',
+                      hintText: 'Cijena',
+                      validators: [
+                        FormBuilderValidators.required(
+                            errorText: 'Cijena je obavezna'),
+                        FormBuilderValidators.match(
+                          r'^\d+([.]\d{2})?$',
+                          errorText:
+                              'Unesite ispravnu cijenu, npr. 34 ili 34.00',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               Row(
                 children: [
                   Expanded(
@@ -264,63 +259,58 @@ class _VlasnikDodajProizvodScreenState
                       ),
                       onChanged: (value) async {
                         if (value != null) {
-                          if (value != null && proizvodResult != null) {
-                            final selectedRestoranId = await _formKey
-                                .currentState?.fields['naziv']?.value;
+                          final selectedRestoranId = await _formKey
+                              .currentState?.fields['naziv']?.value;
 
-                            var nazivPostoji = proizvodResult!.result.any(
-                                (proizvod) =>
-                                    value == proizvod.restoranId.toString());
+                          var nazivPostoji = proizvodResult!.result.any(
+                              (proizvod) =>
+                                  value == proizvod.restoranId.toString());
 
-                            if (nazivPostoji) {
-                              proizvodError =
-                                  "Proizvod s tim imenom već postoji u odabranom restoranu.";
-                            } else {
-                              proizvodError = null;
-                            }
-                            setState(() {});
+                          if (nazivPostoji) {
+                            proizvodError =
+                                "Proizvod s tim imenom već postoji u odabranom restoranu.";
+                          } else {
+                            proizvodError = null;
                           }
+                          setState(() {});
                         }
                       },
                     ),
                   ),
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               Row(
                 children: [
                   Expanded(
-                      child: FormBuilderTextField(
-                    name: 'opis',
-                    decoration: InputDecoration(
-                      labelText: 'Unesite opis',
-                      hintText: 'Unesite opis',
-                      labelStyle: TextStyle(
-                        color: Color.fromARGB(255, 108, 108, 108),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                    child: FormBuilderTextField(
+                      name: 'opis',
+                      decoration: InputDecoration(
+                        labelText: 'Unesite opis',
+                        hintText: 'Unesite opis',
+                        labelStyle: TextStyle(
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
                       ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: "Obavezno polje."),
+                      ]),
                     ),
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                          errorText: "Obavezno polje."),
-                    ]),
-                  )),
+                  ),
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               Row(
                 children: [
                   Expanded(
@@ -353,66 +343,68 @@ class _VlasnikDodajProizvodScreenState
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget _saveRow() {
     return Padding(
       padding: const EdgeInsets.all(25.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            width: 250,
-            height: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Color.fromARGB(255, 0, 83, 86),
-            ),
-            child: InkWell(
-              onTap: () async {
-                var isValid = _formKey.currentState!.saveAndValidate();
-                if (isValid == true) {
-                  var req = Map.from(_formKey.currentState!.value);
-                  req['slika'] = _base64Image;
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+          width: 250,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromARGB(255, 0, 83, 86),
+          ),
+          child: InkWell(
+            onTap: () async {
+              var isValid = _formKey.currentState!.saveAndValidate();
+              if (isValid == true) {
+                var req = Map.from(_formKey.currentState!.value);
+                req['slika'] = _base64Image;
 
-                  if (widget.proizvod == null) {
-                    await proizvodProvider.insert(req);
-                  } else {
-                    await proizvodProvider.update(
-                        widget.proizvod!.proizvodId!, req);
-                  }
-                  await QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.success,
-                    title: "Uspješno dodan/uređen proizvod!",
-                  );
-                  Navigator.pop(context, true);
-                  if (mounted) setState(() {});
+                if (widget.proizvod == null) {
+                  await proizvodProvider.insert(req);
                 } else {
-                  QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.error,
-                    title: "Greška prilikom dodavanja/uređivanja proizvoda.",
-                  );
+                  await proizvodProvider.update(
+                      widget.proizvod!.proizvodId!, req);
                 }
-              },
-              child: Center(
-                child: Text(
-                  "Sačuvaj",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                await QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.success,
+                  title: "Uspješno dodan/uređen proizvod!",
+                );
+                Navigator.pop(context, true);
+                if (mounted) setState(() {});
+              } else {
+                QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.error,
+                  title: "Greška prilikom dodavanja/uređivanja proizvoda.",
+                );
+              }
+            },
+            child: Center(
+              child: Text(
+                "Sačuvaj",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -15,7 +15,10 @@ Restoran _$RestoranFromJson(Map<String, dynamic> json) => Restoran()
   ..lokacija = json['lokacija'] as String?
   ..vrstaRestoranaId = (json['vrstaRestoranaId'] as num?)?.toInt()
   ..vlasnikId = (json['vlasnikId'] as num?)?.toInt()
-  ..isDeleted = json['isDeleted'] as bool?;
+  ..isDeleted = json['isDeleted'] as bool?
+  ..vrstaRestorana = json['vrstaRestorana'] == null
+      ? null
+      : VrstaRestorana.fromJson(json['vrstaRestorana'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$RestoranToJson(Restoran instance) => <String, dynamic>{
       'restoranId': instance.restoranId,
@@ -27,4 +30,5 @@ Map<String, dynamic> _$RestoranToJson(Restoran instance) => <String, dynamic>{
       'vrstaRestoranaId': instance.vrstaRestoranaId,
       'vlasnikId': instance.vlasnikId,
       'isDeleted': instance.isDeleted,
+      'vrstaRestorana': instance.vrstaRestorana,
     };

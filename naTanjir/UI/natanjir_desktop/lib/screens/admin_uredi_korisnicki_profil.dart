@@ -58,7 +58,9 @@ class _AdminUrediKorisnickiProfilScreenState
     return MasterScreen(
       "Uređivanje korisnikovog profila",
       Column(
-        children: [_buildForm(), _saveRow()],
+        children: [
+          _buildForm(),
+        ],
       ),
     );
   }
@@ -70,170 +72,58 @@ class _AdminUrediKorisnickiProfilScreenState
       initialValue: _initialValue,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                width: 200,
-                height: 190,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(20),
-                  image: widget.odabraniKorisnik?.slika != null
-                      ? DecorationImage(
-                          image: MemoryImage(
-                            base64Decode(widget.odabraniKorisnik!.slika!),
-                          ),
-                          fit: BoxFit.cover,
-                        )
-                      : DecorationImage(
-                          image: AssetImage("assets/images/noProfileImg.png"),
-                          fit: BoxFit.cover,
+        child: Container(
+          height: MediaQuery.of(context).size.height - 100,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    width: 200,
+                    height: 190,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(20),
+                      image: widget.odabraniKorisnik?.slika != null
+                          ? DecorationImage(
+                              image: MemoryImage(
+                                base64Decode(widget.odabraniKorisnik!.slika!),
+                              ),
+                              fit: BoxFit.cover,
+                            )
+                          : DecorationImage(
+                              image:
+                                  AssetImage("assets/images/noProfileImg.png"),
+                              fit: BoxFit.cover,
+                            ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
                         ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Expanded(
-                    child: Text(
-                        "TODO: Promjena korisnickog imena salje mail sa rabbit mq-om")),
-                SizedBox(width: 15),
-                Expanded(
-                  child: FormBuilderTextField(
-                    name: 'korisnickoIme',
-                    decoration: InputDecoration(
-                      labelText: 'Korisničko ime',
-                      hintText: 'Korisničko ime',
-                      errorText: usernameError,
-                      labelStyle: TextStyle(
-                        color: Color.fromARGB(255, 108, 108, 108),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                          errorText: "Obavezno polje."),
-                    ]),
-                    onChanged: (value) async {
-                      if (value != null && korisniciResult != null) {
-                        var username = await korisniciResult!.result
-                            .map((e) => e.korisnickoIme == value)
-                            .toList();
-
-                        if (username.contains(true)) {
-                          usernameError = "Korisnik s tim imenom već postoji.";
-                          setState(() {});
-                        } else {
-                          usernameError = null;
-                        }
-                      }
-
-                      setState(() {});
-                    },
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 15),
-            Row(
-              children: [
-                Expanded(
-                    child: buildFormBuilderTextField(
-                  name: 'ime',
-                  labelText: 'Ime',
-                  validators: [
-                    FormBuilderValidators.required(
-                        errorText: "Obavezno polje."),
-                    FormBuilderValidators.minLength(2,
-                        errorText: "Minimalna dužina imena je 2 znaka."),
-                    FormBuilderValidators.maxLength(40,
-                        errorText: "Maksimalna dužina imena je 40 znakova."),
-                    FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
-                        errorText:
-                            "Ime mora počinjati sa velikim slovom i smije sadržavati samo slova.")
-                  ],
-                )),
-                SizedBox(width: 15),
-                Expanded(
-                    child: buildFormBuilderTextField(
-                  name: 'prezime',
-                  labelText: 'Prezime',
-                  validators: [
-                    FormBuilderValidators.required(
-                        errorText: "Obavezno polje."),
-                    FormBuilderValidators.minLength(2,
-                        errorText: "Minimalna dužina prezimena je 2 znaka."),
-                    FormBuilderValidators.maxLength(40,
-                        errorText:
-                            "Maksimalna dužina prezimena je 40 znakova."),
-                    FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
-                        errorText:
-                            "Prezime mora počinjati sa velikim slovom i smije sadržavati samo slova.")
-                  ],
-                ))
-              ],
-            ),
-            SizedBox(height: 15),
-            Row(
-              children: [
-                Expanded(
-                    child: buildFormBuilderTextField(
-                  name: 'email',
-                  labelText: 'Email',
-                  validators: [
-                    FormBuilderValidators.required(
-                        errorText: "Obavezno polje."),
-                    FormBuilderValidators.email(
-                        errorText: "Email nije validan.")
-                  ],
-                )),
-                SizedBox(width: 15),
-                Expanded(
-                  child: buildFormBuilderTextField(
-                    name: 'telefon',
-                    labelText: 'Broj telefona',
-                    validators: [
-                      FormBuilderValidators.required(
-                          errorText: "Obavezno polje."),
-                      FormBuilderValidators.match(r'^\+\d{7,15}$',
-                          errorText:
-                              "Telefon mora imati od 7 do 15 cifara i počinjati znakom +."),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: FormBuilderField(
-                    name: "slika",
-                    builder: (field) {
-                      return InputDecorator(
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "TODO: Promjena korisnickog imena salje mail sa rabbit mq-om",
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: FormBuilderTextField(
+                        name: 'korisnickoIme',
                         decoration: InputDecoration(
-                          labelText: 'Odaberite sliku',
+                          labelText: 'Korisničko ime',
+                          hintText: 'Korisničko ime',
+                          errorText: usernameError,
                           labelStyle: TextStyle(
                             color: Color.fromARGB(255, 108, 108, 108),
                             fontSize: 18,
@@ -246,19 +136,145 @@ class _AdminUrediKorisnickiProfilScreenState
                           filled: true,
                           fillColor: Colors.white,
                         ),
-                        child: ListTile(
-                          leading: Icon(Icons.image),
-                          title: Text("Select image"),
-                          trailing: Icon(Icons.file_upload),
-                          onTap: getImage,
-                        ),
-                      );
-                    },
-                  ),
-                )
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                            errorText: "Obavezno polje.",
+                          ),
+                        ]),
+                        onChanged: (value) async {
+                          if (value != null && korisniciResult != null) {
+                            var username = await korisniciResult!.result
+                                .map((e) => e.korisnickoIme == value)
+                                .toList();
+
+                            if (username.contains(true)) {
+                              usernameError =
+                                  "Korisnik s tim imenom već postoji.";
+                              setState(() {});
+                            } else {
+                              usernameError = null;
+                            }
+                          }
+
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildFormBuilderTextField(
+                        name: 'ime',
+                        labelText: 'Ime',
+                        validators: [
+                          FormBuilderValidators.required(
+                              errorText: "Obavezno polje."),
+                          FormBuilderValidators.minLength(2,
+                              errorText: "Minimalna dužina imena je 2 znaka."),
+                          FormBuilderValidators.maxLength(40,
+                              errorText:
+                                  "Maksimalna dužina imena je 40 znakova."),
+                          FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
+                              errorText:
+                                  "Ime mora počinjati sa velikim slovom i smije sadržavati samo slova."),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: buildFormBuilderTextField(
+                        name: 'prezime',
+                        labelText: 'Prezime',
+                        validators: [
+                          FormBuilderValidators.required(
+                              errorText: "Obavezno polje."),
+                          FormBuilderValidators.minLength(2,
+                              errorText:
+                                  "Minimalna dužina prezimena je 2 znaka."),
+                          FormBuilderValidators.maxLength(40,
+                              errorText:
+                                  "Maksimalna dužina prezimena je 40 znakova."),
+                          FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
+                              errorText:
+                                  "Prezime mora počinjati sa velikim slovom i smije sadržavati samo slova."),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildFormBuilderTextField(
+                        name: 'email',
+                        labelText: 'Email',
+                        validators: [
+                          FormBuilderValidators.required(
+                              errorText: "Obavezno polje."),
+                          FormBuilderValidators.email(
+                              errorText: "Email nije validan."),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: buildFormBuilderTextField(
+                        name: 'telefon',
+                        labelText: 'Broj telefona',
+                        validators: [
+                          FormBuilderValidators.required(
+                              errorText: "Obavezno polje."),
+                          FormBuilderValidators.match(r'^\+\d{7,15}$',
+                              errorText:
+                                  "Telefon mora imati od 7 do 15 cifara i počinjati znakom +."),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FormBuilderField(
+                        name: "slika",
+                        builder: (field) {
+                          return InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'Odaberite sliku',
+                              labelStyle: TextStyle(
+                                color: Color.fromARGB(255, 108, 108, 108),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            child: ListTile(
+                              leading: Icon(Icons.image),
+                              title: Text("Select image"),
+                              trailing: Icon(Icons.file_upload),
+                              onTap: getImage,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                _saveRow(),
               ],
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -266,45 +282,51 @@ class _AdminUrediKorisnickiProfilScreenState
 
   Widget _saveRow() {
     return Padding(
-      padding: const EdgeInsets.all(0.0),
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(97, 158, 158, 158),
-        ),
-        child: InkWell(
-          onTap: () async {
-            var isValid = _formKey.currentState!.saveAndValidate();
-            if (isValid == true) {
-              var req = Map.from(_formKey.currentState!.value);
-              req['slika'] = _base64Image;
-              if (widget.odabraniKorisnik?.korisnikId != null) {
-                await korisniciProvider.update(
-                    widget.odabraniKorisnik!.korisnikId!, req);
+      padding: const EdgeInsets.all(15.0),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+          width: 250,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromARGB(255, 0, 83, 86),
+          ),
+          child: InkWell(
+            onTap: () async {
+              var isValid = _formKey.currentState!.saveAndValidate();
+              if (isValid == true) {
+                var req = Map.from(_formKey.currentState!.value);
+                req['slika'] = _base64Image;
+                if (widget.odabraniKorisnik?.korisnikId != null) {
+                  await korisniciProvider.update(
+                      widget.odabraniKorisnik!.korisnikId!, req);
+                }
+                await QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.success,
+                  title: "Uspješno uređen profil!",
+                );
+                Navigator.pop(context, true);
+                if (mounted) setState(() {});
+              } else {
+                QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.error,
+                  title: "Greška prilikom uređivanja profila.",
+                );
               }
-              await QuickAlert.show(
-                context: context,
-                type: QuickAlertType.success,
-                title: "Uspješno uređen profil!",
-              );
-              Navigator.pop(context, true);
-              if (mounted) setState(() {});
-            } else {
-              QuickAlert.show(
-                context: context,
-                type: QuickAlertType.error,
-                title: "Greška prilikom uređivanja profila.",
-              );
-            }
-          },
-          child: Center(
-            child: Text(
-              "Sačuvaj promjene",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
+            },
+            child: Center(
+              child: Text(
+                "Sačuvaj promjene",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

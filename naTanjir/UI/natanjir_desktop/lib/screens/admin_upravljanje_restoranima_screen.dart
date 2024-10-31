@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:natanjir_desktop/layouts/master_screen.dart';
@@ -42,12 +43,10 @@ class _AdminUpravljanjeRestoranimaScreenState
   late KorisniciProvider korisniciProvider;
   late VrstaRestoranaProvider vrstaRestoranaProvider;
   late RestoranProvider restoranProvider;
-  late OcjenaRestoranProvider ocjenaRestoranProvider;
 
   SearchResult<Korisnici>? korisniciResult;
   SearchResult<VrstaRestorana>? vrstaRestoranaResult;
   SearchResult<Restoran>? restoranResult;
-  SearchResult<OcjenaRestoran>? ocjenaRestoranResult;
   late RestoranDataSource _source;
   int page = 1;
   int pageSize = 10;
@@ -90,7 +89,6 @@ class _AdminUpravljanjeRestoranimaScreenState
     korisniciProvider = context.read<KorisniciProvider>();
     vrstaRestoranaProvider = context.read<VrstaRestoranaProvider>();
     restoranProvider = context.read<RestoranProvider>();
-    ocjenaRestoranProvider = context.read<OcjenaRestoranProvider>();
     _source = RestoranDataSource(
         provider: restoranProvider,
         context: context,
@@ -103,7 +101,6 @@ class _AdminUpravljanjeRestoranimaScreenState
     korisniciResult = await korisniciProvider.get(filter: searchRequest);
     vrstaRestoranaResult = await vrstaRestoranaProvider.get();
     restoranResult = await restoranProvider.get();
-    ocjenaRestoranResult = await ocjenaRestoranProvider.get();
   }
 
   @override
@@ -229,7 +226,7 @@ class _AdminUpravljanjeRestoranimaScreenState
               height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Color.fromARGB(97, 158, 158, 158),
+                color: Color.fromARGB(255, 0, 83, 86),
               ),
               child: InkWell(
                 onTap: () async {
@@ -248,7 +245,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                     "Očisti filtere",
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -391,7 +388,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                         height: 50,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Color.fromARGB(97, 158, 158, 158),
+                          color: Color.fromARGB(255, 0, 83, 86),
                         ),
                         child: InkWell(
                           onTap: () async {
@@ -413,7 +410,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                               "Generiši lozinku",
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
+                                color: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -619,7 +616,7 @@ class _AdminUpravljanjeRestoranimaScreenState
             children: [
               Row(
                 children: [
-                  Expanded(
+                  Flexible(
                     child: FormBuilderTextField(
                       name: 'naziv',
                       decoration: InputDecoration(
@@ -669,7 +666,7 @@ class _AdminUpravljanjeRestoranimaScreenState
               SizedBox(height: 15),
               Row(
                 children: [
-                  Expanded(
+                  Flexible(
                     child: buildFormBuilderTextField(
                       name: 'radnoVrijemeOd',
                       labelText: 'Radno vrijeme OD',
@@ -684,7 +681,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                     ),
                   ),
                   SizedBox(width: 15),
-                  Expanded(
+                  Flexible(
                     child: buildFormBuilderTextField(
                       name: 'radnoVrijemeDo',
                       labelText: 'Radno vrijeme DO',
@@ -704,7 +701,7 @@ class _AdminUpravljanjeRestoranimaScreenState
               SizedBox(height: 15),
               Row(
                 children: [
-                  Expanded(
+                  Flexible(
                     child: FormBuilderDropdown(
                       validator: FormBuilderValidators.required(
                           errorText: "Obavezno polje."),
@@ -737,7 +734,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                   SizedBox(
                     width: 15,
                   ),
-                  Expanded(
+                  Flexible(
                     child: FormBuilderDropdown(
                       name: 'vlasnikId',
                       validator: FormBuilderValidators.required(
@@ -774,7 +771,7 @@ class _AdminUpravljanjeRestoranimaScreenState
               SizedBox(height: 15),
               Row(
                 children: [
-                  Expanded(
+                  Flexible(
                     child: buildFormBuilderTextField(
                       name: 'lokacija',
                       labelText: 'Lokacija restorana',
@@ -791,7 +788,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                     ),
                   ),
                   SizedBox(width: 15),
-                  Expanded(
+                  Flexible(
                     child: FormBuilderField(
                       name: "slikaRest",
                       builder: (field) {
@@ -851,6 +848,7 @@ class _AdminUpravljanjeRestoranimaScreenState
                   DataColumn(label: Text("Lokacija")),
                   DataColumn(label: Text("Radno vrijeme OD")),
                   DataColumn(label: Text("Radno vrijeme DO")),
+                  DataColumn(label: Text("Obrisan")),
                   DataColumn(label: Text("Obriši restoran")),
                 ],
                 source: _source,
@@ -866,54 +864,60 @@ class _AdminUpravljanjeRestoranimaScreenState
   Widget _saveVlasnikaRow() {
     return Padding(
       padding: const EdgeInsets.all(0.0),
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(97, 158, 158, 158),
-        ),
-        child: InkWell(
-          onTap: () async {
-            var isValid = _formKeyVlas.currentState!.saveAndValidate();
-            if (isValid == true) {
-              var req = Map.from(_formKeyVlas.currentState!.value);
-              DateTime dob = req['datumRodjenja'];
-              req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
-              req['uloge'] = [2];
-              req['slika'] = _base64Image;
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+          width: 250,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromARGB(255, 0, 83, 86),
+          ),
+          child: InkWell(
+            onTap: () async {
+              var isValid = _formKeyVlas.currentState!.saveAndValidate();
+              if (isValid == true) {
+                var req = Map.from(_formKeyVlas.currentState!.value);
+                DateTime dob = req['datumRodjenja'];
+                req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
+                req['uloge'] = [2];
+                req['slika'] = _base64Image;
 
-              await korisniciProvider.insert(req);
-              QuickAlert.show(
-                context: context,
-                type: QuickAlertType.confirm,
-                title: "Uspješno dodan vlasnik!",
-                text: "Da li želite isprintati podatke o vlasniku?",
-                confirmBtnText: "Da",
-                cancelBtnText: "Ne",
-                onConfirmBtnTap: () async {
-                  createPdfFile(req);
-                  Navigator.pop(context);
-                },
-              );
-              if (mounted) setState(() {});
-              setState(() {
-                resetFields();
-              });
-            } else {
-              QuickAlert.show(
-                context: context,
-                type: QuickAlertType.error,
-                title: "Greška prilikom dodavanja vlasnika.",
-              );
-            }
-          },
-          child: Center(
-            child: Text(
-              "Dodaj vlasnika",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
+                await korisniciProvider.insert(req);
+                await QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.confirm,
+                  title: "Uspješno dodan vlasnik!",
+                  text: "Da li želite isprintati podatke o vlasniku?",
+                  confirmBtnText: "Da",
+                  cancelBtnText: "Ne",
+                  onConfirmBtnTap: () async {
+                    createPdfFile(req);
+                    Navigator.pop(context);
+                  },
+                );
+                if (mounted) setState(() {});
+                setState(() {
+                  resetFields();
+                });
+              } else {
+                QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.error,
+                  title: "Greška prilikom dodavanja vlasnika.",
+                );
+              }
+            },
+            child: Center(
+              child: Text(
+                "Dodaj vlasnika",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -925,44 +929,50 @@ class _AdminUpravljanjeRestoranimaScreenState
   Widget _saveRestoranRow() {
     return Padding(
       padding: const EdgeInsets.all(0.0),
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(97, 158, 158, 158),
-        ),
-        child: InkWell(
-          onTap: () async {
-            var isValid = _formKeyRest.currentState!.saveAndValidate();
-            if (isValid == true) {
-              var req = Map.from(_formKeyRest.currentState!.value);
-              req['slika'] = _base64Image;
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+          width: 250,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromARGB(255, 0, 83, 86),
+          ),
+          child: InkWell(
+            onTap: () async {
+              var isValid = _formKeyRest.currentState!.saveAndValidate();
+              if (isValid == true) {
+                var req = Map.from(_formKeyRest.currentState!.value);
+                req['slika'] = _base64Image;
 
-              await restoranProvider.insert(req);
-              QuickAlert.show(
-                context: context,
-                type: QuickAlertType.success,
-                title: "Uspješno dodan restoran!",
-              );
-              if (mounted) setState(() {});
-              setState(() {
-                resetFields();
-              });
-            } else {
-              QuickAlert.show(
-                context: context,
-                type: QuickAlertType.error,
-                title: "Greška prilikom dodavanja restorana.",
-              );
-            }
-          },
-          child: Center(
-            child: Text(
-              "Dodaj restoran",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
+                await restoranProvider.insert(req);
+                await QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.success,
+                  title: "Uspješno dodan restoran!",
+                );
+                if (mounted) setState(() {});
+                setState(() {
+                  resetFields();
+                });
+              } else {
+                await QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.error,
+                  title: "Greška prilikom dodavanja restorana.",
+                );
+              }
+            },
+            child: Center(
+              child: Text(
+                "Dodaj restoran",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -1158,6 +1168,12 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
               style: TextStyle(fontSize: 15))),
           DataCell(Text(item.radnoVrijemeDo.toString(),
               style: TextStyle(fontSize: 15))),
+          DataCell(
+            Text(
+              item?.isDeleted == true ? 'Da' : 'Ne',
+              style: TextStyle(fontSize: 15),
+            ),
+          ),
           if (item.isDeleted == false)
             DataCell(
               TextButton(
@@ -1274,7 +1290,11 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
   Future<RemoteDataSourceDetails<Restoran>> getNextPage(
       NextPageRequest pageRequest) async {
     page = (pageRequest.offset ~/ pageSize).toInt() + 1;
-    filter = {'nazivGTE': nazivRestorana, 'isDeleted': isDeleted};
+    filter = {
+      'nazivGTE': nazivRestorana,
+      'isDeleted': isDeleted,
+      'isVrstaRestoranaIncluded': true
+    };
 
     try {
       var result =

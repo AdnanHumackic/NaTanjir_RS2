@@ -315,6 +315,7 @@ class _AdminUpravljanjeKorisnickimNalozimaScreenState
                     DataColumn(label: Text("Email")),
                     DataColumn(label: Text("Telefon")),
                     DataColumn(label: Text("Datum rođenja")),
+                    DataColumn(label: Text("Obrisan")),
                     DataColumn(label: Text("Aktivacija/Deaktivacija")),
                   ],
                   source: _source,
@@ -392,6 +393,12 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
               Text(item.telefon.toString(), style: TextStyle(fontSize: 15))),
           DataCell(Text(formatDate(item.datumRodjenja.toString()),
               style: TextStyle(fontSize: 15))),
+          DataCell(
+            Text(
+              item?.isDeleted == true ? 'Da' : 'Ne',
+              style: TextStyle(fontSize: 15),
+            ),
+          ),
           if (item.isDeleted == false)
             DataCell(
               TextButton(

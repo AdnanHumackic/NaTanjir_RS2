@@ -35,6 +35,7 @@ class _VlasnikUpravljanjeMenijemScreenState
   SearchResult<Restoran>? restoranResult;
   SearchResult<Proizvod>? proizvodResult;
   SearchResult<VrstaProizvodum>? vrstaProizvodumResult;
+
   late ProizvodiDataSource _source;
   int page = 1;
   int pageSize = 10;
@@ -421,7 +422,7 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
             TextButton(
               onPressed: () async {
                 try {
-                  QuickAlert.show(
+                  await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.confirm,
                     title:
@@ -461,7 +462,7 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
             TextButton(
               onPressed: () async {
                 try {
-                  QuickAlert.show(
+                  await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.confirm,
                     title:

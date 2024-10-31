@@ -46,7 +46,10 @@ namespace naTanjir.Services
             {
                 query = query.Include(x => x.VrstaRestorana);
             }
-
+            if (!string.IsNullOrWhiteSpace(searchObject.VrstaRestoranaNazivGTE))
+            {
+                query = query.Where(x => x.VrstaRestorana.Naziv.Contains(searchObject.VrstaRestoranaNazivGTE));
+            }
             if (searchObject?.IsDeleted != null)
             {
                 if (searchObject.IsDeleted == false)

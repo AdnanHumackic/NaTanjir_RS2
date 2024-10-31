@@ -269,6 +269,23 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                   maxLines: 2,
                 ),
                 SizedBox(height: 5),
+                Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.yellow, size: 16),
+                    SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        "${_avgOcjenaRestoran(widget.odabraniRestoran!.restoranId)}",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -435,16 +452,12 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                     BorderRadius.all(Radius.circular(8)),
                                 child: FittedBox(
                                   fit: BoxFit.fill,
-                                  child:
-                                      widget.odabraniRestoran!.slika != null &&
-                                              widget.odabraniRestoran!.slika!
-                                                  .isNotEmpty
-                                          ? imageFromString(
-                                              widget.odabraniRestoran!.slika!)
-                                          : Image.asset(
-                                              "assets/images/emptyProductImage.png",
-                                              fit: BoxFit.fill,
-                                            ),
+                                  child: e!.slika != null && e.slika!.isNotEmpty
+                                      ? imageFromString(e.slika!)
+                                      : Image.asset(
+                                          "assets/images/emptyProductImage.png",
+                                          fit: BoxFit.fill,
+                                        ),
                                 ),
                               ),
                             ),
@@ -576,6 +589,25 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
     double avgOcjena =
         ocjenaProizvod.map((e) => e?.ocjena ?? 0).reduce((a, b) => a + b) /
             ocjenaProizvod.length;
+    return formatNumber(avgOcjena);
+  }
+
+  dynamic _avgOcjenaRestoran(int? restoranId) {
+    if (ocjenaRestoranResult == null || ocjenaRestoranResult!.result == null) {
+      return 0;
+    }
+
+    var ocjenaRestoran = ocjenaRestoranResult!.result
+        .where((e) => e.restoranId == restoranId)
+        .toList();
+
+    if (ocjenaRestoran.isEmpty) {
+      return 0;
+    }
+    double avgOcjena =
+        ocjenaRestoran.map((e) => e?.ocjena ?? 0).reduce((a, b) => a + b) /
+            ocjenaRestoran.length;
+
     return formatNumber(avgOcjena);
   }
 
