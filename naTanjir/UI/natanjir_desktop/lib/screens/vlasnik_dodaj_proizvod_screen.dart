@@ -263,8 +263,9 @@ class _VlasnikDodajProizvodScreenState
                               .currentState?.fields['naziv']?.value;
 
                           var nazivPostoji = proizvodResult!.result.any(
-                              (proizvod) =>
-                                  value == proizvod.restoranId.toString());
+                              (proizvod) => proizvod.naziv
+                                  .toString()
+                                  .contains(value.toString()));
 
                           if (nazivPostoji) {
                             proizvodError =
@@ -383,7 +384,7 @@ class _VlasnikDodajProizvodScreenState
                   type: QuickAlertType.success,
                   title: "Uspješno dodan/uređen proizvod!",
                 );
-                Navigator.pop(context, true);
+                clearinput();
                 if (mounted) setState(() {});
               } else {
                 QuickAlert.show(
@@ -407,6 +408,11 @@ class _VlasnikDodajProizvodScreenState
         ),
       ),
     );
+  }
+
+  void clearinput() {
+    _formKey.currentState?.reset();
+    proizvodError = null;
   }
 
   File? _image;

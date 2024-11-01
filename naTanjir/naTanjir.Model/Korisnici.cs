@@ -25,6 +25,7 @@ namespace naTanjir.Model
         public DateTime DatumRodjenja { get; set; }
 
         public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; }
+        public int? RestoranId { get; set; }
 
     }
 }

@@ -346,6 +346,7 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                   DateTime dob = req['datumRodjenja'];
                   req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
                   req['uloge'] = [1];
+                  req['restoranId'] = null;
                   await korisniciProvider.insert(req);
                   QuickAlert.show(
                     context: context,

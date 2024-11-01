@@ -27,6 +27,8 @@ public partial class Restoran:ISoftDelete
 
     public int VlasnikId { get; set; }
 
+    public virtual ICollection<Korisnici> Korisnicis { get; set; } = new List<Korisnici>();
+
     public virtual ICollection<OcjenaRestoran> OcjenaRestorans { get; set; } = new List<OcjenaRestoran>();
 
     public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();

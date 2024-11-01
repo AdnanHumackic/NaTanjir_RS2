@@ -189,25 +189,31 @@ class _VlasnikDashboardScreenState extends State<VlasnikDashboardScreen> {
         .map((e) => e.narudzbaId)
         .toList();
 
+    var processedIds = <int>{};
     List<Narudzba> narudzbeList = [];
     for (var i in stavke) {
-      var filtrirane = narudzbaResult!.result
-          .where((element) => element.narudzbaId == i)
-          .toList();
+      if (processedIds.add(i!)) {
+        var filtrirane = narudzbaResult!.result
+            .where((element) => element.narudzbaId == i)
+            .toList();
 
-      narudzbeList.addAll(filtrirane);
+        narudzbeList.addAll(filtrirane);
+      }
     }
     double ukupnaZar = 0;
+    var narudzbaIds = <int>{};
     for (var i in stavke) {
-      var zarada = narudzbaResult!.result
-          .where((element) => element.narudzbaId == i)
-          .map((e) => e.ukupnaCijena)
-          .where((cijena) => cijena != null)
-          .cast<double>()
-          .toList();
+      if (narudzbaIds.add(i!)) {
+        var zarada = narudzbaResult!.result
+            .where((element) => element.narudzbaId == i)
+            .map((e) => e.ukupnaCijena)
+            .where((cijena) => cijena != null)
+            .cast<double>()
+            .toList();
 
-      if (zarada.isNotEmpty) {
-        ukupnaZar += zarada.reduce((a, b) => a + b);
+        if (zarada.isNotEmpty) {
+          ukupnaZar += zarada.reduce((a, b) => a + b);
+        }
       }
     }
 
@@ -397,13 +403,17 @@ class _VlasnikDashboardScreenState extends State<VlasnikDashboardScreen> {
         .toList();
 
     List<Narudzba> narudzbeList = [];
-    for (var i in stavke) {
-      var filtrirane = narudzbaResult!.result
-          .where((element) =>
-              element.stateMachine != "ponistena" && element.narudzbaId == i)
-          .toList();
+    var processedIds = <int>{};
 
-      narudzbeList.addAll(filtrirane);
+    for (var i in stavke) {
+      if (processedIds.add(i!)) {
+        var filtrirane = narudzbaResult!.result
+            .where((element) =>
+                element.stateMachine != "ponistena" && element.narudzbaId == i)
+            .toList();
+
+        narudzbeList.addAll(filtrirane);
+      }
     }
 
     List<int> narudzbePoMjesecima = List.filled(12, 0);

@@ -17,8 +17,6 @@ public partial class RestoranFavorit
 
     public int RestoranId { get; set; }
 
-    public bool? IsFavorite { get; set; }
-
     public virtual Korisnici Korisnik { get; set; } = null!;
 
     public virtual Restoran Restoran { get; set; } = null!;

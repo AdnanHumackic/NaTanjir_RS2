@@ -8,6 +8,7 @@ import 'package:natanjir_desktop/screens/korisnik_profile_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_upravljanje_menijem_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_upravljanje_restoranom_screen.dart';
+import 'package:natanjir_desktop/screens/vlasnik_upravljanje_zaposlenicima_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   MasterScreen(this.title, this.child, {super.key});
@@ -160,7 +161,7 @@ class _MasterScreenState extends State<MasterScreen> {
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
-                                          VlasnikUpravljanjeMenijemScreen()));
+                                          VlasnikUpravljanjeZaposlenicimaScreen()));
                                 },
                               ),
                             if (AuthProvider.korisnikUloge != null &&
@@ -240,7 +241,7 @@ class _MasterScreenState extends State<MasterScreen> {
                                 ),
                               ),
                               onTap: () {
-                                Navigator.of(context).pop();
+                                Navigator.pop(context, true);
                               },
                             ),
                             Padding(

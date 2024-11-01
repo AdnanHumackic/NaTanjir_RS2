@@ -31,15 +31,21 @@ public partial class Korisnici:ISoftDelete
 
     public int? LokacijaId { get; set; }
 
+    public int? RestoranId { get; set; }
+
     public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; } = new List<KorisniciUloge>();
 
     public virtual Lokacija? Lokacija { get; set; }
 
-    public virtual ICollection<Narudzba> Narudzbas { get; set; } = new List<Narudzba>();
+    public virtual ICollection<Narudzba> NarudzbaDostavljacs { get; set; } = new List<Narudzba>();
+
+    public virtual ICollection<Narudzba> NarudzbaKorisniks { get; set; } = new List<Narudzba>();
 
     public virtual ICollection<OcjenaProizvod> OcjenaProizvods { get; set; } = new List<OcjenaProizvod>();
 
     public virtual ICollection<OcjenaRestoran> OcjenaRestorans { get; set; } = new List<OcjenaRestoran>();
+
+    public virtual Restoran? Restoran { get; set; }
 
     public virtual ICollection<RestoranFavorit> RestoranFavorits { get; set; } = new List<RestoranFavorit>();
 

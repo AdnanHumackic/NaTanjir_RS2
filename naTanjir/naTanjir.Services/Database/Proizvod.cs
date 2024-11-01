@@ -11,7 +11,7 @@ public partial class Proizvod:ISoftDelete
 
     public decimal Cijena { get; set; }
 
-    public string Opis { get; set; } = null!;
+    public string? Opis { get; set; }
 
     public byte[]? Slika { get; set; }
 

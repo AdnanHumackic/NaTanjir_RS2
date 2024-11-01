@@ -199,7 +199,8 @@ class _KorpaScreenState extends State<KorpaScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(8)),
                         child: FittedBox(
                           fit: BoxFit.fill,
-                          child: productDetails['slika'] == null
+                          child: productDetails['slika'] != null &&
+                                  productDetails['slika'] is String
                               ? imageFromString(productDetails['slika'])
                               : Image.asset(
                                   "assets/images/emptyProductImage.png",

@@ -406,7 +406,17 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
         DataCell(Text(item?.naziv ?? '', style: TextStyle(fontSize: 15))),
         DataCell(Text("${formatNumber(item!.cijena)} KM",
             style: TextStyle(fontSize: 15))),
-        DataCell(Text(item?.opis ?? '', style: TextStyle(fontSize: 15))),
+        DataCell(
+          Container(
+            width: 50,
+            child: Text(
+              item?.opis ?? '',
+              style: TextStyle(fontSize: 15),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ),
         DataCell(Text(item?.vrstaProizvoda?.naziv.toString() ?? '',
             style: TextStyle(fontSize: 15))),
         DataCell(Text(item?.restoran?.naziv.toString() ?? '',

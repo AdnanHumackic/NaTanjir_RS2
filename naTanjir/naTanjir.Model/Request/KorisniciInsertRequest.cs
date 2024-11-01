@@ -22,5 +22,6 @@ namespace naTanjir.Model.Request
         public DateTime DatumRodjenja { get; set; }
         
         public List<int> Uloge { get; set; }
+        public int? RestoranId { get; set; }
     }
 }

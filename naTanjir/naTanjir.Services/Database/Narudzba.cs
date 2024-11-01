@@ -21,6 +21,10 @@ public partial class Narudzba:ISoftDelete
 
     public int KorisnikId { get; set; }
 
+    public int? DostavljacId { get; set; }
+
+    public virtual Korisnici? Dostavljac { get; set; }
+
     public virtual Korisnici Korisnik { get; set; } = null!;
 
     public virtual ICollection<StavkeNarudzbe> StavkeNarudzbes { get; set; } = new List<StavkeNarudzbe>();

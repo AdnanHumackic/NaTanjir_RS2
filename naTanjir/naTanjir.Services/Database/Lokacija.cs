@@ -7,6 +7,8 @@ public partial class Lokacija:ISoftDelete
 {
     public int LokacijaId { get; set; }
 
+    public string? Adresa { get; set; }
+
     public decimal GeografskaDuzina { get; set; }
 
     public decimal GeografskaSirina { get; set; }

@@ -9,3 +9,4 @@ class AuthProvider {
   static String? datumRodjenja;
   static String? slika;
 }
+//dodati restoranId eventualno

@@ -51,7 +51,7 @@ public partial class NaTanjirContext : DbContext
     {
         modelBuilder.Entity<Korisnici>(entity =>
         {
-            entity.HasKey(e => e.KorisnikId).HasName("PK__Korisnic__80B06D61C1B2AB2D");
+            entity.HasKey(e => e.KorisnikId).HasName("PK__Korisnic__80B06D615C84156D");
 
             entity.ToTable("Korisnici");
 
@@ -76,6 +76,7 @@ public partial class NaTanjirContext : DbContext
             entity.Property(e => e.Prezime)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.RestoranId).HasColumnName("RestoranID");
             entity.Property(e => e.Telefon)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -84,11 +85,15 @@ public partial class NaTanjirContext : DbContext
             entity.HasOne(d => d.Lokacija).WithMany(p => p.Korisnicis)
                 .HasForeignKey(d => d.LokacijaId)
                 .HasConstraintName("FKKorisnici502920");
+
+            entity.HasOne(d => d.Restoran).WithMany(p => p.Korisnicis)
+                .HasForeignKey(d => d.RestoranId)
+                .HasConstraintName("FKKorisnici730368");
         });
 
         modelBuilder.Entity<KorisniciUloge>(entity =>
         {
-            entity.HasKey(e => e.KorisnikUlogaId).HasName("PK__Korisnic__1608720E68DAA251");
+            entity.HasKey(e => e.KorisnikUlogaId).HasName("PK__Korisnic__1608720E0989100E");
 
             entity.ToTable("KorisniciUloge");
 
@@ -110,11 +115,14 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<Lokacija>(entity =>
         {
-            entity.HasKey(e => e.LokacijaId).HasName("PK__Lokacija__49DE2C2AB15D94E6");
+            entity.HasKey(e => e.LokacijaId).HasName("PK__Lokacija__49DE2C2A9281FD2A");
 
             entity.ToTable("Lokacija");
 
             entity.Property(e => e.LokacijaId).HasColumnName("LokacijaID");
+            entity.Property(e => e.Adresa)
+                .HasMaxLength(255)
+                .IsUnicode(false);
             entity.Property(e => e.GeografskaDuzina).HasColumnType("decimal(18, 8)");
             entity.Property(e => e.GeografskaSirina).HasColumnType("decimal(18, 8)");
             entity.Property(e => e.VrijemeBrisanja).HasColumnType("date");
@@ -122,12 +130,13 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<Narudzba>(entity =>
         {
-            entity.HasKey(e => e.NarudzbaId).HasName("PK__Narudzba__FBEC1357DB43AB89");
+            entity.HasKey(e => e.NarudzbaId).HasName("PK__Narudzba__FBEC1357198DE1F7");
 
             entity.ToTable("Narudzba");
 
             entity.Property(e => e.NarudzbaId).HasColumnName("NarudzbaID");
             entity.Property(e => e.DatumKreiranja).HasColumnType("datetime");
+            entity.Property(e => e.DostavljacId).HasColumnName("DostavljacID");
             entity.Property(e => e.KorisnikId).HasColumnName("KorisnikID");
             entity.Property(e => e.StateMachine)
                 .HasMaxLength(100)
@@ -135,7 +144,11 @@ public partial class NaTanjirContext : DbContext
             entity.Property(e => e.UkupnaCijena).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.VrijemeBrisanja).HasColumnType("date");
 
-            entity.HasOne(d => d.Korisnik).WithMany(p => p.Narudzbas)
+            entity.HasOne(d => d.Dostavljac).WithMany(p => p.NarudzbaDostavljacs)
+                .HasForeignKey(d => d.DostavljacId)
+                .HasConstraintName("FKNarudzba82867");
+
+            entity.HasOne(d => d.Korisnik).WithMany(p => p.NarudzbaKorisniks)
                 .HasForeignKey(d => d.KorisnikId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKNarudzba980749");
@@ -143,7 +156,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<OcjenaProizvod>(entity =>
         {
-            entity.HasKey(e => e.OcjenaProizvodId).HasName("PK__OcjenaPr__B0C8530F8F087FE1");
+            entity.HasKey(e => e.OcjenaProizvodId).HasName("PK__OcjenaPr__B0C8530F00FAB0CC");
 
             entity.ToTable("OcjenaProizvod");
 
@@ -167,7 +180,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<OcjenaRestoran>(entity =>
         {
-            entity.HasKey(e => e.OcjenaRestoranId).HasName("PK__OcjenaRe__993C51F7F059D8BC");
+            entity.HasKey(e => e.OcjenaRestoranId).HasName("PK__OcjenaRe__993C51F732425CE4");
 
             entity.ToTable("OcjenaRestoran");
 
@@ -191,7 +204,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<Proizvod>(entity =>
         {
-            entity.HasKey(e => e.ProizvodId).HasName("PK__Proizvod__21A8BE1848D12339");
+            entity.HasKey(e => e.ProizvodId).HasName("PK__Proizvod__21A8BE1844B862D5");
 
             entity.ToTable("Proizvod");
 
@@ -200,9 +213,7 @@ public partial class NaTanjirContext : DbContext
             entity.Property(e => e.Naziv)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Opis)
-                .HasMaxLength(255)
-                .IsUnicode(false);
+            entity.Property(e => e.Opis).IsUnicode(false);
             entity.Property(e => e.RestoranId).HasColumnName("RestoranID");
             entity.Property(e => e.StateMachine)
                 .HasMaxLength(100)
@@ -223,7 +234,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<Restoran>(entity =>
         {
-            entity.HasKey(e => e.RestoranId).HasName("PK__Restoran__259AB1A7C4ECF3F1");
+            entity.HasKey(e => e.RestoranId).HasName("PK__Restoran__259AB1A7E928F083");
 
             entity.ToTable("Restoran");
 
@@ -260,15 +271,12 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<RestoranFavorit>(entity =>
         {
-            entity.HasKey(e => e.RestoranFavoritId).HasName("PK__Restoran__2953C4B4B52333D4");
+            entity.HasKey(e => e.RestoranFavoritId).HasName("PK__Restoran__2953C4B4ECFC983F");
 
             entity.ToTable("RestoranFavorit");
 
             entity.Property(e => e.RestoranFavoritId).HasColumnName("RestoranFavoritID");
             entity.Property(e => e.DatumDodavanja).HasColumnType("date");
-            entity.Property(e => e.IsFavorite)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("isFavorite");
             entity.Property(e => e.KorisnikId).HasColumnName("KorisnikID");
             entity.Property(e => e.RestoranId).HasColumnName("RestoranID");
             entity.Property(e => e.VrijemeBrisanja).HasColumnType("date");
@@ -286,7 +294,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<StavkeNarudzbe>(entity =>
         {
-            entity.HasKey(e => e.StavkeNarudzbeId).HasName("PK__StavkeNa__FA672E98582B57E8");
+            entity.HasKey(e => e.StavkeNarudzbeId).HasName("PK__StavkeNa__FA672E98FA1F1FC3");
 
             entity.ToTable("StavkeNarudzbe");
 
@@ -314,7 +322,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<Uloge>(entity =>
         {
-            entity.HasKey(e => e.UlogaId).HasName("PK__Uloge__DCAB23EBB577A2BD");
+            entity.HasKey(e => e.UlogaId).HasName("PK__Uloge__DCAB23EB32F59E4B");
 
             entity.ToTable("Uloge");
 
@@ -330,7 +338,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<Upit>(entity =>
         {
-            entity.HasKey(e => e.UpitId).HasName("PK__Upit__EF8C13F2299FF1DF");
+            entity.HasKey(e => e.UpitId).HasName("PK__Upit__EF8C13F2B6D15C03");
 
             entity.ToTable("Upit");
 
@@ -362,7 +370,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<VrstaProizvodum>(entity =>
         {
-            entity.HasKey(e => e.VrstaId).HasName("PK__VrstaPro__42CB8F0F95083C28");
+            entity.HasKey(e => e.VrstaId).HasName("PK__VrstaPro__42CB8F0F7E27EE4D");
 
             entity.Property(e => e.VrstaId).HasColumnName("VrstaID");
             entity.Property(e => e.Naziv)
@@ -373,7 +381,7 @@ public partial class NaTanjirContext : DbContext
 
         modelBuilder.Entity<VrstaRestorana>(entity =>
         {
-            entity.HasKey(e => e.VrstaId).HasName("PK__VrstaRes__42CB8F0FC1F27321");
+            entity.HasKey(e => e.VrstaId).HasName("PK__VrstaRes__42CB8F0FDCCE323D");
 
             entity.ToTable("VrstaRestorana");
 

@@ -258,7 +258,7 @@ class _AdminUpravljanjeKorisnickimNalozimaScreenState
                   height: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color.fromARGB(97, 158, 158, 158),
+                    color: Color.fromARGB(255, 0, 83, 86),
                   ),
                   child: InkWell(
                     onTap: () async {
@@ -283,7 +283,7 @@ class _AdminUpravljanjeKorisnickimNalozimaScreenState
                         "Očisti filtere",
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
