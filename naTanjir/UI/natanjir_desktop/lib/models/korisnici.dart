@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:natanjir_desktop/models/korisnik_uloga.dart';
+import 'package:natanjir_desktop/models/restoran.dart';
 part 'korisnici.g.dart';
 
 @JsonSerializable()
@@ -13,6 +14,8 @@ class Korisnici {
   String? datumRodjenja;
   String? slika;
   bool? isDeleted;
+  int? restoranId;
+  Restoran? restoran;
   List<KorisnikUloga>? korisniciUloges;
 
   Korisnici();

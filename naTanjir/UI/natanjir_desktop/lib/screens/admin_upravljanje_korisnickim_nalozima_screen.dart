@@ -10,7 +10,7 @@ import 'package:natanjir_desktop/models/uloga.dart';
 import 'package:natanjir_desktop/providers/korisnici_provider.dart';
 import 'package:natanjir_desktop/providers/uloga_provider.dart';
 import 'package:natanjir_desktop/providers/utils.dart';
-import 'package:natanjir_desktop/screens/admin_uredi_korisnicki_profil.dart';
+import 'package:natanjir_desktop/screens/admin_vlasnik_uredi_korisnicki_profil.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
@@ -367,7 +367,8 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AdminUrediKorisnickiProfilScreen(
+                        builder: (context) =>
+                            AdminVlasnikUrediKorisnickiProfilScreen(
                               odabraniKorisnik: item,
                             )),
                   ).then((value) {

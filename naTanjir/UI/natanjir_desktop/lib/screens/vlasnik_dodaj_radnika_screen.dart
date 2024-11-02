@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -17,9 +18,12 @@ import 'package:natanjir_desktop/providers/auth_provider.dart';
 import 'package:natanjir_desktop/providers/korisnici_provider.dart';
 import 'package:natanjir_desktop/providers/restoran_provider.dart';
 import 'package:natanjir_desktop/providers/uloga_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class VlasnikDodajRadnikaScreen extends StatefulWidget {
   @override
@@ -573,29 +577,30 @@ class _VlasnikDodajRadnikaScreenState extends State<VlasnikDodajRadnikaScreen> {
               var isValid = _formKey.currentState!.saveAndValidate();
               if (isValid == true) {
                 var req = Map.from(_formKey.currentState!.value);
-                req['slika'] = _base64Image;
                 DateTime dob = req['datumRodjenja'];
                 req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
+                req['slika'] = _base64Image;
                 req['uloge'] = [_formKey.currentState!.fields['uloge']?.value];
-                // if (widget.proizvod == null) {
-                //   await proizvodProvider.insert(req);
-                // } else {
-                //   await proizvodProvider.update(
-                //       widget.proizvod!.proizvodId!, req);
-                // }
+
                 await korisniciProvider.insert(req);
                 await QuickAlert.show(
                   context: context,
-                  type: QuickAlertType.success,
-                  title: "Uspješno dodan/uređen radnik!",
+                  type: QuickAlertType.confirm,
+                  title: "Uspješno dodan radnik!",
+                  text: "Da li želite isprintati podatke o radniku?",
+                  confirmBtnText: "Da",
+                  cancelBtnText: "Ne",
+                  onConfirmBtnTap: () async {
+                    createPdfFile(req);
+                    Navigator.of(context).pop();
+                  },
                 );
                 clearinput();
-                if (mounted) setState(() {});
               } else {
                 QuickAlert.show(
                   context: context,
                   type: QuickAlertType.error,
-                  title: "Greška prilikom dodavanja/uređivanja radnika.",
+                  title: "Greška prilikom dodavanja radnika.",
                 );
               }
             },
@@ -620,5 +625,75 @@ class _VlasnikDodajRadnikaScreenState extends State<VlasnikDodajRadnikaScreen> {
     usernameError = null;
     dateError = null;
     confirmPasswordError = null;
+  }
+
+  void createPdfFile(Map req) async {
+    final pdf = pw.Document();
+
+    final img = await rootBundle.load('assets/images/naTanjirLogoMini.png');
+    final imageBytes = img.buffer.asUint8List();
+    pw.Image image1 = pw.Image(pw.MemoryImage(imageBytes));
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Center(
+                child: pw.Column(
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  children: [
+                    pw.Container(
+                      alignment: pw.Alignment.center,
+                      height: 150,
+                      width: 100,
+                      child: image1,
+                    ),
+                    pw.SizedBox(height: 20),
+                    pw.Text('Podaci o radniku:',
+                        style: pw.TextStyle(fontSize: 24)),
+                    pw.SizedBox(height: 20),
+                    pw.Text('Ime: ${req['ime']}',
+                        style: pw.TextStyle(fontSize: 18)),
+                    pw.Text('Prezime: ${req['prezime']}',
+                        style: pw.TextStyle(fontSize: 18)),
+                    pw.Text('Email: ${req['email']}',
+                        style: pw.TextStyle(fontSize: 18)),
+                    pw.Text(
+                      'Korisnicko ime: ${req['korisnickoIme']}',
+                      style: pw.TextStyle(
+                        fontSize: 18,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.Text(
+                      'Lozinka: ${req['lozinka']}',
+                      style: pw.TextStyle(
+                        fontSize: 18,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.SizedBox(height: 40),
+                    pw.Divider(thickness: 1),
+                    pw.Text(
+                      'Hvala sto koristite nas sistem!\nMolimo Vas da nakon prijave promijenite svoju lozinku.',
+                      style: pw.TextStyle(fontSize: 20),
+                      textAlign: pw.TextAlign.center,
+                    ),
+                    pw.Divider(thickness: 1),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
   }
 }

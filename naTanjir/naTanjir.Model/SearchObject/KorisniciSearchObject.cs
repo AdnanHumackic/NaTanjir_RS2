@@ -12,9 +12,10 @@ namespace naTanjir.Model.SearchObject
         public string? EmailGTE { get; set; }
         public string? KorisnickoIme { get; set; }
         public string? Uloga { get; set; }
-        public bool? IsKorisniciUlogeIncluded { get; set; }     
+        public bool? IsKorisniciUlogeIncluded { get; set; }  
+        public bool? IsRestoranIncluded { get; set; }
+        public int? VlasnikRestoranaId { get; set; }
         public bool? IsDeleted { get; set; }
-        public string? OrderBy { get; set; }
-
+        public List<int>? RestoranId { get; set; }
     }
 }

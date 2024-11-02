@@ -189,10 +189,10 @@ class _VlasnikDashboardScreenState extends State<VlasnikDashboardScreen> {
         .map((e) => e.narudzbaId)
         .toList();
 
-    var processedIds = <int>{};
+    var restoranNarudzbaIds = <int>{};
     List<Narudzba> narudzbeList = [];
     for (var i in stavke) {
-      if (processedIds.add(i!)) {
+      if (restoranNarudzbaIds.add(i!)) {
         var filtrirane = narudzbaResult!.result
             .where((element) => element.narudzbaId == i)
             .toList();

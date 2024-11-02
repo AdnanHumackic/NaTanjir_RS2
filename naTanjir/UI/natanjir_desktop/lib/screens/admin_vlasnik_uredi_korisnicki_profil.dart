@@ -15,16 +15,17 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-class AdminUrediKorisnickiProfilScreen extends StatefulWidget {
+class AdminVlasnikUrediKorisnickiProfilScreen extends StatefulWidget {
   Korisnici? odabraniKorisnik;
-  AdminUrediKorisnickiProfilScreen({super.key, required this.odabraniKorisnik});
+  AdminVlasnikUrediKorisnickiProfilScreen(
+      {super.key, required this.odabraniKorisnik});
   @override
-  _AdminUrediKorisnickiProfilScreenState createState() =>
-      _AdminUrediKorisnickiProfilScreenState();
+  _AdminVlasnikUrediKorisnickiProfilScreenState createState() =>
+      _AdminVlasnikUrediKorisnickiProfilScreenState();
 }
 
-class _AdminUrediKorisnickiProfilScreenState
-    extends State<AdminUrediKorisnickiProfilScreen> {
+class _AdminVlasnikUrediKorisnickiProfilScreenState
+    extends State<AdminVlasnikUrediKorisnickiProfilScreen> {
   late KorisniciProvider korisniciProvider;
 
   SearchResult<Korisnici>? korisniciResult;

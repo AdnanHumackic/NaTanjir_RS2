@@ -26,6 +26,8 @@ namespace naTanjir.Model
 
         public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; }
         public int? RestoranId { get; set; }
+        public virtual Restoran? Restoran { get; set; }
+
 
     }
 }

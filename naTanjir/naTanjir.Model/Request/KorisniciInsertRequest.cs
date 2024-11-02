@@ -23,5 +23,7 @@ namespace naTanjir.Model.Request
         
         public List<int> Uloge { get; set; }
         public int? RestoranId { get; set; }
+        public byte[]? Slika { get; set; }
+
     }
 }

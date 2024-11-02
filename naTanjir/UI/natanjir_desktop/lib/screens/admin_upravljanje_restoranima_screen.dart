@@ -895,13 +895,10 @@ class _AdminUpravljanjeRestoranimaScreenState
                   cancelBtnText: "Ne",
                   onConfirmBtnTap: () async {
                     createPdfFile(req);
-                    Navigator.pop(context);
+                    Navigator.of(context).pop();
                   },
                 );
-                if (mounted) setState(() {});
-                setState(() {
-                  resetFields();
-                });
+                resetFields();
               } else {
                 QuickAlert.show(
                   context: context,

@@ -66,6 +66,18 @@ namespace naTanjir.Services
             {
                 query = query.Include(x => x.KorisniciUloges).ThenInclude(x => x.Uloga);
             }
+            if (searchObject.IsRestoranIncluded == true)
+            {
+                query = query.Include(x => x.Restoran);
+            }
+            if (searchObject.RestoranId != null)
+            {
+                query = query.Where(x => x.RestoranId.HasValue && searchObject.RestoranId.Contains(x.RestoranId.Value));
+            }
+            if (searchObject.VlasnikRestoranaId != null) 
+            {
+                query = query.Where(x => x.Restoran.VlasnikId == searchObject.VlasnikRestoranaId);
+            }
 
             if (searchObject?.IsDeleted != null)
             {
