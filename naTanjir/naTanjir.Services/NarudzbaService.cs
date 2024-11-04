@@ -31,7 +31,7 @@ namespace naTanjir.Services
 
             if (searchObject.BrojNarudzbe != null)
             {
-                query = query.Where(x => x.BrojNarudzbe == searchObject.BrojNarudzbe);
+                query = query.Where(x => x.BrojNarudzbe.ToString().StartsWith(searchObject.BrojNarudzbe.ToString()));
             }
 
             if (searchObject.UkupnaCijena != null)
@@ -46,17 +46,19 @@ namespace naTanjir.Services
 
             if (searchObject.DatumKreiranjaGTE != null)
             {
-                query = query.Where(x => x.DatumKreiranja > searchObject.DatumKreiranjaGTE);
+                query = query.Where(x => x.DatumKreiranja >= searchObject.DatumKreiranjaGTE);
             }
 
             if (searchObject.DatumKreiranjaLTE != null)
             {
-                query = query.Where(x => x.DatumKreiranja < searchObject.DatumKreiranjaLTE);
+                query = query.Where(x => x.DatumKreiranja <= searchObject.DatumKreiranjaLTE);
             }
-            if (!string.IsNullOrWhiteSpace(searchObject.StateMachine))
+
+            if (searchObject.StateMachine != null && searchObject.StateMachine.Any())
             {
-                query = query.Where(x => x.StateMachine.StartsWith(searchObject.StateMachine));
+                query = query.Where(x => searchObject.StateMachine.Contains(x.StateMachine));
             }
+
             if (searchObject.KorisnikId != null)
             {
                 query = query.Where(x => x.KorisnikId == searchObject.KorisnikId);

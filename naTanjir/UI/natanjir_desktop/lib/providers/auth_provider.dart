@@ -10,5 +10,6 @@ class AuthProvider {
   static String? telefon;
   static String? datumRodjenja;
   static String? slika;
+  static int? restoranId;
   static List<KorisnikUloga>? korisnikUloge;
 }

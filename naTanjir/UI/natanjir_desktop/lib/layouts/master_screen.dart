@@ -5,6 +5,7 @@ import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/admin_upravljanje_korisnickim_nalozima_screen.dart';
 import 'package:natanjir_desktop/screens/admin_upravljanje_restoranima_screen.dart';
 import 'package:natanjir_desktop/screens/korisnik_profile_screen.dart';
+import 'package:natanjir_desktop/screens/radnik_narudzbe_list_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_upravljanje_menijem_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_upravljanje_restoranom_screen.dart';
@@ -69,6 +70,20 @@ class _MasterScreenState extends State<MasterScreen> {
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text(
                                   "Vlasnik panel",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!.any(
+                                    (x) => x.uloga?.naziv == "RadnikRestorana"))
+                              Padding(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Text(
+                                  "Narudžbe",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -227,6 +242,27 @@ class _MasterScreenState extends State<MasterScreen> {
                                           AdminUpravljanjeKorisnickimNalozimaScreen()));
                                 },
                               ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!.any(
+                                    (x) => x.uloga?.naziv == "RadnikRestorana"))
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.shopping_bag_outlined,
+                                  color: Colors.white,
+                                ),
+                                title: const Text(
+                                  "Narudžbe",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          RadnikNarudzbeListScreen()));
+                                },
+                              ),
                             Spacer(),
                             ListTile(
                               leading: const Icon(
@@ -281,6 +317,7 @@ class _MasterScreenState extends State<MasterScreen> {
                                 AuthProvider.username = null;
                                 AuthProvider.password = null;
                                 AuthProvider.korisnikUloge = null;
+                                AuthProvider.restoranId = null;
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                         builder: (context) => MyApp()));

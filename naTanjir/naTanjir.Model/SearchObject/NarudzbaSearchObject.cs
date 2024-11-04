@@ -11,7 +11,7 @@ namespace naTanjir.Model.SearchObject
         public DateTime? DatumKreiranja { get; set; }
         public DateTime? DatumKreiranjaGTE { get; set; }
         public DateTime? DatumKreiranjaLTE { get; set; }
-        public string? StateMachine { get; set; }
+        public List<string>? StateMachine { get; set; }
         public int? KorisnikId { get; set; }
         public int? RestoranId { get; set; }
         public bool? IsStavkeNarudzbeIncluded { get; set; }

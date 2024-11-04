@@ -23,6 +23,7 @@ import 'package:natanjir_desktop/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_desktop/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/product_list_screen.dart';
+import 'package:natanjir_desktop/screens/radnik_narudzbe_list_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -235,7 +236,9 @@ class _LoginPageState extends State<LoginPage> {
                                 AuthProvider.korisnikUloge =
                                     korisnik.korisniciUloges;
                               }
-
+                              if (korisnik.restoranId != null) {
+                                AuthProvider.restoranId = korisnik.restoranId;
+                              }
                               print("Authenticated!");
 
                               if (AuthProvider.korisnikUloge != null &&
@@ -250,6 +253,13 @@ class _LoginPageState extends State<LoginPage> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
                                       VlasnikDashboardScreen(),
+                                ));
+                              } else if (AuthProvider.korisnikUloge != null &&
+                                  AuthProvider.korisnikUloge!.any((x) =>
+                                      x.uloga?.naziv == "RadnikRestorana")) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      RadnikNarudzbeListScreen(),
                                 ));
                               }
                             } on Exception catch (e) {
