@@ -17,10 +17,10 @@ namespace naTanjir.API.Controllers
         {
         }
 
-        [HttpPut("{id}/preuzmi")]
-        public async Task<Model.Narudzba> Preuzmi(int id, CancellationToken cancellationToken = default)
+        [HttpPut("{id}/preuzmi/{dostavljacId}")]
+        public async Task<Model.Narudzba> Preuzmi(int id,int dostavljacId, CancellationToken cancellationToken = default)
         {
-            return await (_service as INarudzbaService).PreuzmiAsync(id, cancellationToken);
+            return await (_service as INarudzbaService).PreuzmiAsync(id, dostavljacId, cancellationToken);
         }
 
         [HttpPut("{id}/uToku")]

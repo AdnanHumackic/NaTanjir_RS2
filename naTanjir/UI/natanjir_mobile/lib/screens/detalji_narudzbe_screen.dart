@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:natanjir_mobile/models/korisnici.dart';
 import 'package:natanjir_mobile/models/narudzba.dart';
 import 'package:natanjir_mobile/models/search_result.dart';
 import 'package:natanjir_mobile/models/stavke_narudzbe.dart';
+import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/korisnici_provider.dart';
+import 'package:natanjir_mobile/providers/narudzba_provider.dart';
 import 'package:natanjir_mobile/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +27,12 @@ class DetaljiNarudzbeScreen extends StatefulWidget {
 
 class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
   late StavkeNarudzbeProvider stavkeNarudzbeProvider;
+  late KorisniciProvider korisniciProvider;
+  late NarudzbaProvider narudzbaProvider;
 
   SearchResult<StavkeNarudzbe>? stavkeNarudzbeResult;
+  SearchResult<Korisnici>? korisnikResult;
+
   Map<String, dynamic> searchRequest = {};
 
   @override
@@ -36,6 +44,9 @@ class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
       'isRestoranIncluded': true,
     };
     stavkeNarudzbeProvider = context.read<StavkeNarudzbeProvider>();
+    korisniciProvider = context.read<KorisniciProvider>();
+    narudzbaProvider = context.read<NarudzbaProvider>();
+
     _initForm();
   }
 
@@ -43,6 +54,8 @@ class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
     stavkeNarudzbeResult = await stavkeNarudzbeProvider.get(
       filter: searchRequest,
     );
+    korisnikResult = await korisniciProvider.get();
+
     setState(() {});
   }
 
@@ -89,9 +102,63 @@ class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
               child: _buildPage(),
             ),
           ),
+          _buildFooter(),
         ],
       ),
     );
+  }
+
+  Widget _buildFooter() {
+    if (AuthProvider.korisnikUloge != null &&
+        AuthProvider.korisnikUloge!
+            .any((x) => x.uloga?.naziv == "Dostavljac")) {
+      return Container(
+        padding: EdgeInsets.all(15),
+        child: Column(
+          children: [
+            Divider(
+              color: Colors.grey,
+              thickness: 1,
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await narudzbaProvider.zavrsi(widget.narudzba!.narudzbaId!);
+                    Navigator.pop(context, true);
+                    await ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                        duration: Duration(seconds: 1),
+                        content: Center(
+                          child: Text(
+                              "Narudžba #${widget.narudzba!.brojNarudzbe} je završena."),
+                        ),
+                      ),
+                    );
+                    setState(() {});
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    "Završi narudžbu",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildHeader() {
@@ -245,17 +312,22 @@ class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
             height: 10,
           ),
           Container(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Narudžbu kreirao/la: ${widget.narudzba!.korisnik!.ime} ${widget.narudzba!.korisnik!.prezime}",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color.fromARGB(255, 108, 108, 108),
-                  fontWeight: FontWeight.w600,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: korisnikResult!.result
+                  .where((element) =>
+                      element.korisnikId == widget.narudzba?.korisnikId)
+                  .map((e) => Text(
+                        "Narudžbu kreirao/la: ${e.ime} ${e.prezime}",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 108, 108, 108),
+                          fontWeight: FontWeight.w600,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
           SizedBox(

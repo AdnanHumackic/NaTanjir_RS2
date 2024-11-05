@@ -44,7 +44,7 @@ namespace naTanjir.Services.NarudzbaStateMachine
             throw new UserException("Method not allowed");
         }
 
-        public virtual async Task<Model.Narudzba> Preuzeta(int id)
+        public virtual async Task<Model.Narudzba> Preuzeta(int id, int dostavljacId)
         {
             throw new UserException("Method not allowed");
         }

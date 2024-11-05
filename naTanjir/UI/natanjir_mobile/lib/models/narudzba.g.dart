@@ -16,6 +16,7 @@ Narudzba _$NarudzbaFromJson(Map<String, dynamic> json) => Narudzba()
   ..korisnik = json['korisnik'] == null
       ? null
       : Korisnici.fromJson(json['korisnik'] as Map<String, dynamic>)
+  ..dostavljacId = (json['dostavljacId'] as num?)?.toInt()
   ..stavkeNarudzbe = (json['stavkeNarudzbe'] as List<dynamic>?)
       ?.map((e) => StavkeNarudzbe.fromJson(e as Map<String, dynamic>))
       .toList();
@@ -28,5 +29,6 @@ Map<String, dynamic> _$NarudzbaToJson(Narudzba instance) => <String, dynamic>{
       'stateMachine': instance.stateMachine,
       'korisnikId': instance.korisnikId,
       'korisnik': instance.korisnik,
+      'dostavljacId': instance.dostavljacId,
       'stavkeNarudzbe': instance.stavkeNarudzbe,
     };

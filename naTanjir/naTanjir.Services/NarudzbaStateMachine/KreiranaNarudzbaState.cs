@@ -26,10 +26,11 @@ namespace naTanjir.Services.NarudzbaStateMachine
             return Mapper.Map<Model.Narudzba>(entity);
         }
 
-        public override async Task<Model.Narudzba> Preuzeta(int id)
+        public override async Task<Model.Narudzba> Preuzeta(int id, int dostavljacId)
         {
             var set = Context.Set<Database.Narudzba>();
             var entity = set.Find(id);
+            entity.DostavljacId = dostavljacId;
             entity.StateMachine = "preuzeta";
             await Context.SaveChangesAsync();
 

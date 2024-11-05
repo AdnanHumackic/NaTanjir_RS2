@@ -59,6 +59,11 @@ namespace naTanjir.Services
                 query = query.Where(x => searchObject.StateMachine.Contains(x.StateMachine));
             }
 
+            if (searchObject.DostavljacId != null)
+            {
+                query = query.Where(x => x.DostavljacId == searchObject.DostavljacId);
+            }
+
             if (searchObject.KorisnikId != null)
             {
                 query = query.Where(x => x.KorisnikId == searchObject.KorisnikId);
@@ -134,7 +139,7 @@ namespace naTanjir.Services
             return await state.Update(id, request);
         }
 
-        public async Task<Model.Narudzba> PreuzmiAsync(int narudzbaId, CancellationToken cancellationToken = default)
+        public async Task<Model.Narudzba> PreuzmiAsync(int narudzbaId, int dostavljacId, CancellationToken cancellationToken = default)
         {
             var narudzba = await Context.Narudzbas.FindAsync(narudzbaId, cancellationToken);
 
@@ -142,8 +147,7 @@ namespace naTanjir.Services
                 throw new UserException("Pogresan id.");
 
             var state =BaseNarudzbaState.CreateState(narudzba.StateMachine);
-
-            return await state.Preuzeta(narudzbaId);
+            return await state.Preuzeta(narudzbaId, dostavljacId);
         }
       
         public async Task<Model.Narudzba> UTokuAsync(int narudzbaId, CancellationToken cancellationToken = default)

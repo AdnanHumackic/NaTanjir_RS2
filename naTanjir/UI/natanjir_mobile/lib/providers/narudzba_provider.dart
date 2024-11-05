@@ -11,8 +11,33 @@ class NarudzbaProvider extends BaseProvider<Narudzba> {
     return Narudzba.fromJson(data);
   }
 
-  Future ponisti(int rezervacijaId) async {
-    var url = "${BaseProvider.baseUrl}Narudzba/${rezervacijaId}/ponisti";
+  Future ponisti(int narudzbaId) async {
+    var url = "${BaseProvider.baseUrl}Narudzba/${narudzbaId}/ponisti";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.put(uri, headers: headers);
+  }
+
+  Future preuzmi(int narudzbaId, int dostavljacId) async {
+    var url =
+        "${BaseProvider.baseUrl}Narudzba/${narudzbaId}/preuzmi/${dostavljacId}";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.put(uri, headers: headers);
+  }
+
+  Future uToku(int narudzbaId) async {
+    var url = "${BaseProvider.baseUrl}Narudzba/${narudzbaId}/uToku";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.put(uri, headers: headers);
+  }
+
+  Future zavrsi(int narudzbaId) async {
+    var url = "${BaseProvider.baseUrl}Narudzba/${narudzbaId}/zavrsi";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 

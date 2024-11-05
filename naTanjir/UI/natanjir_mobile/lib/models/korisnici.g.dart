@@ -15,7 +15,14 @@ Korisnici _$KorisniciFromJson(Map<String, dynamic> json) => Korisnici()
   ..korisnickoIme = json['korisnickoIme'] as String?
   ..datumRodjenja = json['datumRodjenja'] as String?
   ..slika = json['slika'] as String?
-  ..isDeleted = json['isDeleted'] as bool?;
+  ..isDeleted = json['isDeleted'] as bool?
+  ..restoranId = (json['restoranId'] as num?)?.toInt()
+  ..restoran = json['restoran'] == null
+      ? null
+      : Restoran.fromJson(json['restoran'] as Map<String, dynamic>)
+  ..korisniciUloges = (json['korisniciUloges'] as List<dynamic>?)
+      ?.map((e) => KorisnikUloga.fromJson(e as Map<String, dynamic>))
+      .toList();
 
 Map<String, dynamic> _$KorisniciToJson(Korisnici instance) => <String, dynamic>{
       'korisnikId': instance.korisnikId,
@@ -27,4 +34,7 @@ Map<String, dynamic> _$KorisniciToJson(Korisnici instance) => <String, dynamic>{
       'datumRodjenja': instance.datumRodjenja,
       'slika': instance.slika,
       'isDeleted': instance.isDeleted,
+      'restoranId': instance.restoranId,
+      'restoran': instance.restoran,
+      'korisniciUloges': instance.korisniciUloges,
     };

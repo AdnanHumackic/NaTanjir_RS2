@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:natanjir_mobile/models/vrsta_restorana.dart';
 part 'restoran.g.dart';
 
 @JsonSerializable()
@@ -12,7 +13,7 @@ class Restoran {
   int? vrstaRestoranaId;
   int? vlasnikId;
   bool? isDeleted;
-
+  VrstaRestorana? vrstaRestorana;
   Restoran();
   factory Restoran.fromJson(Map<String, dynamic> json) =>
       _$RestoranFromJson(json);

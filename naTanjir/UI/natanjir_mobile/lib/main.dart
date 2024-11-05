@@ -18,8 +18,10 @@ import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_favorit_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_provider.dart';
 import 'package:natanjir_mobile/providers/stavke_narudzbe_provider.dart';
+import 'package:natanjir_mobile/providers/uloga_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
+import 'package:natanjir_mobile/screens/dostavljac_narudzbe_screen.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:natanjir_mobile/screens/registracija_screen.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +46,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => OcjenaProizvodProvider()),
     ChangeNotifierProvider(create: (_) => NarudzbaProvider()),
     ChangeNotifierProvider(create: (_) => StavkeNarudzbeProvider()),
+    ChangeNotifierProvider(create: (_) => UlogeProvider()),
   ], child: const MyApp()));
 }
 
@@ -229,9 +232,27 @@ class _LoginPageState extends State<LoginPage> {
                               AuthProvider.datumRodjenja =
                                   korisnik.datumRodjenja;
                               AuthProvider.slika = korisnik.slika;
+
+                              if (korisnik.korisniciUloges != null) {
+                                AuthProvider.korisnikUloge =
+                                    korisnik.korisniciUloges;
+                              }
+                              if (korisnik.restoranId != null) {
+                                AuthProvider.restoranId = korisnik.restoranId;
+                              }
                               print("Authenticated!");
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MasterScreen()));
+                              if (AuthProvider.korisnikUloge != null &&
+                                  AuthProvider.korisnikUloge!
+                                      .any((x) => x.uloga?.naziv == "Kupac")) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MasterScreen()));
+                              } else if (AuthProvider.korisnikUloge != null &&
+                                  AuthProvider.korisnikUloge!.any(
+                                      (x) => x.uloga?.naziv == "Dostavljac")) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        DostavljacNarudzbeScreen()));
+                              }
                             } on Exception catch (e) {
                               QuickAlert.show(
                                   context: context,

@@ -12,6 +12,7 @@ class Narudzba {
   String? stateMachine;
   int? korisnikId;
   Korisnici? korisnik;
+  int? dostavljacId;
   List<StavkeNarudzbe>? stavkeNarudzbe;
 
   Narudzba();
