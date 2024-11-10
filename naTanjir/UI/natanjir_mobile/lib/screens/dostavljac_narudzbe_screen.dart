@@ -181,6 +181,9 @@ class _DostavljacNarudzbeScreenState extends State<DostavljacNarudzbeScreen>
       child: Scaffold(
         body: Column(
           children: [
+            SizedBox(
+              height: 25,
+            ),
             _buildHeader(),
             TabBar(
               controller: _tabController,

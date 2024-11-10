@@ -9,13 +9,15 @@ public partial class Lokacija:ISoftDelete
 
     public string? Adresa { get; set; }
 
-    public decimal GeografskaDuzina { get; set; }
+    public decimal? GeografskaDuzina { get; set; }
 
-    public decimal GeografskaSirina { get; set; }
+    public decimal? GeografskaSirina { get; set; }
 
     public bool IsDeleted { get; set; }
 
     public DateTime? VrijemeBrisanja { get; set; }
 
-    public virtual ICollection<Korisnici> Korisnicis { get; set; } = new List<Korisnici>();
+    public int? KorisnikId { get; set; }
+
+    public virtual Korisnici? Korisnik { get; set; }
 }

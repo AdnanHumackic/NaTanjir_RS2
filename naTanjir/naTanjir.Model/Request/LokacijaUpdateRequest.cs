@@ -10,8 +10,7 @@ namespace naTanjir.Model.Request
 
         public decimal? GeografskaSirina { get; set; }
 
-        public bool IsDeleted { get; set; }
-        public DateTime? VrijemeBrisanja { get; set; }
+        public string? Adresa { get; set; }
 
     }
 }

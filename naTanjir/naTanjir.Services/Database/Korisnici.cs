@@ -29,13 +29,11 @@ public partial class Korisnici:ISoftDelete
 
     public DateTime? VrijemeBrisanja { get; set; }
 
-    public int? LokacijaId { get; set; }
-
     public int? RestoranId { get; set; }
 
     public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; } = new List<KorisniciUloge>();
 
-    public virtual Lokacija? Lokacija { get; set; }
+    public virtual ICollection<Lokacija> Lokacijas { get; set; } = new List<Lokacija>();
 
     public virtual ICollection<Narudzba> NarudzbaDostavljacs { get; set; } = new List<Narudzba>();
 

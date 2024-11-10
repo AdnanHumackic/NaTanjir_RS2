@@ -28,35 +28,12 @@ namespace naTanjir.Services
             {
                 query = query.Where(x => x.IsDeleted == searchObject.IsDeleted);
             }
-
+            if (searchObject.KorisnikId != null)
+            {
+                query = query.Where(x => x.KorisnikId == searchObject.KorisnikId);
+            }
             return query;
         }
-
-        public override async Task BeforeInsertAsync(LokacijaInsertRequest request, Lokacija entity, CancellationToken cancellationToken = default)
-        {
-            if (!request.GeografskaDuzina.HasValue || !request.GeografskaSirina.HasValue ||
-                 request.GeografskaDuzina.Value == 0 || request.GeografskaSirina.Value == 0)
-            {
-                throw new UserException("Molimo unesite validne podatke.");
-            }
-
-            await base.BeforeInsertAsync(request, entity, cancellationToken);
-        }
-
-        public override async Task BeforeUpdateAsync(LokacijaUpdateRequest request, Lokacija entity, CancellationToken cancellationToken = default)
-        {
-            await base.BeforeUpdateAsync(request, entity, cancellationToken);
-
-            if (!request.GeografskaDuzina.HasValue || !request.GeografskaSirina.HasValue ||
-                request.GeografskaDuzina.Value == 0 || request.GeografskaSirina.Value == 0)
-            {
-                throw new UserException("Molimo unesite validne podatke.");
-            }
-
-            if (request?.IsDeleted == null)
-            {
-                throw new UserException("Molimo unesite status lokacije.");
-            }
-        }
+      
     }
 }

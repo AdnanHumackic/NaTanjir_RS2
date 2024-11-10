@@ -1,19 +1,22 @@
+import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_paypal_payment/flutter_paypal_payment.dart';
 import 'package:natanjir_mobile/layouts/master_screen.dart';
+import 'package:natanjir_mobile/models/lokacija.dart';
+import 'package:natanjir_mobile/models/search_result.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
+import 'package:natanjir_mobile/providers/lokacija_provider.dart';
 import 'package:natanjir_mobile/providers/narudzba_provider.dart';
-import 'package:natanjir_mobile/screens/korpa_screen.dart';
-import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 
 class KreiranjeNarudzbeScreen extends StatefulWidget {
   final List<dynamic> odabraniProizvodi;
@@ -39,12 +42,22 @@ class KreiranjeNarudzbeScreen extends StatefulWidget {
 
 class _KreiranjeNarudzbeScreenState extends State<KreiranjeNarudzbeScreen> {
   late NarudzbaProvider narudzbaProvider;
+  late LokacijaProvider lokacijaProvider;
+
+  SearchResult<Lokacija>? lokacijaResult;
   final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
 
   @override
   void initState() {
     super.initState();
     narudzbaProvider = context.read<NarudzbaProvider>();
+    lokacijaProvider = context.read<LokacijaProvider>();
+    _initForm();
+  }
+
+  Future _initForm() async {
+    lokacijaResult = await lokacijaProvider.get();
+    setState(() {});
   }
 
   @override
@@ -224,6 +237,7 @@ class _KreiranjeNarudzbeScreenState extends State<KreiranjeNarudzbeScreen> {
                 flex: 1,
                 child: InkWell(
                   onTap: () async {
+                    _getLocation();
                     await makePayment();
                   },
                   child: Container(
@@ -260,6 +274,71 @@ class _KreiranjeNarudzbeScreenState extends State<KreiranjeNarudzbeScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _getLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print('Dijeljenje lokacije odbijeno.');
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print('Dijeljenje lokacije odbijeno.');
+          return;
+        }
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      double latitude = position.latitude;
+      double longitude = position.longitude;
+
+      print("Sirina: $latitude, Duzina: $longitude");
+
+      double latitudeString = latitude;
+      double longitudeString = longitude;
+
+      var lokacijaPostoji;
+      try {
+        lokacijaPostoji = lokacijaResult!.result.firstWhere(
+          (element) => element.korisnikId == AuthProvider.korisnikId,
+        );
+      } catch (e) {
+        print("Lokacija nije pronađena.");
+      }
+
+      if (lokacijaPostoji != null &&
+          lokacijaPostoji.korisnikId != null &&
+          lokacijaPostoji.lokacijaId != null) {
+        var updateRequest = {
+          'korisnikId': AuthProvider.korisnikId,
+          'adresa': null,
+          'geografskaDuzina': longitudeString,
+          'geografskaSirina': latitudeString,
+        };
+        await lokacijaProvider.update(
+            lokacijaPostoji.lokacijaId!, updateRequest);
+        print("Lokacija ažurirana.");
+      } else {
+        var insertRequest = {
+          'korisnikId': AuthProvider.korisnikId,
+          'adresa': null,
+          'geografskaDuzina': longitudeString,
+          'geografskaSirina': latitudeString,
+        };
+        await lokacijaProvider.insert(insertRequest);
+        print("Lokacija unesena.");
+      }
+    } catch (e) {
+      print('Greška: $e');
+    }
   }
 
   Future makePayment() async {

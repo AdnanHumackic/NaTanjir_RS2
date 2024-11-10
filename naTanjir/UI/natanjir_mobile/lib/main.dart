@@ -11,6 +11,7 @@ import 'package:natanjir_mobile/models/ocjena_proizvod.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/korisnici_provider.dart';
+import 'package:natanjir_mobile/providers/lokacija_provider.dart';
 import 'package:natanjir_mobile/providers/narudzba_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
@@ -47,6 +48,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => NarudzbaProvider()),
     ChangeNotifierProvider(create: (_) => StavkeNarudzbeProvider()),
     ChangeNotifierProvider(create: (_) => UlogeProvider()),
+    ChangeNotifierProvider(create: (_) => LokacijaProvider()),
   ], child: const MyApp()));
 }
 
