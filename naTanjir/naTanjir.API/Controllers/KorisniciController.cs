@@ -20,9 +20,9 @@ namespace naTanjir.API.Controllers
 
        [HttpPost("login")]
        [AllowAnonymous]
-       public Model.Korisnici Login(string username, string password)
+       public Model.Korisnici Login(string username, string password, string connectionId)
        {
-           return (_service as IKorisniciService).Login(username, password);
+           return (_service as IKorisniciService).Login(username, password, connectionId);
        }
     }
 }

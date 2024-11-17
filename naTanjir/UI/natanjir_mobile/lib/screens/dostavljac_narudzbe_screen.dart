@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:natanjir_mobile/models/korisnici.dart';
 import 'package:natanjir_mobile/models/narudzba.dart';
 import 'package:natanjir_mobile/models/search_result.dart';
 import 'package:natanjir_mobile/models/stavke_narudzbe.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/korisnici_provider.dart';
 import 'package:natanjir_mobile/providers/narudzba_provider.dart';
 import 'package:natanjir_mobile/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
@@ -376,7 +378,7 @@ class _DostavljacNarudzbeScreenState extends State<DostavljacNarudzbeScreen>
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              "Broj aktivnih narudžbi: ${narudzbaList.where((e) => e.stateMachine == "preuzeta").length}",
+              "Broj aktivnih narudžbi: ${narudzbaList.where((e) => e.stateMachine == "preuzeta" || e.stateMachine == "uToku").length}",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black,

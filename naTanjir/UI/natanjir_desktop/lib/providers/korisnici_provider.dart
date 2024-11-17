@@ -12,9 +12,10 @@ class KorisniciProvider extends BaseProvider<Korisnici> {
     return Korisnici.fromJson(data);
   }
 
-  Future<Korisnici> login(String username, String password) async {
+  Future<Korisnici> login(
+      String username, String password, String connectionId) async {
     var url =
-        "${BaseProvider.baseUrl}Korisnici/login?username=${username}&password=${password}";
+        "${BaseProvider.baseUrl}Korisnici/login?username=${username}&password=${password}&connectionId=${connectionId}";
 
     var uri = Uri.parse(url);
     var headers = createHeaders();

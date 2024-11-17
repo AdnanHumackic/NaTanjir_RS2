@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:natanjir_mobile/layouts/master_screen.dart';
 import 'package:natanjir_mobile/main.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
+import 'package:natanjir_mobile/providers/signalr_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 import 'package:natanjir_mobile/screens/dostavljac_obavljene_narudzbe_list_screen.dart';
 import 'package:natanjir_mobile/screens/historija_narudzbi_screen.dart';

@@ -54,7 +54,7 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.12.0
   advanced_datatable: ^0.0.9
-
+  signalr_netcore: ^0.1.7+2-nullsafety.3
 
 dev_dependencies:
   flutter_test:

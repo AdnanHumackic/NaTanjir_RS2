@@ -83,7 +83,7 @@ class _MasterScreenState extends State<MasterScreen> {
                               Padding(
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text(
-                                  "Narudžbe",
+                                  "Radnik restorana panel",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,

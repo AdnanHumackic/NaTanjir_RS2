@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using naTanjir.Model;
@@ -7,6 +8,8 @@ using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
+using naTanjir.Services.RabbitMQ;
+using naTanjir.Services.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +24,24 @@ namespace naTanjir.Services
     {
 
         ILogger<KorisniciService> _logger;
-        public KorisniciService(NaTanjirContext context, IMapper mapper, ILogger<KorisniciService> logger) : base(context, mapper)
+        private readonly IRabbitMQService _rabbitMQService;
+        private readonly IHubContext<SignalRHubService> _hubContext;
+        public KorisniciService(NaTanjirContext context, IMapper mapper, ILogger<KorisniciService> logger,
+            IRabbitMQService rabbitMQService, IHubContext<SignalRHubService> hubContext) : base(context, mapper)
         {
             _logger = logger;
+            _rabbitMQService = rabbitMQService;
+            _hubContext = hubContext;
         }
 
         public override IQueryable<Database.Korisnici> AddFilter(KorisniciSearchObject searchObject, IQueryable<Database.Korisnici> query)
         {
             query = base.AddFilter(searchObject, query);
+            if (searchObject.KorisnikId != null)
+            {
+                query = query.Where(x => x.KorisnikId==searchObject.KorisnikId);
+            }
+
 
             if (!string.IsNullOrWhiteSpace(searchObject.ImeGTE))
             {
@@ -106,7 +119,11 @@ namespace naTanjir.Services
 
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
-
+        public override async Task AfterUpdateAsync(KorisniciUpdateRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
+        {
+            await base.AfterUpdateAsync(request, entity, cancellationToken);
+           
+        }
         public override async Task AfterInsertAsync(KorisniciInsertRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
         {
             if (request.Uloge != null)
@@ -149,6 +166,19 @@ namespace naTanjir.Services
         public override async Task BeforeUpdateAsync(KorisniciUpdateRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
+            var currentUsername = Context.Korisnicis.Where(x => x.KorisnikId == entity.KorisnikId).Select(x => x.KorisnickoIme).FirstOrDefault();
+            if(request.KorisnickoIme!=currentUsername)
+                await _rabbitMQService.SendEmail(new Model.Messages.Email
+                {
+                    EmailTo = entity.Email,
+                    Message = $"Poštovani, vaše korisničko ime je promijenjeno na <b>'{entity.KorisnickoIme}'</b> " +
+                                            "jer je prethodno korisničko ime ocijenjeno kao neprimjereno.<br>"+
+                                            "Molimo Vas da ubuduće, prilikom prijave, koristite novo korisničko ime.<br>" +
+                                            "Srdačan pozdrav, <br>"+
+                                            "naTanjir Team",
+                    ReceiverName = entity.Ime + " " + entity.Prezime,
+                    Subject = "Promjena korisničkog imena"
+                });
 
             if (request.NovaLozinka != null)
             {
@@ -161,8 +191,8 @@ namespace naTanjir.Services
             }
             entity.IsDeleted = false;
         }
-      
-        public Model.Korisnici Login(string username, string password)
+
+        public Model.Korisnici Login(string username, string password, string connectionId)
         {
             var entity = Context.Korisnicis.Include(x=>x.KorisniciUloges).ThenInclude(y=>y.Uloga).FirstOrDefault(x => x.KorisnickoIme == username);
 
@@ -177,7 +207,10 @@ namespace naTanjir.Services
             {
                 return null;
             }
-
+            if (connectionId != "")
+            {
+                _hubContext.Groups.AddToGroupAsync(connectionId, username);
+            }
             return Mapper.Map<Model.Korisnici>(entity);
         }
     }

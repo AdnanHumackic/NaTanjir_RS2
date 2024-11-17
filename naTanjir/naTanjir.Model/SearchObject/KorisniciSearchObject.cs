@@ -6,6 +6,7 @@ namespace naTanjir.Model.SearchObject
 {
     public class KorisniciSearchObject:BaseSearchObject
     {
+        public int? KorisnikId { get; set; }
         public string? ImeGTE { get; set; }
         public string? PrezimeGTE { get; set; }
         public string? ImePrezimeGTE { get; set; }

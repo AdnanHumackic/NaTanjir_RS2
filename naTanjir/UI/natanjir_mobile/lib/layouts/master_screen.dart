@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
+import 'package:natanjir_mobile/providers/signalr_provider.dart';
 import 'package:natanjir_mobile/screens/dostavljac_narudzbe_screen.dart';
 import 'package:natanjir_mobile/screens/korpa_screen.dart';
 import 'package:natanjir_mobile/screens/narudzbe_list_screen.dart';
@@ -9,6 +10,7 @@ import 'package:natanjir_mobile/screens/product_details_screen.dart';
 import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_favorit_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
+import 'package:provider/provider.dart';
 
 class MasterScreen extends StatefulWidget {
   MasterScreen({super.key});
@@ -26,7 +28,7 @@ class _MasterScreenState extends State<MasterScreen> {
     ObavijestListScreen(),
     RestoranFavoritListScreen(),
   ];
-
+  SignalRProvider _signalRProvider = SignalRProvider();
   void _navigateBottomBar(int index) {
     setState(() {
       _selectedIndex = index;
@@ -35,6 +37,7 @@ class _MasterScreenState extends State<MasterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _signalRProvider = context.watch<SignalRProvider>();
     return SafeArea(
         child: Scaffold(
       body: _pages[_selectedIndex],
@@ -78,10 +81,73 @@ class _MasterScreenState extends State<MasterScreen> {
               AuthProvider.korisnikUloge!.any((x) => x.uloga?.naziv == "Kupac"))
             BottomNavigationBarItem(
               label: 'Obavijesti',
-              activeIcon: Icon(Icons.chat_rounded, color: Colors.white),
-              icon: Icon(
-                Icons.chat_outlined,
-                color: Colors.white,
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    Icons.chat_outlined,
+                    color: Colors.white,
+                  ),
+                  if (_signalRProvider.messageCount > 0)
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          '${_signalRProvider.messageCount}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              activeIcon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    Icons.chat_rounded,
+                    color: Colors.white,
+                  ),
+                  if (_signalRProvider.messageCount > 0)
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          '${_signalRProvider.messageCount}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           if (AuthProvider.korisnikUloge != null &&

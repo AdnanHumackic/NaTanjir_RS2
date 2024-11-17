@@ -166,9 +166,7 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
     vrstaRestoranaResult = await vrstaRestoranaProvider.get();
     ocjenaRestoranResult = await ocjenaRestoranProvider.get();
     restoranfavoritResult = await restoranfavoritProvider.get();
-    if (mounted) {
-      setState(() {});
-    }
+
     setState(() {});
   }
 

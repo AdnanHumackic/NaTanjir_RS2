@@ -155,19 +155,33 @@ class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    await narudzbaProvider.zavrsi(widget.narudzba!.narudzbaId!);
-                    Navigator.pop(context, true);
-                    await ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Color.fromARGB(255, 0, 83, 86),
-                        duration: Duration(seconds: 1),
-                        content: Center(
-                          child: Text(
-                              "Narudžba #${widget.narudzba!.brojNarudzbe} je završena."),
+                    if (widget.narudzba!.stateMachine != "uToku") {
+                      await ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Center(
+                            child: Text(
+                                "Narudžba #${widget.narudzba!.brojNarudzbe} treba biti u toku da bi bila završena."),
+                          ),
                         ),
-                      ),
-                    );
-                    setState(() {});
+                      );
+                    } else {
+                      await narudzbaProvider
+                          .zavrsi(widget.narudzba!.narudzbaId!);
+                      Navigator.pop(context, true);
+                      await ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                          duration: Duration(seconds: 1),
+                          content: Center(
+                            child: Text(
+                                "Narudžba #${widget.narudzba!.brojNarudzbe} je završena."),
+                          ),
+                        ),
+                      );
+                      setState(() {});
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 0, 83, 86),
@@ -427,7 +441,7 @@ class _DetaljiNarudzbeScreenState extends State<DetaljiNarudzbeScreen> {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: 200),
                     child: Text(
-                      "Narudžba ruta",
+                      "Upali navigaciju",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,

@@ -18,6 +18,7 @@ import 'package:natanjir_mobile/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_favorit_provider.dart';
 import 'package:natanjir_mobile/providers/restoran_provider.dart';
+import 'package:natanjir_mobile/providers/signalr_provider.dart';
 import 'package:natanjir_mobile/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_mobile/providers/uloga_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
@@ -49,6 +50,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => StavkeNarudzbeProvider()),
     ChangeNotifierProvider(create: (_) => UlogeProvider()),
     ChangeNotifierProvider(create: (_) => LokacijaProvider()),
+    ChangeNotifierProvider(create: (_) => SignalRProvider()),
   ], child: const MyApp()));
 }
 
@@ -98,6 +100,19 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  final SignalRProvider _signalRProvider = SignalRProvider();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (AuthProvider.isSignedIn) {
+      _signalRProvider.stopConnection();
+      AuthProvider.connectionId = null;
+      AuthProvider.isSignedIn = false;
+    }
+    _signalRProvider.startConnection();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,11 +226,12 @@ class _LoginPageState extends State<LoginPage> {
                             try {
                               KorisniciProvider korisniciProvider =
                                   new KorisniciProvider();
-
+                              SignalRProvider _signalRProvider =
+                                  new SignalRProvider();
                               var korisnik = await korisniciProvider.login(
                                   AuthProvider.username!,
-                                  AuthProvider.password!);
-
+                                  AuthProvider.password!,
+                                  AuthProvider.connectionId!);
                               if (korisnik.isDeleted!) {
                                 QuickAlert.show(
                                   context: context,
@@ -225,7 +241,7 @@ class _LoginPageState extends State<LoginPage> {
                                 );
                                 return;
                               }
-
+                              _signalRProvider.initializeMessageCount();
                               AuthProvider.korisnikId = korisnik.korisnikId;
                               AuthProvider.ime = korisnik.ime;
                               AuthProvider.prezime = korisnik.prezime;
@@ -234,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                               AuthProvider.datumRodjenja =
                                   korisnik.datumRodjenja;
                               AuthProvider.slika = korisnik.slika;
-
+                              AuthProvider.isSignedIn = true;
                               if (korisnik.korisniciUloges != null) {
                                 AuthProvider.korisnikUloge =
                                     korisnik.korisniciUloges;
@@ -242,6 +258,7 @@ class _LoginPageState extends State<LoginPage> {
                               if (korisnik.restoranId != null) {
                                 AuthProvider.restoranId = korisnik.restoranId;
                               }
+
                               print("Authenticated!");
                               if (AuthProvider.korisnikUloge != null &&
                                   AuthProvider.korisnikUloge!

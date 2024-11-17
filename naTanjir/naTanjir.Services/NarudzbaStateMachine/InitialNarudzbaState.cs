@@ -1,7 +1,9 @@
 ﻿using MapsterMapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using naTanjir.Model;
 using naTanjir.Model.Request;
+using naTanjir.Services.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,14 @@ namespace naTanjir.Services.NarudzbaStateMachine
 {
     public class InitialNarudzbaState : BaseNarudzbaState
     {
-        public InitialNarudzbaState(Database.NaTanjirContext context, IMapper mapper, IServiceProvider serviceProvider) : base(context, mapper, serviceProvider)
+        private readonly IHubContext<SignalRHubService> _hubContext;
+
+        public InitialNarudzbaState(Database.NaTanjirContext context, IMapper mapper, IServiceProvider serviceProvider,
+            IHubContext<SignalRHubService> hubContext
+            ) : base(context, mapper, serviceProvider)
         {
-        }
+            _hubContext = hubContext;
+        }   
 
         public override async Task<Narudzba> Insert(NarudzbaInsertRequest request)
         {
@@ -26,6 +33,8 @@ namespace naTanjir.Services.NarudzbaStateMachine
             await Context.SaveChangesAsync();
 
             var narudzbaId = await Context.Narudzbas.Select(x => x.NarudzbaId).OrderBy(x => x).LastOrDefaultAsync();
+
+            List<string> radniciRestorana = new List<string>(); 
 
             foreach (var stavka in request.StavkeNarudzbe)
             {
@@ -39,7 +48,22 @@ namespace naTanjir.Services.NarudzbaStateMachine
                 };
 
                 await Context.StavkeNarudzbes.AddAsync(stavkeNarudzbe);
+                var radnici = await Context.Korisnicis
+                    .Where(k => k.RestoranId == stavka.RestoranId && 
+                    k.KorisniciUloges.Any(ku=>ku.UlogaId==5))
+                    .Select(k => k.KorisnickoIme)
+                    .ToListAsync();
+
+                radniciRestorana.AddRange(radnici);
             }
+            foreach(var radnici in radniciRestorana)
+            {
+                await _hubContext.Clients.Group(radnici)
+                     .SendAsync("ReceiveMessage", $"Poštovani, kreirana je nova narudžba " +
+                    $"#{entity.BrojNarudzbe}. Molimo vas da što prije započnete s njenom pripremom.");
+
+            }
+
             await Context.SaveChangesAsync();
 
             return Mapper.Map<Narudzba>(entity);

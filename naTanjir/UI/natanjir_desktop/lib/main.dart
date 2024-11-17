@@ -17,6 +17,7 @@ import 'package:natanjir_desktop/providers/ocjena_restoran_provider.dart';
 import 'package:natanjir_desktop/providers/product_provider.dart';
 import 'package:natanjir_desktop/providers/restoran_favorit_provider.dart';
 import 'package:natanjir_desktop/providers/restoran_provider.dart';
+import 'package:natanjir_desktop/providers/signalr_provider.dart';
 import 'package:natanjir_desktop/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_desktop/providers/uloga_provider.dart';
 import 'package:natanjir_desktop/providers/vrsta_proizvodum_provider.dart';
@@ -45,6 +46,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => NarudzbaProvider()),
     ChangeNotifierProvider(create: (_) => StavkeNarudzbeProvider()),
     ChangeNotifierProvider(create: (_) => UlogeProvider()),
+    ChangeNotifierProvider(create: (_) => SignalRProvider()),
   ], child: const MyApp()));
 }
 
@@ -94,6 +96,19 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  final SignalRProvider _signalRProvider = SignalRProvider();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (AuthProvider.isSignedIn) {
+      _signalRProvider.stopConnection();
+      AuthProvider.connectionId = null;
+      AuthProvider.isSignedIn = false;
+    }
+    _signalRProvider.startConnection();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -209,9 +224,9 @@ class _LoginPageState extends State<LoginPage> {
                                   new KorisniciProvider();
 
                               var korisnik = await korisniciProvider.login(
-                                AuthProvider.username!,
-                                AuthProvider.password!,
-                              );
+                                  AuthProvider.username!,
+                                  AuthProvider.password!,
+                                  AuthProvider.connectionId!);
 
                               if (korisnik.isDeleted!) {
                                 QuickAlert.show(
@@ -231,6 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                               AuthProvider.datumRodjenja =
                                   korisnik.datumRodjenja;
                               AuthProvider.slika = korisnik.slika;
+                              AuthProvider.isSignedIn = true;
 
                               if (korisnik.korisniciUloges != null) {
                                 AuthProvider.korisnikUloge =

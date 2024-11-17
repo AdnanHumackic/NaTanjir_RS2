@@ -350,3 +350,7 @@ MigrationBackup/
 .ionide/
 naTanjir/UI/natanjir_mobile/.env
 naTanjir/UI/natanjir_desktop/.env
+naTanjir/.env
+naTanjir/naTanjir.API/.env
+naTanjir/naTanjir.Services/.env
+naTanjir/naTanjir.Subscriber/.env

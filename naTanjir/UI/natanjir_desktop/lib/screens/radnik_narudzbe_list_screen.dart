@@ -6,10 +6,12 @@ import 'package:natanjir_desktop/models/search_result.dart';
 import 'package:natanjir_desktop/models/stavke_narudzbe.dart';
 import 'package:natanjir_desktop/providers/auth_provider.dart';
 import 'package:natanjir_desktop/providers/narudzba_provider.dart';
+import 'package:natanjir_desktop/providers/signalr_provider.dart';
 import 'package:natanjir_desktop/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_desktop/providers/utils.dart';
 import 'package:natanjir_desktop/screens/detalji_narudzbe_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 class RadnikNarudzbeListScreen extends StatefulWidget {
   RadnikNarudzbeListScreen({Key? key}) : super(key: key);
@@ -27,6 +29,7 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
   List<Narudzba> narudzbaList = [];
   SearchResult<StavkeNarudzbe>? stavkeNarudzbeResult;
   late TabController _tabController;
+  final SignalRProvider _signalRProvider = SignalRProvider();
 
   int page = 1;
 
@@ -42,6 +45,7 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
   void dispose() {
     scrollController.dispose();
     _tabController.dispose();
+    _signalRProvider.onNotificationReceived = null;
     super.dispose();
   }
 
@@ -80,6 +84,23 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
         _loadMore();
       }
     });
+    _signalRProvider?.onNotificationReceived = (message) {
+      if (message.isNotEmpty) {
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.info,
+          title: "Obavijest",
+          text: message,
+          onConfirmBtnTap: () async {
+            Navigator.of(context).pop();
+            await _firstLoad();
+            setState(() {});
+          },
+        );
+        setState(() {});
+      }
+    };
+
     _initForm();
   }
 
@@ -90,7 +111,7 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
     setState(() {});
   }
 
-  void _firstLoad() async {
+  Future<void> _firstLoad() async {
     setState(() {
       isFirstLoadRunning = true;
       narudzbaList = [];
@@ -109,7 +130,7 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
       page: page,
       pageSize: 10,
       orderBy: 'DatumKreiranja',
-      sortDirection: 'asc',
+      sortDirection: 'desc',
     );
 
     narudzbaList = narudzbaResult!.result;
@@ -146,7 +167,7 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
           page: page,
           pageSize: 10,
           orderBy: 'DatumKreiranja',
-          sortDirection: 'asc',
+          sortDirection: 'desc',
         );
 
         if (narudzbaResult?.result.isNotEmpty ?? false) {

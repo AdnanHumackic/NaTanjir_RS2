@@ -8,6 +8,9 @@ using naTanjir.Services;
 using naTanjir.Services.Auth;
 using naTanjir.Services.Database;
 using naTanjir.Services.NarudzbaStateMachine;
+using naTanjir.Services.RabbitMQ;
+using naTanjir.Services.SignalR;
+using naTanjir.Services.SignalRService;
 using naTanjir.Services.Validator.Implementation;
 using naTanjir.Services.Validator.Interfaces;
 
@@ -48,8 +51,10 @@ builder.Services.AddTransient<IOcjenaProizvodValidatorService, OcjenaProizvodVal
 
 builder.Services.AddTransient<IActiveUserService, ActiveUserService>();
 builder.Services.AddTransient<IActiveUserServiceAsync, ActiveUserServiceAsync>();
+builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
+builder.Services.AddScoped<ISignalRHubService, SignalRHubService>();
 
-
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers(x =>
 {
@@ -95,6 +100,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(
+    options => options
+        .SetIsOriginAllowed(x => _ = true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+); 
+
+app.MapHub<SignalRHubService>("/notifications-hub");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

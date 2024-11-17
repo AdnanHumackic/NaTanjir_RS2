@@ -12,4 +12,6 @@ class AuthProvider {
   static String? slika;
   static int? restoranId;
   static List<KorisnikUloga>? korisnikUloge;
+  static String? connectionId;
+  static bool isSignedIn = false;
 }

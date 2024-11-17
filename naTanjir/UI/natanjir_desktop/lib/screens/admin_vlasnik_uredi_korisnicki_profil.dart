@@ -66,7 +66,6 @@ class _AdminVlasnikUrediKorisnickiProfilScreenState
     );
   }
 
-  //TODO: promjena korisnickog imena salje mail sa rabbit mq-om
   Widget _buildForm() {
     return FormBuilder(
       key: _formKey,
@@ -112,12 +111,6 @@ class _AdminVlasnikUrediKorisnickiProfilScreenState
                 SizedBox(height: 20),
                 Row(
                   children: [
-                    Expanded(
-                      child: Text(
-                        "TODO: Promjena korisnickog imena salje mail sa rabbit mq-om",
-                      ),
-                    ),
-                    SizedBox(width: 15),
                     Expanded(
                       child: FormBuilderTextField(
                         name: 'korisnickoIme',

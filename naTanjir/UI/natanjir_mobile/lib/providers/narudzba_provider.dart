@@ -43,4 +43,19 @@ class NarudzbaProvider extends BaseProvider<Narudzba> {
 
     var response = await http.put(uri, headers: headers);
   }
+
+  Future<List<String>> getAllowedActions(int narudzbaId) async {
+    var url = "${BaseProvider.baseUrl}Narudzba/${narudzbaId}/allowedActions";
+
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.cast<String>();
+    }
+    throw new Exception("Greška");
+  }
 }

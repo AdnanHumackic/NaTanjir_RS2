@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "naTanjir.API", "naTanjir.API\naTanjir.API.csproj", "{2820878F-3F08-4346-AA90-52E64CE4FC9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "naTanjir.API", "naTanjir.API\naTanjir.API.csproj", "{2820878F-3F08-4346-AA90-52E64CE4FC9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "naTanjir.Model", "naTanjir.Model\naTanjir.Model.csproj", "{1039182F-9CEB-4133-9684-289F803F1572}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "naTanjir.Model", "naTanjir.Model\naTanjir.Model.csproj", "{1039182F-9CEB-4133-9684-289F803F1572}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "naTanjir.Services", "naTanjir.Services\naTanjir.Services.csproj", "{BE7341F1-008C-4D8E-9957-9741477C01CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "naTanjir.Services", "naTanjir.Services\naTanjir.Services.csproj", "{BE7341F1-008C-4D8E-9957-9741477C01CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "naTanjir.Subscriber", "naTanjir.Subscriber\naTanjir.Subscriber.csproj", "{09B30804-8E27-4CBA-B047-276295B32274}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{BE7341F1-008C-4D8E-9957-9741477C01CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE7341F1-008C-4D8E-9957-9741477C01CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE7341F1-008C-4D8E-9957-9741477C01CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09B30804-8E27-4CBA-B047-276295B32274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09B30804-8E27-4CBA-B047-276295B32274}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09B30804-8E27-4CBA-B047-276295B32274}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09B30804-8E27-4CBA-B047-276295B32274}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

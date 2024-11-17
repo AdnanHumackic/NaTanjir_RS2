@@ -30,8 +30,7 @@ namespace naTanjir.API.Authentication
 
             var username = credentials[0];
             var password = credentials[1];
-
-            var user = _korisniciService.Login(username, password);
+            var user = _korisniciService.Login(username, password, "");
 
             if (user == null)
             {
