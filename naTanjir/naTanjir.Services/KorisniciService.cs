@@ -9,6 +9,8 @@ using naTanjir.Model.SearchObject;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
 using naTanjir.Services.RabbitMQ;
+using naTanjir.Services.Recommender.OrderBased;
+using naTanjir.Services.Recommender.UserGradeBased;
 using naTanjir.Services.SignalR;
 using System;
 using System.Collections.Generic;
@@ -26,11 +28,14 @@ namespace naTanjir.Services
         ILogger<KorisniciService> _logger;
         private readonly IRabbitMQService _rabbitMQService;
         private readonly IHubContext<SignalRHubService> _hubContext;
+        private readonly IUserGradeRecommenderService _userGradeRecommenderService;
         public KorisniciService(NaTanjirContext context, IMapper mapper, ILogger<KorisniciService> logger,
-            IRabbitMQService rabbitMQService, IHubContext<SignalRHubService> hubContext) : base(context, mapper)
+            IRabbitMQService rabbitMQService, IHubContext<SignalRHubService> hubContext,
+            IUserGradeRecommenderService userGradeRecommenderService) : base(context, mapper)
         {
             _logger = logger;
             _rabbitMQService = rabbitMQService;
+            _userGradeRecommenderService = userGradeRecommenderService;
             _hubContext = hubContext;
         }
 
@@ -212,6 +217,18 @@ namespace naTanjir.Services
                 _hubContext.Groups.AddToGroupAsync(connectionId, username);
             }
             return Mapper.Map<Model.Korisnici>(entity);
+        }
+
+        public async Task<List<Model.Proizvod>> GetRecommendedGradedProducts(int korisnikId, int restoranId)
+        {
+            var korisniciOcj = await _userGradeRecommenderService.GetRecommendedGradedProducts(korisnikId, restoranId);
+
+            return korisniciOcj;
+        }
+
+        public void TrainData()
+        {
+           _userGradeRecommenderService.TrainData();
         }
     }
 }

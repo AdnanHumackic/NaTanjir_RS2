@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace naTanjir.Services.Recommender
+namespace naTanjir.Services.Recommender.OrderBased
 {
     public interface IRecommenderService
     {

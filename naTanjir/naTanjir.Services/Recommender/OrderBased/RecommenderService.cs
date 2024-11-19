@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace naTanjir.Services.Recommender
+namespace naTanjir.Services.Recommender.OrderBased
 {
     public class RecommenderService : IRecommenderService
     {
@@ -22,7 +22,7 @@ namespace naTanjir.Services.Recommender
         private static object isLocked = new object();
         private static ITransformer model = null;
 
-        private const string ModelFilePath = "recommender-model.zip"; 
+        private const string ModelFilePath = "order-model.zip";
 
         public RecommenderService(NaTanjirContext naTanjirContext, IMapper mapper)
         {
@@ -36,7 +36,7 @@ namespace naTanjir.Services.Recommender
 
             if (!proizvodExistsInOrders)
             {
-                return null; 
+                return null;
             }
 
             if (mlContext == null)
@@ -98,12 +98,12 @@ namespace naTanjir.Services.Recommender
                     if (rb.ProizvodId == item.ProizvodId)
                         continue;
 
-                    var similarity = ComputeCosineSimilarity(item, rb);
+                    //var similarity = ComputeCosineSimilarity(item, rb);
                     data.Add(new ProizvodEntry()
                     {
                         ProizvodId = (uint)item.ProizvodId,
                         CoPurchaseProizvodId = (uint)rb.ProizvodId,
-                        Label = (float)similarity
+                        //Label = (float)similarity
                     });
                 }
             }
@@ -117,7 +117,7 @@ namespace naTanjir.Services.Recommender
                 LabelColumnName = "Label",
                 LossFunction = MatrixFactorizationTrainer.LossFunctionType.SquareLossOneClass,
                 Alpha = 0.01,
-                Lambda = 0.025,
+                Lambda = 0.005,
                 // For better results use the following parameters
                 NumberOfIterations = 100,
                 C = 0.00001,
@@ -132,43 +132,58 @@ namespace naTanjir.Services.Recommender
             }
         }
 
-        public double ComputeCosineSimilarity(Database.Proizvod proizvod1, Database.Proizvod proizvod2)
-        {
-            var features1 = GetFeatureVector(proizvod1);
-            var features2 = GetFeatureVector(proizvod2);
+        //public double ComputeCosineSimilarity(Database.Proizvod proizvod1, Database.Proizvod proizvod2)
+        //{
+        //    var features1 = GetFeatureVector(proizvod1);
+        //    var features2 = GetFeatureVector(proizvod2);
 
-            double dotProduct = features1.Zip(features2, (f1, f2) => f1 * f2).Sum();
-            double magnitude1 = Math.Sqrt(features1.Sum(f => f * f));
-            double magnitude2 = Math.Sqrt(features2.Sum(f => f * f));
-            if (magnitude1 == 0 || magnitude2 == 0)
-                return 0;
-            return dotProduct / (magnitude1 * magnitude2);
-        }
+        //    double dotProduct = features1.Zip(features2, (f1, f2) => f1 * f2).Sum();
+        //    double magnitude1 = Math.Sqrt(features1.Sum(f => f * f));
+        //    double magnitude2 = Math.Sqrt(features2.Sum(f => f * f));
+        //    if (magnitude1 == 0 || magnitude2 == 0)
+        //        return 0;
+        //    return dotProduct / (magnitude1 * magnitude2);
+        //}
 
-        public double[] GetFeatureVector(Database.Proizvod product)
-        {
-            var allProductIds = naTanjirContext.Proizvods.Select(p => p.ProizvodId).ToList();
+        //public double[] GetFeatureVector(Database.Proizvod product)
+        //{
+        //    var allProductIds = naTanjirContext.Proizvods.Select(p => p.ProizvodId).ToList();
 
-            var featureVector = new List<double>();
+        //    var featureVector = new List<double>();
 
-            foreach (var otherProductId in allProductIds)
-            {
-                if (otherProductId == product.ProizvodId)
-                {
-                    featureVector.Add(0);
-                    continue;
-                }
+        //    foreach (var otherProductId in allProductIds)
+        //    {
+        //        if (otherProductId == product.ProizvodId)
+        //        {
+        //            featureVector.Add(0);
+        //            continue;
+        //        }
 
-                var coPurchaseCount = naTanjirContext.StavkeNarudzbes
-                    .Where(x => x.ProizvodId == product.ProizvodId &&
-                                naTanjirContext.StavkeNarudzbes.Any(y => y.NarudzbaId == x.NarudzbaId && y.ProizvodId == otherProductId))
-                    .Count();
+        //        var coPurchaseCount = naTanjirContext.StavkeNarudzbes
+        //            .Where(x => x.ProizvodId == product.ProizvodId &&
+        //                        naTanjirContext.StavkeNarudzbes.Any(y => y.NarudzbaId == x.NarudzbaId && y.ProizvodId == otherProductId))
+        //            .Count();
 
-                featureVector.Add(coPurchaseCount);
-            }
+        //        featureVector.Add(coPurchaseCount);
+        //    }
 
-            return featureVector.ToArray();
-        }
+        //    return featureVector.ToArray();
+        //}
+    }
+
+
+    public class ProizvodRatingPrediction
+    {
+        public float Label;
+        public float Score;
+    }
+    public class ProizvodRatingEntry
+    {
+        [KeyType(count: 262111)]
+        public int korisnikId;
+        [KeyType(count: 262111)]
+        public float proizvodId;
+        public float Label;
     }
 
     public class Copurchase_prediction

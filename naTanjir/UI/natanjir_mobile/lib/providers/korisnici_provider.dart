@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:natanjir_mobile/models/korisnici.dart';
+import 'package:natanjir_mobile/models/proizvod.dart';
 import 'package:natanjir_mobile/providers/base_provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,5 +39,29 @@ class KorisniciProvider extends BaseProvider<Korisnici> {
     } else {
       throw new UserException("Unknown error.");
     }
+  }
+
+  Future<List<Proizvod>> getRecommended(int korisnikId, int restoranId) async {
+    var url =
+        "${BaseProvider.baseUrl}Korisnici/${korisnikId}/${restoranId}/recommended";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.get(uri, headers: headers);
+    if (response.body.isEmpty || response.body == 'null') {
+      return [];
+    }
+    if (isValidResponse(response)) {
+      var data = json.decode(response.body);
+
+      if (data is List) {
+        List<Proizvod> dataList =
+            data.map((item) => Proizvod.fromJson(item)).toList();
+        return dataList;
+      } else {
+        throw new UserException("Greška");
+      }
+    }
+    throw new UserException("Greška");
   }
 }

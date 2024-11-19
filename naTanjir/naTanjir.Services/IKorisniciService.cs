@@ -14,5 +14,8 @@ namespace naTanjir.Services
     public interface IKorisniciService:ICRUDServiceAsync<Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest>
     {
         Model.Korisnici Login(string username, string password, string connectionId);
+
+        Task<List<Model.Proizvod>> GetRecommendedGradedProducts(int korisnikId, int restoranId);
+        void TrainData();
     }
 }

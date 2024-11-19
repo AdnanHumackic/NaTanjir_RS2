@@ -24,5 +24,18 @@ namespace naTanjir.API.Controllers
        {
            return (_service as IKorisniciService).Login(username, password, connectionId);
        }
+
+        [AllowAnonymous]
+        [HttpGet("{korisnikId}/{restoranId}/recommended")]
+        public Task<List<Model.Proizvod>> Recommend(int korisnikId, int restoranId)
+        {
+            return (_service as IKorisniciService).GetRecommendedGradedProducts(korisnikId, restoranId);
+        }
+        [AllowAnonymous]
+        [HttpGet("traindata")]
+        public void TrainData()
+        {
+            (_service as IKorisniciService).TrainData();
+        }
     }
 }

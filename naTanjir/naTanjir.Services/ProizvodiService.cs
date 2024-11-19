@@ -7,7 +7,7 @@ using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
-using naTanjir.Services.Recommender;
+using naTanjir.Services.Recommender.OrderBased;
 using System;
 using System.Collections.Generic;
 using System.Linq;
