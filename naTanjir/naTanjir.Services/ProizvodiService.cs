@@ -7,6 +7,7 @@ using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
+using naTanjir.Services.Recommender;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,12 @@ namespace naTanjir.Services
 {
     public class ProizvodiService : BaseCRUDServiceAsync<Model.Proizvod, ProizvodiSearchObject, Database.Proizvod, ProizvodiInsertRequest, ProizvodiUpdateRequest>, IProizvodiService
     {
-        public ProizvodiService(NaTanjirContext context, IMapper mapper) : base(context, mapper)
+        private readonly IRecommenderService recommendService;
+
+        public ProizvodiService(NaTanjirContext context, IMapper mapper,
+            IRecommenderService recommenderService) : base(context, mapper)
         {
+            this.recommendService=recommenderService;
         }
 
         public override IQueryable<Database.Proizvod> AddFilter(ProizvodiSearchObject searchObject, IQueryable<Database.Proizvod> query)
@@ -129,6 +134,17 @@ namespace naTanjir.Services
             {
                 throw new UserException("Molimo unesite status restorana.");
             }
+        }
+
+        public async Task<List<Model.Proizvod>> Recommend(int id)
+        {
+            var proizvodi = await recommendService.GetRecommendedProducts(id);
+
+            return proizvodi;
+        }
+        public void TrainData()
+        {
+            recommendService.TrainData();
         }
     }
 }

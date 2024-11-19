@@ -9,6 +9,7 @@ using naTanjir.Services.Auth;
 using naTanjir.Services.Database;
 using naTanjir.Services.NarudzbaStateMachine;
 using naTanjir.Services.RabbitMQ;
+using naTanjir.Services.Recommender;
 using naTanjir.Services.SignalR;
 using naTanjir.Services.SignalRService;
 using naTanjir.Services.Validator.Implementation;
@@ -53,6 +54,7 @@ builder.Services.AddTransient<IActiveUserService, ActiveUserService>();
 builder.Services.AddTransient<IActiveUserServiceAsync, ActiveUserServiceAsync>();
 builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
 builder.Services.AddScoped<ISignalRHubService, SignalRHubService>();
+builder.Services.AddScoped<IRecommenderService, RecommenderService>();
 
 builder.Services.AddSignalR();
 

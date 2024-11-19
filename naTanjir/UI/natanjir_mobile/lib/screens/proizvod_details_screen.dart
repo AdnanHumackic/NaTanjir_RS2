@@ -7,6 +7,7 @@ import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:natanjir_mobile/providers/base_provider.dart';
 import 'package:natanjir_mobile/providers/cart_provider.dart';
 import 'package:natanjir_mobile/providers/ocjena_proizvod_provider.dart';
+import 'package:natanjir_mobile/providers/product_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +25,8 @@ class ProizvodDetailsScreen extends StatefulWidget {
 
 class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
   late OcjenaProizvodProvider ocjenaProizvodProvider;
+  late ProductProvider proizvodProvider;
+  List<Proizvod> proizvodList = [];
 
   SearchResult<OcjenaProizvod>? ocjenaProizvodResult;
 
@@ -40,11 +43,15 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
   void initState() {
     super.initState();
     ocjenaProizvodProvider = context.read<OcjenaProizvodProvider>();
+    proizvodProvider = context.read<ProductProvider>();
     _initForm();
   }
 
   Future _initForm() async {
     ocjenaProizvodResult = await ocjenaProizvodProvider.get();
+    var proizvodi = await proizvodProvider
+        .getRecommendedProducts(widget.odabraniProizvod!.proizvodId!);
+    proizvodList = proizvodi;
     setState(() {});
   }
 
@@ -321,6 +328,95 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                 ),
               ),
             ),
+            proizvodList.isEmpty
+                ? Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      "Nema preporučenih proizvoda.",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Column(
+                      children: proizvodList.map((proizvod) {
+                        return Card(
+                          surfaceTintColor: Colors.white,
+                          elevation: 5,
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          child: ConstrainedBox(
+                            constraints:
+                                BoxConstraints(maxWidth: double.infinity),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.all(10),
+                              title: Text(
+                                proizvod.naziv!,
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Text(
+                                '${formatNumber(proizvod!.cijena)} KM',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: proizvod!.slika != null &&
+                                        proizvod!.slika!.isNotEmpty
+                                    ? imageFromString(proizvod!.slika!)
+                                    : Image.asset(
+                                        "assets/images/emptyProductImage.png",
+                                        fit: BoxFit.cover,
+                                        width: 50,
+                                        height: 50,
+                                      ),
+                              ),
+                              trailing: IconButton(
+                                icon: Icon(
+                                  Icons.add_circle,
+                                  size: 35,
+                                  color: Color.fromARGB(255, 0, 83, 86),
+                                ),
+                                onPressed: () async {
+                                  try {
+                                    await cartProvider.addToCart(
+                                      widget.odabraniProizvod as Proizvod,
+                                      quantity,
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor:
+                                            Color.fromARGB(255, 0, 83, 86),
+                                        duration: Duration(milliseconds: 500),
+                                        content: Center(
+                                          child: Text(
+                                              "Proizvod je dodan u korpu."),
+                                        ),
+                                      ),
+                                    );
+                                  } on Exception catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 1),
+                                        content: Center(
+                                          child: Text(e.toString()),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
           ],
         ),
       ),

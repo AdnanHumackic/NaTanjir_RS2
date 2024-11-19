@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
@@ -7,7 +8,9 @@ import 'package:signalr_netcore/hub_connection_builder.dart';
 
 class SignalRProvider with ChangeNotifier {
   late HubConnection _hubConnection;
-
+  Timer? _reconnectTimer;
+  Timer? _connectionIdTimeoutTimer;
+  bool _isReconnecting = false;
   SignalRProvider._privateConstructor();
 
   static final SignalRProvider _instance =
@@ -33,11 +36,14 @@ class SignalRProvider with ChangeNotifier {
     try {
       await _hubConnection.start();
       print('SignalR konekcija uspješna.');
+      _startConnectionIdTimeout();
     } catch (e) {
       print('Greška prilikom konektovanja: $e');
+      _scheduleReconnect();
     }
 
     _hubConnection.on('ReceiveConnectionId', (arguments) {
+      _connectionIdTimeoutTimer?.cancel();
       print("Connection id: $arguments");
       AuthProvider.connectionId = arguments?[0];
     });
@@ -55,6 +61,39 @@ class SignalRProvider with ChangeNotifier {
         }
       }
     });
+  }
+
+  void _startConnectionIdTimeout() {
+    _connectionIdTimeoutTimer = Timer(Duration(seconds: 3), () {
+      print("Nije primljen ConnectionId. Pokušaj ponovnog povezivanja.");
+      _restartConnection();
+    });
+  }
+
+  void _scheduleReconnect() {
+    if (_isReconnecting) return;
+
+    _isReconnecting = true;
+    _reconnectTimer = Timer.periodic(Duration(seconds: 3), (timer) async {
+      print("Pokušavam ponovo uspostaviti SignalR konekciju...");
+      try {
+        await startConnection();
+        if (_hubConnection.state == HubConnectionState.Connected) {
+          timer.cancel();
+          _isReconnecting = false;
+          print("SignalR ponovo povezan.");
+        }
+      } catch (e) {
+        print("Ponovno povezivanje neuspješno: $e");
+      }
+    });
+  }
+
+  Future<void> _restartConnection() async {
+    if (_hubConnection.state == HubConnectionState.Connected) {
+      await _hubConnection.stop();
+    }
+    await startConnection();
   }
 
   bool isConnected() {

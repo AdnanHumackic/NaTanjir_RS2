@@ -12,5 +12,8 @@ namespace naTanjir.Services
 {
     public interface IProizvodiService:ICRUDServiceAsync<Model.Proizvod, ProizvodiSearchObject, ProizvodiInsertRequest, ProizvodiUpdateRequest>
     {
+        Task<List<Model.Proizvod>> Recommend(int id);
+        void TrainData();
+
     }
 }

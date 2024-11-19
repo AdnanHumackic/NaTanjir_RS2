@@ -16,6 +16,19 @@ namespace naTanjir.API.Controllers
             : base(service)
         {
         }
-        
+
+        [AllowAnonymous]
+        [HttpGet("{proizvodId}/recommended")]
+        public Task<List<Model.Proizvod>> Recommend(int proizvodId)
+        {
+            return (_service as IProizvodiService).Recommend(proizvodId);
+        }
+        [AllowAnonymous]
+        [HttpGet("traindata")]
+        public void TrainData()
+        {
+            (_service as IProizvodiService).TrainData();
+        }
+
     }
 }

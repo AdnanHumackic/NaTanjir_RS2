@@ -90,6 +90,7 @@ class _ObavijestListScreenState extends State<ObavijestListScreen> {
                     itemCount: _notifications.length,
                     itemBuilder: (context, index) {
                       return Card(
+                        surfaceTintColor: Colors.white,
                         elevation: 4,
                         margin: EdgeInsets.symmetric(vertical: 5),
                         child: ListTile(
