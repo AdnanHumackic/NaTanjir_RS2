@@ -21,13 +21,22 @@ namespace naTanjir.Services.Validator.Implementation
 
         public void ValidateRestoranIns(RestoranInsertRequest request)
         {
-            var nazivRest = Context.Restorans.Where(x => x.Naziv == request.Naziv).FirstOrDefault();
+            var nazivRest = Context.Restorans.Where(x => x.Naziv.ToLower() == request.Naziv.ToLower()).FirstOrDefault();
 
             if (nazivRest != null)
             {
                 throw new UserException($"Restoran sa nazivom: {request.Naziv} već postoji.");
             }
 
+            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeOd))
+            {
+                throw new UserException("Molimo unesite radno vrijeme od (npr 08:00).");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeDo))
+            {
+                throw new UserException("Molimo unesite radno vrijeme do (npr 20:00).");
+            }
             var vrstaRest = Context.VrstaRestoranas.Where(x => x.VrstaId == request.VrstaRestoranaId).FirstOrDefault();
 
             if (vrstaRest == null)
@@ -40,6 +49,35 @@ namespace naTanjir.Services.Validator.Implementation
             if (vlasnik == null)
             {
                 throw new UserException($"Korisnik sa id: {request.VlasnikId} ne postoji.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Lokacija))
+            {
+                throw new UserException($"Molimo unesite lokaciju restorana.");
+
+            }
+        }
+
+        public void ValidateRestoranUpd(RestoranUpdateRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeOd))
+            {
+                throw new UserException("Molimo unesite radno vrijeme od.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeDo))
+            {
+                throw new UserException("Molimo unesite radno vrijeme do.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Lokacija))
+            {
+                throw new UserException("Molimo unesite lokaciju restorana.");
+            }
+
+            if (request?.IsDeleted == null)
+            {
+                throw new UserException("Molimo unesite status restorana.");
             }
         }
     }

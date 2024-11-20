@@ -47,7 +47,7 @@ namespace naTanjir.Services
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            //vrstaRestoranaValidator.ValidateVrstaRestoranaNazivUpd(request);
+            vrstaRestoranaValidator.ValidateVrstaRestoranaNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {

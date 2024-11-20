@@ -51,7 +51,7 @@ namespace naTanjir.Services
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            //vrstaProizvodumValidator.ValidateVrstaProizvodumNazivUpd(request);
+            vrstaProizvodumValidator.ValidateVrstaProizvodumNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {

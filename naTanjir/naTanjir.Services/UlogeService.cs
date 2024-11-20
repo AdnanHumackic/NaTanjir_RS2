@@ -50,7 +50,7 @@ namespace naTanjir.Services
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            //ulogeValidator.ValidateUlogaNazivUpd(request);
+            ulogeValidator.ValidateUlogaNazivUpd(request);
 
             if (request?.IsDeleted == null)
             {

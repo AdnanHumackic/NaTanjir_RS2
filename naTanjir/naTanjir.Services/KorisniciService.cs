@@ -6,12 +6,14 @@ using naTanjir.Model;
 using naTanjir.Model.Exceptions;
 using naTanjir.Model.Request;
 using naTanjir.Model.SearchObject;
+using naTanjir.Services.Auth;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
 using naTanjir.Services.RabbitMQ;
 using naTanjir.Services.Recommender.OrderBased;
 using naTanjir.Services.Recommender.UserGradeBased;
 using naTanjir.Services.SignalR;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,14 +31,19 @@ namespace naTanjir.Services
         private readonly IRabbitMQService _rabbitMQService;
         private readonly IHubContext<SignalRHubService> _hubContext;
         private readonly IUserGradeRecommenderService _userGradeRecommenderService;
+        private readonly IPasswordService _passwordService;
+        private readonly IKorisniciValidatorService _korisniciValidator;
         public KorisniciService(NaTanjirContext context, IMapper mapper, ILogger<KorisniciService> logger,
             IRabbitMQService rabbitMQService, IHubContext<SignalRHubService> hubContext,
-            IUserGradeRecommenderService userGradeRecommenderService) : base(context, mapper)
+            IUserGradeRecommenderService userGradeRecommenderService, IPasswordService passwordService,
+            IKorisniciValidatorService korisniciValidator) : base(context, mapper)
         {
             _logger = logger;
             _rabbitMQService = rabbitMQService;
             _userGradeRecommenderService = userGradeRecommenderService;
             _hubContext = hubContext;
+            _passwordService=passwordService;
+            _korisniciValidator= korisniciValidator;
         }
 
         public override IQueryable<Database.Korisnici> AddFilter(KorisniciSearchObject searchObject, IQueryable<Database.Korisnici> query)
@@ -118,17 +125,13 @@ namespace naTanjir.Services
             {
                 throw new UserException("Lozinka i LozinkaPotvrda moraju biti iste.");
             }
-
-            entity.LozinkaSalt = GenerateSalt();
-            entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.Lozinka);
+            _korisniciValidator.ValidateKorisniciIns(request);
+            entity.LozinkaSalt = _passwordService.GenerateSalt();
+            entity.LozinkaHash = _passwordService.GenerateHash(entity.LozinkaSalt, request.Lozinka);
 
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
-        public override async Task AfterUpdateAsync(KorisniciUpdateRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
-        {
-            await base.AfterUpdateAsync(request, entity, cancellationToken);
-           
-        }
+       
         public override async Task AfterInsertAsync(KorisniciInsertRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
         {
             if (request.Uloge != null)
@@ -147,26 +150,6 @@ namespace naTanjir.Services
             await base.AfterInsertAsync(request, entity, cancellationToken);
         }
 
-        public static string GenerateSalt()
-        {
-            var byteArray = RNGCryptoServiceProvider.GetBytes(16);
-
-            return Convert.ToBase64String(byteArray);
-        }
-
-        public static string GenerateHash(string salt, string password)
-        {
-            byte[] src = Convert.FromBase64String(salt);
-            byte[] bytes = Encoding.Unicode.GetBytes(password);
-            byte[] dst = new byte[src.Length + bytes.Length];
-
-            System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
-            System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
-
-            HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
-            byte[] inArray = algorithm.ComputeHash(dst);
-            return Convert.ToBase64String(inArray);
-        }
 
         public override async Task BeforeUpdateAsync(KorisniciUpdateRequest request, Database.Korisnici entity, CancellationToken cancellationToken = default)
         {
@@ -184,15 +167,15 @@ namespace naTanjir.Services
                     ReceiverName = entity.Ime + " " + entity.Prezime,
                     Subject = "Promjena korisničkog imena"
                 });
-
+            _korisniciValidator.ValidateKorisniciUpd(request);
             if (request.NovaLozinka != null)
             {
                 if (request.NovaLozinka != request.LozinkaPotvrda)
                 {
                     throw new UserException("Lozinka i LozinkaPotvrda moraju biti iste.");
                 }
-                entity.LozinkaSalt = GenerateSalt();
-                entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.NovaLozinka);
+                entity.LozinkaSalt = _passwordService.GenerateSalt();
+                entity.LozinkaHash = _passwordService.GenerateHash(entity.LozinkaSalt, request.NovaLozinka);
             }
             entity.IsDeleted = false;
         }
@@ -206,7 +189,7 @@ namespace naTanjir.Services
                 return null;
             }
 
-            var hash = GenerateHash(entity.LozinkaSalt, password);
+            var hash = _passwordService.GenerateHash(entity.LozinkaSalt, password);
 
             if (hash != entity.LozinkaHash)
             {

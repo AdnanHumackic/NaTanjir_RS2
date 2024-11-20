@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using naTanjir.Model;
 using naTanjir.Model.Request;
 using naTanjir.Services.SignalR;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,13 @@ namespace naTanjir.Services.NarudzbaStateMachine
     public class InitialNarudzbaState : BaseNarudzbaState
     {
         private readonly IHubContext<SignalRHubService> _hubContext;
-
+        private readonly INarudzbaValidatorService _narudzbaValidator;
         public InitialNarudzbaState(Database.NaTanjirContext context, IMapper mapper, IServiceProvider serviceProvider,
-            IHubContext<SignalRHubService> hubContext
+            IHubContext<SignalRHubService> hubContext, INarudzbaValidatorService narudzbaValidator
             ) : base(context, mapper, serviceProvider)
         {
             _hubContext = hubContext;
+            _narudzbaValidator = narudzbaValidator;
         }   
 
         public override async Task<Narudzba> Insert(NarudzbaInsertRequest request)
@@ -30,8 +32,8 @@ namespace naTanjir.Services.NarudzbaStateMachine
             var entity = Mapper.Map<Database.Narudzba>(request);
             entity.StateMachine = "kreirana";
             set.Add(entity);
+            _narudzbaValidator.ValidateNarudzbaIns(request, entity);
             await Context.SaveChangesAsync();
-
             var narudzbaId = await Context.Narudzbas.Select(x => x.NarudzbaId).OrderBy(x => x).LastOrDefaultAsync();
 
             List<string> radniciRestorana = new List<string>(); 

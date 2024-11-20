@@ -63,28 +63,5 @@ namespace naTanjir.Services
 
             return query;
         }
-
-        public override async Task BeforeInsertAsync(StavkeNarudzbeInsertRequest request, StavkeNarudzbe entity, CancellationToken cancellationToken = default)
-        {
-            if (request?.Kolicina == null || request.Kolicina <= 0)
-            {
-                throw new UserException("Molimo unesite validnu kolicinu.");
-            }
-            if (request?.Cijena == null || request.Cijena <= 0)
-            {
-                throw new UserException("Molimo unesite validnu kolicinu.");
-            }
-            if (request?.ProizvodId == null || request.ProizvodId == 0)
-            {
-                throw new UserException("Molimo unesite proizvod id.");
-            }
-
-            if (request?.RestoranId == null || request.RestoranId == 0)
-            {
-                throw new UserException("Molimo unesite restoran id.");
-            }
-
-            await base.BeforeInsertAsync(request, entity, cancellationToken);
-        }
     }
 }

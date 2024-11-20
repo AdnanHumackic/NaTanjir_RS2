@@ -7,6 +7,7 @@ using naTanjir.Services.Auth;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
 using naTanjir.Services.NarudzbaStateMachine;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,9 +21,12 @@ namespace naTanjir.Services
     public class NarudzbaService : BaseCRUDServiceAsync<Model.Narudzba, NarudzbaSearchObject, Database.Narudzba, NarudzbaInsertRequest, NarudzbaUpdateRequest>, INarudzbaService
     {
         public BaseNarudzbaState BaseNarudzbaState { get; set; }
-        public NarudzbaService(NaTanjirContext context, IMapper mapper, BaseNarudzbaState baseNarudzbaState) : base(context, mapper)
+        private readonly INarudzbaValidatorService _narudzbaValidator;
+        public NarudzbaService(NaTanjirContext context, IMapper mapper, BaseNarudzbaState baseNarudzbaState,
+            INarudzbaValidatorService narudzbaValidator) : base(context, mapper)
         {
             BaseNarudzbaState = baseNarudzbaState;
+            _narudzbaValidator = narudzbaValidator;
         }
 
         public override IQueryable<Narudzba> AddFilter(NarudzbaSearchObject searchObject, IQueryable<Narudzba> query)
@@ -90,31 +94,6 @@ namespace naTanjir.Services
             }
 
             return query;
-        }
-
-        public override async Task BeforeInsertAsync(NarudzbaInsertRequest request, Narudzba entity, CancellationToken cancellationToken = default)
-        {
-            if (request?.KorisnikId == null || request.KorisnikId == 0)
-            {
-                throw new UserException("Molimo unesite korisnik id.");
-            }
-
-            if (request?.BrojNarudzbe == null || request.BrojNarudzbe == 0)
-            {
-                throw new UserException("Molimo unesite broj narudzbe.");
-            }
-
-            if (request?.UkupnaCijena == null || request.UkupnaCijena <= 0)
-            {
-                throw new UserException("Molimo unesite ukupnu cijenu koja mora bit veća od 0.");
-            }
-
-            if (request?.DatumKreiranja == null)
-            {
-                entity.DatumKreiranja = DateTime.Now;
-            }
-
-            await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
         public override async Task BeforeUpdateAsync(NarudzbaUpdateRequest request, Narudzba entity, CancellationToken cancellationToken = default)
         {

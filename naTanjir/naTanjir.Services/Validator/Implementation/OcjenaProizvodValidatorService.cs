@@ -34,13 +34,29 @@ namespace naTanjir.Services.Validator.Implementation
             {
                 throw new UserException($"Proizvod sa id: {request.ProizvodId} ne postoji.");
             }
-
+            if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
+            {
+                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
+            }
             var restOcj = Context.OcjenaProizvods.Where(x => x.ProizvodId == request.ProizvodId
             && x.KorisnikId == request.KorisnikId).FirstOrDefault();
 
             if (restOcj != null)
             {
                 throw new UserException($"Proizvod sa id: {request.ProizvodId} je već ocijenjen od strane korisnika sa id: {request.KorisnikId}.");
+            }
+        }
+
+        public void ValidateOcjenaProizvodtUpd(OcjenaProizvodUpdateRequest request)
+        {
+            if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
+            {
+                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
+            }
+
+            if (request?.IsDeleted == null)
+            {
+                throw new UserException("Molimo unesite stauts ocjene.");
             }
         }
     }

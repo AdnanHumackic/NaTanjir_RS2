@@ -6,7 +6,6 @@ namespace naTanjir.Model.Request
 {
     public class RestoranInsertRequest
     {
-        //popravi eventualno
         public string Naziv { get; set; } 
 
         public string RadnoVrijemeOd { get; set; }

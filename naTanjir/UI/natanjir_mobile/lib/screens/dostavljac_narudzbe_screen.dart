@@ -497,7 +497,9 @@ class _DostavljacNarudzbeScreenState extends State<DostavljacNarudzbeScreen>
                                   ),
                                 ),
                               );
-                              Navigator.of(context)
+                              await Future.delayed(Duration(seconds: 1));
+
+                              await Navigator.of(context)
                                   .push(
                                 MaterialPageRoute(
                                   builder: (context) =>

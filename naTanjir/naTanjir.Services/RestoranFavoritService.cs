@@ -43,7 +43,6 @@ namespace naTanjir.Services
                 query = query.Where(x => x.RestoranId == searchObject.RestoranId);
             }
 
-
             if (searchObject.IsRestoranIncluded == true)
             {
                 query = query.Include(x => x.Restoran);

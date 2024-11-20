@@ -29,19 +29,19 @@ namespace naTanjir.API.Controllers
             return base.GetById(id, cancellationToken);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public override Task<Uloge> Insert(UlogeInsertRequest request, CancellationToken cancellationToken = default)
         {
             return base.Insert(request, cancellationToken);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public override Task<Uloge> Update(int id, UlogeUpdateRequest request, CancellationToken cancellationToken = default)
         {
             return base.Update(id, request, cancellationToken);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public override Task Delete(int id, CancellationToken cancellationToken = default)
         {
             return base.Delete(id, cancellationToken);

@@ -31,7 +31,6 @@ builder.Services.AddTransient<IOcjenaRestoranService, OcjenaRestoranService>();
 builder.Services.AddTransient<IOcjenaProizvodService, OcjenaProizvodService>();
 builder.Services.AddTransient<INarudzbaService, NarudzbaService>();
 builder.Services.AddTransient<IStavkeNarudzbe, StavkeNarudzbeService>();
-builder.Services.AddTransient<IUpitService, UpitService>();
 
 builder.Services.AddTransient<BaseNarudzbaState>();
 builder.Services.AddTransient<InitialNarudzbaState>();
@@ -50,7 +49,11 @@ builder.Services.AddTransient<IRestoranFavoritValidatorService, RestoranFavoritV
 builder.Services.AddTransient<IRestoranValidatorService, RestoranValidatorService>();
 builder.Services.AddTransient<IOcjenaRestoranValidatorService, OcjenaRestoranValidatorService>();
 builder.Services.AddTransient<IOcjenaProizvodValidatorService, OcjenaProizvodValidatorService>();
+builder.Services.AddTransient<IProizvodValidatorService, ProizvodValidatorService>();
+builder.Services.AddTransient<IKorisniciValidatorService, KorisniciValidatorService>();
+builder.Services.AddTransient<INarudzbaValidatorService, NarudzbaValidatorService>();
 
+builder.Services.AddTransient<IPasswordService, PasswordService>();
 builder.Services.AddTransient<IActiveUserService, ActiveUserService>();
 builder.Services.AddTransient<IActiveUserServiceAsync, ActiveUserServiceAsync>();
 builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();

@@ -84,9 +84,15 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
         _loadMore();
       }
     });
-    _signalRProvider?.onNotificationReceived = (message) {
+    _displayNotification(context);
+
+    _initForm();
+  }
+
+  Future _displayNotification(BuildContext context) async {
+    _signalRProvider?.onNotificationReceived = (message) async {
       if (message.isNotEmpty) {
-        QuickAlert.show(
+        await QuickAlert.show(
           context: context,
           type: QuickAlertType.info,
           title: "Obavijest",
@@ -100,8 +106,6 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
         setState(() {});
       }
     };
-
-    _initForm();
   }
 
   Future _initForm() async {

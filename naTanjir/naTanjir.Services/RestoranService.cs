@@ -67,22 +67,7 @@ namespace naTanjir.Services
 
         public override async Task BeforeInsertAsync(RestoranInsertRequest request, Restoran entity, CancellationToken cancellationToken = default)
         {
-            this.restoranValidator.ValidateRestoranIns(request);
-
-            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeOd))
-            {
-                throw new UserException("Molimo unesite radno vrijeme od.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeDo))
-            {
-                throw new UserException("Molimo unesite radno vrijeme do.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Lokacija))
-            {
-                throw new UserException("Molimo unesite lokaciju restorana.");
-            }
+            restoranValidator.ValidateRestoranIns(request);
 
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
@@ -91,25 +76,7 @@ namespace naTanjir.Services
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeOd))
-            {
-                throw new UserException("Molimo unesite radno vrijeme od.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.RadnoVrijemeDo))
-            {
-                throw new UserException("Molimo unesite radno vrijeme do.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Lokacija))
-            {
-                throw new UserException("Molimo unesite lokaciju restorana.");
-            }
-
-            if (request?.IsDeleted == null)
-            {
-                throw new UserException("Molimo unesite status restorana.");
-            }
+            restoranValidator.ValidateRestoranUpd(request);
         }
 
        

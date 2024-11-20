@@ -30,5 +30,34 @@ namespace naTanjir.API.Controllers
             (_service as IProizvodiService).TrainData();
         }
 
+        [AllowAnonymous]
+        public override Task<PagedResult<Proizvod>> GetList([FromQuery] ProizvodiSearchObject searchObject, CancellationToken cancellationToken = default)
+        {
+            return base.GetList(searchObject, cancellationToken);
+        }
+
+        [AllowAnonymous]
+        public override Task<Proizvod> GetById(int id, CancellationToken cancellationToken = default)
+        {
+            return base.GetById(id, cancellationToken);
+        }
+
+        [Authorize(Roles = "Vlasnik")]
+        public override Task<Proizvod> Insert(ProizvodiInsertRequest request, CancellationToken cancellationToken = default)
+        {
+            return base.Insert(request, cancellationToken);
+        }
+
+        [Authorize(Roles = "Vlasnik")]
+        public override Task<Proizvod> Update(int id, ProizvodiUpdateRequest request, CancellationToken cancellationToken = default)
+        {
+            return base.Update(id, request, cancellationToken);
+        }
+
+        [Authorize(Roles = "Vlasnik")]
+        public override Task Delete(int id, CancellationToken cancellationToken = default)
+        {
+            return base.Delete(id, cancellationToken);
+        }
     }
 }

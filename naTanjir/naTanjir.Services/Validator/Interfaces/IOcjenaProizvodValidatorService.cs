@@ -10,6 +10,8 @@ namespace naTanjir.Services.Validator.Interfaces
     public interface IOcjenaProizvodValidatorService:IBaseValidatorService<Database.OcjenaProizvod>
     {
         void ValidateOcjenaProizvodtIns(OcjenaProizvodInsertRequest request);
+        void ValidateOcjenaProizvodtUpd(OcjenaProizvodUpdateRequest request);
+
 
     }
 }

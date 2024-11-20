@@ -23,24 +23,24 @@ namespace naTanjir.API.Controllers
             return base.GetList(searchObject, cancellationToken);
         }
 
-        //[AllowAnonymous]
+        [AllowAnonymous]
         public override Task<VrstaRestorana> GetById(int id, CancellationToken cancellationToken = default)
         {
             return base.GetById(id, cancellationToken);
         }
 
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         public override Task<VrstaRestorana> Insert(VrstaRestoranaInsertRequest request, CancellationToken cancellationToken = default)
         {
             return base.Insert(request, cancellationToken);
         }
         
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public override Task<VrstaRestorana> Update(int id, VrstaRestoranaUpdateRequest request, CancellationToken cancellationToken = default)
         {
             return base.Update(id, request, cancellationToken);
         }
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public override Task Delete(int id, CancellationToken cancellationToken = default)
         {
             return  base.Delete(id, cancellationToken);

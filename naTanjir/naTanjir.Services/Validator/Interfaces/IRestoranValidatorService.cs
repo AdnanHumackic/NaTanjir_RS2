@@ -10,5 +10,7 @@ namespace naTanjir.Services.Validator.Interfaces
     public interface IRestoranValidatorService:IBaseValidatorService<Database.Restoran>
     {
         void ValidateRestoranIns(RestoranInsertRequest request);
+        void ValidateRestoranUpd(RestoranUpdateRequest request);
+
     }
 }

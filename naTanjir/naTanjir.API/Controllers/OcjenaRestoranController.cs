@@ -16,5 +16,35 @@ namespace naTanjir.API.Controllers
             : base(service)
         {
         }
+
+        [AllowAnonymous]
+        public override Task<PagedResult<OcjenaRestoran>> GetList([FromQuery] OcjenaRestoranSearchObject searchObject, CancellationToken cancellationToken = default)
+        {
+            return base.GetList(searchObject, cancellationToken);
+        }
+        
+        [AllowAnonymous]
+        public override Task<OcjenaRestoran> GetById(int id, CancellationToken cancellationToken = default)
+        {
+            return base.GetById(id, cancellationToken);
+        }
+
+        [Authorize(Roles = "Kupac")]
+        public override Task<OcjenaRestoran> Insert(OcjenaRestoranInsertRequest request, CancellationToken cancellationToken = default)
+        {
+            return base.Insert(request, cancellationToken);
+        }
+
+        [Authorize(Roles = "Kupac")]
+        public override Task<OcjenaRestoran> Update(int id, OcjenaRestoranUpdateRequest request, CancellationToken cancellationToken = default)
+        {
+            return base.Update(id, request, cancellationToken);
+        }
+
+        [Authorize(Roles = "Kupac")]
+        public override Task Delete(int id, CancellationToken cancellationToken = default)
+        {
+            return base.Delete(id, cancellationToken);
+        }
     }
 }

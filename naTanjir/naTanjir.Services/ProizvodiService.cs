@@ -8,6 +8,7 @@ using naTanjir.Model.SearchObject;
 using naTanjir.Services.BaseServices.Implementation;
 using naTanjir.Services.Database;
 using naTanjir.Services.Recommender.OrderBased;
+using naTanjir.Services.Validator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,12 @@ namespace naTanjir.Services
     public class ProizvodiService : BaseCRUDServiceAsync<Model.Proizvod, ProizvodiSearchObject, Database.Proizvod, ProizvodiInsertRequest, ProizvodiUpdateRequest>, IProizvodiService
     {
         private readonly IRecommenderService recommendService;
-
+        private readonly IProizvodValidatorService proizvodValidator;
         public ProizvodiService(NaTanjirContext context, IMapper mapper,
-            IRecommenderService recommenderService) : base(context, mapper)
+            IRecommenderService recommenderService, IProizvodValidatorService proizvodValidator) : base(context, mapper)
         {
             this.recommendService=recommenderService;
+            this.proizvodValidator = proizvodValidator;
         }
 
         public override IQueryable<Database.Proizvod> AddFilter(ProizvodiSearchObject searchObject, IQueryable<Database.Proizvod> query)
@@ -78,62 +80,14 @@ namespace naTanjir.Services
 
         public override async Task BeforeInsertAsync(ProizvodiInsertRequest request, Database.Proizvod entity, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(request.Naziv))
-            {
-                throw new UserException("Molimo unesite naziv proizvoda.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Opis))
-            {
-                throw new UserException("Molimo unesite opis proizvoda.");
-            }
-
-            if (request?.Cijena == null || request.Cijena <= 0)
-            {
-                throw new UserException("Molimo unesite validnu cijenu.");
-            }
-
-            if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId == null)
-            {
-                throw new UserException("Molimo unesite tip proizvoda.");
-            }
-
-            if (request.RestoranId == 0 || request?.RestoranId == null)
-            {
-                throw new UserException("Molimo unesite restoran kojem proizvod pripada.");
-            }
-
+            proizvodValidator.ValidateProizvodIns(request);
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
         public override async Task BeforeUpdateAsync(ProizvodiUpdateRequest request, Database.Proizvod entity, CancellationToken cancellationToken = default)
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
-
-            if (string.IsNullOrWhiteSpace(request.Naziv))
-            {
-                throw new UserException("Molimo unesite naziv proizvoda.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Opis))
-            {
-                throw new UserException("Molimo unesite opis proizvoda.");
-            }
-
-            if (request.Cijena == 0 || request.Cijena < 0)
-            {
-                throw new UserException("Molimo unesite validnu cijenu.");
-            }
-
-            if (request.VrstaProizvodaId == 0 || request?.VrstaProizvodaId == null)
-            {
-                throw new UserException("Molimo unesite tip proizvoda.");
-            }
-
-            if (request?.IsDeleted == null)
-            {
-                throw new UserException("Molimo unesite status restorana.");
-            }
+            proizvodValidator.ValidateProizvodUpd(request);
         }
 
         public async Task<List<Model.Proizvod>> Recommend(int id)

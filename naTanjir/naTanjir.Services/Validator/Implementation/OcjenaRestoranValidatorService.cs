@@ -43,6 +43,19 @@ namespace naTanjir.Services.Validator.Implementation
             {
                 throw new UserException($"Restoran sa id: {request.RestoranId} je već ocijenjen od strane korisnika sa id: {request.KorisnikId}.");
             }
+            
+            if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
+            {
+                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
+            }
+        }
+
+        public void ValidateOcjenaRestorantUpd(OcjenaRestoranUpdateRequest request)
+        {
+            if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
+            {
+                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
+            }
         }
     }
 }

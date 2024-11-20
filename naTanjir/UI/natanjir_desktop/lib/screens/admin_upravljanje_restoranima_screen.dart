@@ -294,7 +294,9 @@ class _AdminUpravljanjeRestoranimaScreenState
                       onChanged: (value) async {
                         if (value != null && korisniciResult != null) {
                           var username = await korisniciResult!.result
-                              .map((e) => e.korisnickoIme == value)
+                              .map((e) =>
+                                  e.korisnickoIme!.toLowerCase() ==
+                                  value.toLowerCase())
                               .toList();
 
                           if (username.contains(true)) {
@@ -646,7 +648,8 @@ class _AdminUpravljanjeRestoranimaScreenState
                       onChanged: (value) async {
                         if (value != null && korisniciResult != null) {
                           var username = await restoranResult!.result
-                              .map((e) => e.naziv == value)
+                              .map((e) =>
+                                  e.naziv!.toLowerCase() == value.toLowerCase())
                               .toList();
 
                           if (username.contains(true)) {

@@ -138,7 +138,11 @@ class _AdminVlasnikUrediKorisnickiProfilScreenState
                         onChanged: (value) async {
                           if (value != null && korisniciResult != null) {
                             var username = await korisniciResult!.result
-                                .map((e) => e.korisnickoIme == value)
+                                .map((e) =>
+                                    e.korisnickoIme!.toLowerCase() ==
+                                        value.toLowerCase() &&
+                                    e.korisnikId !=
+                                        widget.odabraniKorisnik!.korisnikId)
                                 .toList();
 
                             if (username.contains(true)) {

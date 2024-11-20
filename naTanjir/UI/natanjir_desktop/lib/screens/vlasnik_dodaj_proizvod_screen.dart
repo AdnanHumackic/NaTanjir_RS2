@@ -231,53 +231,54 @@ class _VlasnikDodajProizvodScreenState
                     ),
                   ),
                   SizedBox(width: 15),
-                  Expanded(
-                    child: FormBuilderDropdown(
-                      validator: FormBuilderValidators.required(
-                          errorText: "Obavezno polje."),
-                      name: 'restoranId',
-                      items: restoranResult?.result
-                              .map((item) => DropdownMenuItem(
-                                  value: item.restoranId.toString(),
-                                  child: Text(item.naziv ?? "")))
-                              .toList() ??
-                          [],
-                      decoration: InputDecoration(
-                        labelText: 'Restoran',
-                        labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 108, 108, 108),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                  if (widget.proizvod == null)
+                    Expanded(
+                      child: FormBuilderDropdown(
+                        validator: FormBuilderValidators.required(
+                            errorText: "Obavezno polje."),
+                        name: 'restoranId',
+                        items: restoranResult?.result
+                                .map((item) => DropdownMenuItem(
+                                    value: item.restoranId.toString(),
+                                    child: Text(item.naziv ?? "")))
+                                .toList() ??
+                            [],
+                        decoration: InputDecoration(
+                          labelText: 'Restoran',
+                          labelStyle: TextStyle(
+                            color: Color.fromARGB(255, 108, 108, 108),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "Odaberite restoran",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        hintText: "Odaberite restoran",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      onChanged: (value) async {
-                        if (value != null) {
-                          final selectedRestoranId = await _formKey
-                              .currentState?.fields['naziv']?.value;
+                        onChanged: (value) async {
+                          if (value != null) {
+                            final selectedRestoranId = await _formKey
+                                .currentState?.fields['naziv']?.value;
 
-                          var nazivPostoji = proizvodResult!.result.any(
-                              (proizvod) => proizvod.naziv
-                                  .toString()
-                                  .contains(value.toString()));
+                            var nazivPostoji = proizvodResult!.result.any(
+                                (proizvod) => proizvod.naziv
+                                    .toString()
+                                    .contains(value.toString()));
 
-                          if (nazivPostoji) {
-                            proizvodError =
-                                "Proizvod s tim imenom već postoji u odabranom restoranu.";
-                          } else {
-                            proizvodError = null;
+                            if (nazivPostoji) {
+                              proizvodError =
+                                  "Proizvod s tim imenom već postoji u odabranom restoranu.";
+                            } else {
+                              proizvodError = null;
+                            }
+                            setState(() {});
                           }
-                          setState(() {});
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ),
                 ],
               ),
               SizedBox(height: 15),
@@ -372,7 +373,6 @@ class _VlasnikDodajProizvodScreenState
               if (isValid == true) {
                 var req = Map.from(_formKey.currentState!.value);
                 req['slika'] = _base64Image;
-
                 if (widget.proizvod == null) {
                   await proizvodProvider.insert(req);
                 } else {

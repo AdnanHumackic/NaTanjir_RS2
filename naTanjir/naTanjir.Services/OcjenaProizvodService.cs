@@ -91,32 +91,19 @@ namespace naTanjir.Services
                 entity.DatumKreiranja = DateTime.Now;
             }
 
-            if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
-            {
-                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
-            }
-
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
         public override async Task BeforeUpdateAsync(OcjenaProizvodUpdateRequest request, Database.OcjenaProizvod entity, CancellationToken cancellationToken = default)
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);
-            
+            ocjenaProizvodValidator.ValidateOcjenaProizvodtUpd(request);
+
             if (request?.DatumKreiranja == null)
             {
                 entity.DatumKreiranja = DateTime.Now;
             }
 
-            if (request?.Ocjena == null || request.Ocjena <= 0 || request.Ocjena > 5)
-            {
-                throw new UserException("Molimo unesite validnu ocjenu između 1 i 5.");
-            }
-
-            if (request?.IsDeleted == null)
-            {
-                throw new UserException("Molimo unesite stauts ocjene.");
-            }
         }
       
     }
