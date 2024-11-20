@@ -114,30 +114,7 @@ namespace naTanjir.Services.Recommender.UserGradeBased
             allProducts = naTanjirContext.Proizvods.Select(x => x.ProizvodId).ToList();
             allProductTypes = naTanjirContext.VrstaProizvoda.Select(x => x.VrstaId).ToList();
         }
-        public double ComputeCosineSimilarity(Database.Proizvod proizvod1, Database.Proizvod proizvod2)
-        {
-            var features1 = GetFeatureVector(proizvod1);
-            var features2 = GetFeatureVector(proizvod2);
-
-            double dotProduct = features1.Zip(features2, (f1, f2) => f1 * f2).Sum();
-            double magnitude1 = Math.Sqrt(features1.Sum(f => f * f));
-            double magnitude2 = Math.Sqrt(features2.Sum(f => f * f));
-            if (magnitude1 == 0 || magnitude2 == 0)
-                return 0;
-            return dotProduct / (magnitude1 * magnitude2);
-        }
-        public double[] GetFeatureVector(Database.Proizvod proizvod)
-        {
-            var featureVector = new List<double>();
-
-            allProducts = naTanjirContext.Proizvods.Select(x => x.ProizvodId).ToList();
-            allProductTypes = naTanjirContext.VrstaProizvoda.Select(x => x.VrstaId).ToList();
-
-            featureVector.AddRange(allProducts.Select(product => proizvod.OcjenaProizvods.Select(x => x.OcjenaProizvodId).Contains(product) ? 1.0 : 0.0));
-            featureVector.AddRange(allProductTypes.Select(x => x == proizvod.ProizvodId ? 1.0 : 0.0));
-
-            return featureVector.ToArray();
-        }
+      
         public void TrainData()
         {
             if (mlContext == null) mlContext = new MLContext();
@@ -155,12 +132,10 @@ namespace naTanjir.Services.Recommender.UserGradeBased
                 {
                     if (rb.ProizvodId == item.ProizvodId)
                         continue;
-                    var similarity = ComputeCosineSimilarity(item, rb);
                     data.Add(new ProizvodEntry()
                     {
                         ProizvodId = (uint)item.ProizvodId,
                         CoSimilarProizvodId = (uint)rb.ProizvodId,
-                        Label = (float)similarity
                     });
 
                 }

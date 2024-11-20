@@ -29,6 +29,7 @@ import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_mobile/screens/korisnik_profile_edit_screen.dart';
 import 'package:natanjir_mobile/screens/korisnik_profile_screen.dart';
 import 'package:natanjir_mobile/screens/product_details_screen.dart';
+import 'package:natanjir_mobile/screens/registracija_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_details_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -223,35 +224,63 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      right: 0,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => KorisnikProfileScreen()),
-                          ).then((value) {
-                            if (value == true) {
-                              setState(() {});
-                            }
-                          });
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: SizedBox(
-                            width: 50,
-                            height: 40,
-                            child: AuthProvider.slika != null
-                                ? imageFromString(AuthProvider.slika!)
-                                : Image.asset(
-                                    "assets/images/noProfileImg.png",
-                                    fit: BoxFit.fill,
-                                  ),
+                    if (AuthProvider.korisnikId == null)
+                      Positioned(
+                        right: 0,
+                        child: SizedBox(
+                          width: 105,
+                          height: 35,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => RegistracijaScreen()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              "Registruj se",
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    if (AuthProvider.korisnikId != null)
+                      Positioned(
+                        right: 0,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      KorisnikProfileScreen()),
+                            ).then((value) {
+                              if (value == true) {
+                                setState(() {});
+                              }
+                            });
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: SizedBox(
+                              width: 50,
+                              height: 40,
+                              child: AuthProvider.slika != null
+                                  ? imageFromString(AuthProvider.slika!)
+                                  : Image.asset(
+                                      "assets/images/noProfileImg.png",
+                                      fit: BoxFit.fill,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -470,6 +499,23 @@ class _RestoranListScreenState extends State<RestoranListScreen> {
                                       ? Icon(Icons.favorite, color: Colors.red)
                                       : Icon(Icons.favorite_border),
                                   onTap: () async {
+                                    if (AuthProvider.korisnikId == null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: Colors.red,
+                                          duration: Duration(seconds: 1),
+                                          content: Center(
+                                            child: Text(
+                                              "Morate biti prijavljeni da biste dodali restoran u favorite.",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
                                     if (restoranfavoritResult != null &&
                                         restoranfavoritResult!.result != null) {
                                       bool isFavorite = restoranfavoritResult!

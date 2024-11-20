@@ -163,21 +163,41 @@ class _ObavijestListScreenState extends State<ObavijestListScreen> {
                 flex: 0,
                 child: InkWell(
                   onTap: () async {
+                    if (AuthProvider.korisnikId == null) {
+                      await ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Center(
+                            child: Text("Niste prijavljeni."),
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     if (_notifications.isNotEmpty) {
                       _signalRProvider.clearMessages();
-                      await QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.success,
-                        title: 'Obavijesti uspješno obrisane!',
+                      await ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Color.fromARGB(255, 0, 83, 86),
+                          duration: Duration(seconds: 1),
+                          content: Center(
+                            child: Text("Obavijesti uspješno obrisane."),
+                          ),
+                        ),
                       );
                       setState(() {
                         _notifications = [];
                       });
                     } else {
-                      QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.error,
-                        title: 'Nema obavijesti za obrisati!',
+                      await ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Center(
+                            child: Text("Nema obavijesti za obrisati."),
+                          ),
+                        ),
                       );
                     }
                   },

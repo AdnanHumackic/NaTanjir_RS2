@@ -321,6 +321,39 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: RichText(
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: "Preskoči",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  AuthProvider.korisnikId = null;
+                                  AuthProvider.ime = null;
+                                  AuthProvider.prezime = null;
+                                  AuthProvider.email = null;
+                                  AuthProvider.telefon = null;
+                                  AuthProvider.datumRodjenja = null;
+                                  AuthProvider.slika = null;
+                                  AuthProvider.isSignedIn = false;
+                                  AuthProvider.korisnikUloge = null;
+                                  AuthProvider.restoranId = null;
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => MasterScreen()));
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     Spacer(),
                     Row(
                       children: [

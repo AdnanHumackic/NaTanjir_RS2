@@ -30,8 +30,9 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
 
   SearchResult<OcjenaProizvod>? ocjenaProizvodResult;
 
-  final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
-
+  final CartProvider? cartProvider = AuthProvider.korisnikId == null
+      ? null
+      : CartProvider(AuthProvider.korisnikId!);
   var quantity = 1;
 
   @override
@@ -59,7 +60,11 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return await _showDialog(context) ?? false;
+        if (AuthProvider.korisnikId != null) {
+          return await _showDialog(context) ?? false;
+        }
+        Navigator.of(context).pop();
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(),
@@ -250,8 +255,24 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                     child: InkWell(
                       onTap: () async {
                         try {
-                          await cartProvider.addToCart(
-                              widget.odabraniProizvod as Proizvod, quantity);
+                          if (AuthProvider.korisnikId == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 1),
+                                content: Center(
+                                  child: Text(
+                                      "Morate biti prijavljeni da biste dodali proizvod u korpu."),
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+                          await cartProvider!.addToCart(
+                            widget.odabraniProizvod as Proizvod,
+                            quantity,
+                          );
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: Color.fromARGB(255, 0, 83, 86),
@@ -381,12 +402,29 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                                   color: Color.fromARGB(255, 0, 83, 86),
                                 ),
                                 onPressed: () async {
+                                  //dodati btn za vracanje nazad kad udjes kao neprijavljen
                                   try {
-                                    await cartProvider.addToCart(
-                                      widget.odabraniProizvod as Proizvod,
+                                    if (AuthProvider.korisnikId == null) {
+                                      await ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: Colors.red,
+                                          duration: Duration(seconds: 1),
+                                          content: Center(
+                                            child: Text(
+                                                "Morate biti prijavljeni da biste dodali proizvod u korpu."),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    await cartProvider!.addToCart(
+                                      proizvod,
                                       quantity,
                                     );
-                                    ScaffoldMessenger.of(context).showSnackBar(
+
+                                    await ScaffoldMessenger.of(context)
+                                        .showSnackBar(
                                       SnackBar(
                                         backgroundColor:
                                             Color.fromARGB(255, 0, 83, 86),
@@ -398,7 +436,8 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                                       ),
                                     );
                                   } on Exception catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    await ScaffoldMessenger.of(context)
+                                        .showSnackBar(
                                       SnackBar(
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),

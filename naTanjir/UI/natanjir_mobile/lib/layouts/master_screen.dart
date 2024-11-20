@@ -47,120 +47,110 @@ class _MasterScreenState extends State<MasterScreen> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Color.fromARGB(255, 0, 83, 86),
         items: [
-          if (AuthProvider.korisnikUloge != null &&
-              AuthProvider.korisnikUloge!.any((x) => x.uloga?.naziv == "Kupac"))
-            BottomNavigationBarItem(
-              label: 'Početna ',
-              activeIcon: Icon(Icons.home_sharp, color: Colors.white),
-              icon: Icon(
-                Icons.home_outlined,
-                color: Colors.white,
-              ),
+          BottomNavigationBarItem(
+            label: 'Početna ',
+            activeIcon: Icon(Icons.home_sharp, color: Colors.white),
+            icon: Icon(
+              Icons.home_outlined,
+              color: Colors.white,
             ),
-          if (AuthProvider.korisnikUloge != null &&
-              AuthProvider.korisnikUloge!.any((x) => x.uloga?.naziv == "Kupac"))
-            BottomNavigationBarItem(
-              label: 'Narudžbe',
-              activeIcon: Icon(Icons.shopping_bag_sharp),
-              icon: Icon(
-                Icons.shopping_bag_outlined,
-                color: Colors.white,
-              ),
+          ),
+          BottomNavigationBarItem(
+            label: 'Narudžbe',
+            activeIcon: Icon(Icons.shopping_bag_sharp),
+            icon: Icon(
+              Icons.shopping_bag_outlined,
+              color: Colors.white,
             ),
-          if (AuthProvider.korisnikUloge != null &&
-              AuthProvider.korisnikUloge!.any((x) => x.uloga?.naziv == "Kupac"))
-            BottomNavigationBarItem(
-              label: 'Korpa',
-              activeIcon: Icon(Icons.shopping_cart_sharp, color: Colors.white),
-              icon: Icon(
-                Icons.shopping_cart_outlined,
-                color: Colors.white,
-              ),
+          ),
+          BottomNavigationBarItem(
+            label: 'Korpa',
+            activeIcon: Icon(Icons.shopping_cart_sharp, color: Colors.white),
+            icon: Icon(
+              Icons.shopping_cart_outlined,
+              color: Colors.white,
             ),
-          if (AuthProvider.korisnikUloge != null &&
-              AuthProvider.korisnikUloge!.any((x) => x.uloga?.naziv == "Kupac"))
-            BottomNavigationBarItem(
-              label: 'Obavijesti',
-              icon: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    Icons.chat_outlined,
-                    color: Colors.white,
-                  ),
-                  if (_signalRProvider.messageCount > 0)
-                    Positioned(
-                      right: -6,
-                      top: -6,
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
+          ),
+          BottomNavigationBarItem(
+            label: 'Obavijesti',
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  Icons.chat_outlined,
+                  color: Colors.white,
+                ),
+                if (_signalRProvider.messageCount > 0)
+                  Positioned(
+                    right: -6,
+                    top: -6,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
+                      child: Text(
+                        '${_signalRProvider.messageCount}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
-                        constraints: BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: Text(
-                          '${_signalRProvider.messageCount}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                ],
-              ),
-              activeIcon: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    Icons.chat_rounded,
-                    color: Colors.white,
                   ),
-                  if (_signalRProvider.messageCount > 0)
-                    Positioned(
-                      right: -6,
-                      top: -6,
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
+              ],
+            ),
+            activeIcon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  Icons.chat_rounded,
+                  color: Colors.white,
+                ),
+                if (_signalRProvider.messageCount > 0)
+                  Positioned(
+                    right: -6,
+                    top: -6,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
+                      child: Text(
+                        '${_signalRProvider.messageCount}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
-                        constraints: BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: Text(
-                          '${_signalRProvider.messageCount}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-          if (AuthProvider.korisnikUloge != null &&
-              AuthProvider.korisnikUloge!.any((x) => x.uloga?.naziv == "Kupac"))
-            BottomNavigationBarItem(
-              backgroundColor: Color.fromARGB(255, 0, 83, 86),
-              label: 'Favoriti',
-              activeIcon: Icon(Icons.favorite, color: Colors.white),
-              icon: Icon(
-                Icons.favorite_outline,
-                color: Colors.white,
-              ),
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: Color.fromARGB(255, 0, 83, 86),
+            label: 'Favoriti',
+            activeIcon: Icon(Icons.favorite, color: Colors.white),
+            icon: Icon(
+              Icons.favorite_outline,
+              color: Colors.white,
             ),
+          ),
         ],
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white,

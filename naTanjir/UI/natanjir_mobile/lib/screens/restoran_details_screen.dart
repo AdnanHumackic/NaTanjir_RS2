@@ -49,7 +49,9 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   SearchResult<OcjenaProizvod>? ocjenaProizvodResult;
   SearchResult<OcjenaRestoran>? ocjenaRestoranResult;
 
-  final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
+  final CartProvider? cartProvider = AuthProvider.korisnikId == null
+      ? null
+      : CartProvider(AuthProvider.korisnikId!);
 
   Map<String, dynamic> searchRequest = {};
 
@@ -171,10 +173,11 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
     vrstaProizvodumResult = await vrstaProizvodumProvider.get();
     ocjenaProizvodResult = await ocjenaProizvodProvider.get();
     ocjenaRestoranResult = await ocjenaRestoranProvider.get();
-    var proizvodi = await korisniciProvider.getRecommended(
-        AuthProvider.korisnikId!, widget.odabraniRestoran!.restoranId!);
-
-    recommendedProizvodList = proizvodi;
+    if (AuthProvider.korisnikId != null) {
+      var proizvodi = await korisniciProvider.getRecommended(
+          AuthProvider.korisnikId!, widget.odabraniRestoran!.restoranId!);
+      recommendedProizvodList = proizvodi;
+    }
     setState(() {});
   }
 
@@ -182,7 +185,11 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return await _showDialog(context) ?? false;
+        if (AuthProvider.korisnikId != null) {
+          return await _showDialog(context) ?? false;
+        }
+        Navigator.of(context).pop();
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(),
@@ -582,8 +589,8 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                         child: InkWell(
                                           onTap: () async {
                                             try {
-                                              await cartProvider.addToCart(
-                                                  e, 1);
+                                              await cartProvider!
+                                                  .addToCart(e, 1);
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
@@ -820,16 +827,33 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                         child: InkWell(
                                           onTap: () async {
                                             try {
-                                              await cartProvider.addToCart(
-                                                  e, 1);
+                                              if (AuthProvider.korisnikId ==
+                                                  null) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    backgroundColor: Colors.red,
+                                                    duration:
+                                                        Duration(seconds: 1),
+                                                    content: Center(
+                                                      child: Text(
+                                                          "Morate biti prijavljeni da biste dodali proizvod u korpu."),
+                                                    ),
+                                                  ),
+                                                );
+                                                return;
+                                              }
+                                              await cartProvider!
+                                                  .addToCart(e, 1);
+
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
                                                   backgroundColor:
                                                       Color.fromARGB(
                                                           255, 0, 83, 86),
-                                                  duration:
-                                                      Duration(seconds: 1),
+                                                  duration: Duration(
+                                                      milliseconds: 500),
                                                   content: Center(
                                                     child: Text(
                                                         "Proizvod je dodan u korpu."),
@@ -841,14 +865,10 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
                                                   .showSnackBar(
                                                 SnackBar(
                                                   backgroundColor: Colors.red,
-                                                  duration: Duration(
-                                                      milliseconds: 500),
+                                                  duration:
+                                                      Duration(seconds: 1),
                                                   content: Center(
-                                                    child: Text(
-                                                      e.toString(),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
+                                                    child: Text(e.toString()),
                                                   ),
                                                 ),
                                               );

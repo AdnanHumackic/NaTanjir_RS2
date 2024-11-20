@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:natanjir_mobile/main.dart';
 import 'package:natanjir_mobile/models/korisnici.dart';
 import 'package:natanjir_mobile/models/search_result.dart';
 import 'package:natanjir_mobile/providers/korisnici_provider.dart';
@@ -317,6 +319,34 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                 }
                 setState(() {});
               },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: RichText(
+                text: TextSpan(
+                  text: "Imate korisnički račun?",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: "Prijavite se!",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => MyApp()));
+                        },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

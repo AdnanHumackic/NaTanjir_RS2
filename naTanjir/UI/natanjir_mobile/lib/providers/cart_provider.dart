@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:natanjir_mobile/models/proizvod.dart';
 
 class CartProvider {
-  final int userId;
+  final int? userId;
   static const String _cartKeyPrefix = 'cart_';
 
   CartProvider(this.userId);

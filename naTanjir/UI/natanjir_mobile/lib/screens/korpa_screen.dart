@@ -17,7 +17,9 @@ class KorpaScreen extends StatefulWidget {
 }
 
 class _KorpaScreenState extends State<KorpaScreen> {
-  final CartProvider cartProvider = CartProvider(AuthProvider.korisnikId!);
+  final CartProvider? cartProvider = AuthProvider.korisnikId == null
+      ? null
+      : CartProvider(AuthProvider.korisnikId!);
   Map<String, dynamic> cartItems = {};
   late ScrollController scrollController = ScrollController();
   bool showbtn = false;
@@ -41,7 +43,8 @@ class _KorpaScreenState extends State<KorpaScreen> {
   }
 
   Future<void> _loadCart() async {
-    cartItems = await cartProvider.getCart();
+    if (AuthProvider.korisnikId != null)
+      cartItems = await cartProvider!.getCart();
     setState(() {});
   }
 
@@ -167,7 +170,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
               children: [
                 SlidableAction(
                   onPressed: (context) async {
-                    await cartProvider
+                    await cartProvider!
                         .deleteProductFromCart(productDetails['id']);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -178,7 +181,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
                         ),
                       ),
                     );
-                    cartItems = await cartProvider.getCart();
+                    cartItems = await cartProvider!.getCart();
                     setState(() {});
                   },
                   backgroundColor: Colors.red,
@@ -248,7 +251,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
                                   productDetails['kolicina'] =
                                       (productDetails['kolicina'] - 1)
                                           .clamp(1, double.infinity);
-                                  await cartProvider.updateCart(
+                                  await cartProvider!.updateCart(
                                       productDetails['id'],
                                       productDetails['kolicina']);
 
@@ -271,7 +274,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
                             ),
                             InkWell(
                               onTap: () async {
-                                await cartProvider.updateCart(
+                                await cartProvider!.updateCart(
                                     productDetails['id'],
                                     productDetails['kolicina'] + 1);
                                 productDetails['kolicina']++;

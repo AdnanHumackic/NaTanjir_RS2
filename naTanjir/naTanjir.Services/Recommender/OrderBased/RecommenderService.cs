@@ -98,12 +98,10 @@ namespace naTanjir.Services.Recommender.OrderBased
                     if (rb.ProizvodId == item.ProizvodId)
                         continue;
 
-                    //var similarity = ComputeCosineSimilarity(item, rb);
                     data.Add(new ProizvodEntry()
                     {
                         ProizvodId = (uint)item.ProizvodId,
                         CoPurchaseProizvodId = (uint)rb.ProizvodId,
-                        //Label = (float)similarity
                     });
                 }
             }
@@ -132,60 +130,7 @@ namespace naTanjir.Services.Recommender.OrderBased
             }
         }
 
-        //public double ComputeCosineSimilarity(Database.Proizvod proizvod1, Database.Proizvod proizvod2)
-        //{
-        //    var features1 = GetFeatureVector(proizvod1);
-        //    var features2 = GetFeatureVector(proizvod2);
-
-        //    double dotProduct = features1.Zip(features2, (f1, f2) => f1 * f2).Sum();
-        //    double magnitude1 = Math.Sqrt(features1.Sum(f => f * f));
-        //    double magnitude2 = Math.Sqrt(features2.Sum(f => f * f));
-        //    if (magnitude1 == 0 || magnitude2 == 0)
-        //        return 0;
-        //    return dotProduct / (magnitude1 * magnitude2);
-        //}
-
-        //public double[] GetFeatureVector(Database.Proizvod product)
-        //{
-        //    var allProductIds = naTanjirContext.Proizvods.Select(p => p.ProizvodId).ToList();
-
-        //    var featureVector = new List<double>();
-
-        //    foreach (var otherProductId in allProductIds)
-        //    {
-        //        if (otherProductId == product.ProizvodId)
-        //        {
-        //            featureVector.Add(0);
-        //            continue;
-        //        }
-
-        //        var coPurchaseCount = naTanjirContext.StavkeNarudzbes
-        //            .Where(x => x.ProizvodId == product.ProizvodId &&
-        //                        naTanjirContext.StavkeNarudzbes.Any(y => y.NarudzbaId == x.NarudzbaId && y.ProizvodId == otherProductId))
-        //            .Count();
-
-        //        featureVector.Add(coPurchaseCount);
-        //    }
-
-        //    return featureVector.ToArray();
-        //}
     }
-
-
-    public class ProizvodRatingPrediction
-    {
-        public float Label;
-        public float Score;
-    }
-    public class ProizvodRatingEntry
-    {
-        [KeyType(count: 262111)]
-        public int korisnikId;
-        [KeyType(count: 262111)]
-        public float proizvodId;
-        public float Label;
-    }
-
     public class Copurchase_prediction
     {
         public float Score { get; set; }
