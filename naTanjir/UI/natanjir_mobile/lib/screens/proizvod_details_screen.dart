@@ -49,11 +49,17 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
   }
 
   Future _initForm() async {
-    ocjenaProizvodResult = await ocjenaProizvodProvider.get();
-    var proizvodi = await proizvodProvider
-        .getRecommendedProducts(widget.odabraniProizvod!.proizvodId!);
-    proizvodList = proizvodi;
-    setState(() {});
+    try {
+      ocjenaProizvodResult = await ocjenaProizvodProvider.get();
+      var proizvodi = await proizvodProvider
+          .getRecommendedProducts(widget.odabraniProizvod!.proizvodId!);
+      proizvodList = proizvodi;
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   @override

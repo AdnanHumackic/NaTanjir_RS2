@@ -6,15 +6,17 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["naTanjir.API/naTanjir.API.csproj", "naTanjir.API/"]
-RUN dotnet restore "naTanjir.API/naTanjir.API.csproj"
+RUN dotnet restore "./naTanjir.API/naTanjir.API.csproj"
 COPY . .
 WORKDIR "/src/naTanjir.API"
-RUN dotnet build "naTanjir.API.csproj" -c Release -o /app/build
+RUN dotnet build "./naTanjir.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "naTanjir.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./naTanjir.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

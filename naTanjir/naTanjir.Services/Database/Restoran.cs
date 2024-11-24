@@ -37,8 +37,6 @@ public partial class Restoran:ISoftDelete
 
     public virtual ICollection<StavkeNarudzbe> StavkeNarudzbes { get; set; } = new List<StavkeNarudzbe>();
 
-    public virtual ICollection<Upit> Upits { get; set; } = new List<Upit>();
-
     public virtual Korisnici Vlasnik { get; set; } = null!;
 
     public virtual VrstaRestorana VrstaRestorana { get; set; } = null!;

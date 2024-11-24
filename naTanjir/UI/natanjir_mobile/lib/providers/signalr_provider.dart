@@ -5,6 +5,7 @@ import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
+import 'package:signalr_netcore/itransport.dart';
 
 class SignalRProvider with ChangeNotifier {
   late HubConnection _hubConnection;
@@ -29,7 +30,7 @@ class SignalRProvider with ChangeNotifier {
   Future<void> startConnection() async {
     _hubConnection = HubConnectionBuilder()
         .withUrl(
-          'http://localhost:5212/notifications-hub',
+          'http://10.0.2.2:5212/notifications-hub',
         )
         .build();
 

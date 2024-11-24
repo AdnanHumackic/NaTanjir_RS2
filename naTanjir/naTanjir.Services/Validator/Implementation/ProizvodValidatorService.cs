@@ -20,14 +20,7 @@ namespace naTanjir.Services.Validator.Implementation
         }
 
         public void ValidateProizvodIns(ProizvodiInsertRequest request)
-        {
-            var nazivProizvoda = Context.Proizvods.Where(x => x.Naziv == request.Naziv).FirstOrDefault();
-
-            if (nazivProizvoda != null)
-            {
-                throw new UserException($"Proizvod sa nazivom: {request.Naziv} već postoji.");
-            }
-          
+        { 
             if (string.IsNullOrWhiteSpace(request.Opis))
             {
                 throw new UserException("Molimo unesite opis proizvoda.");

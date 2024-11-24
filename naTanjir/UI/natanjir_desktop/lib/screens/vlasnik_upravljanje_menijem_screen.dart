@@ -446,13 +446,13 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
                       await QuickAlert.show(
                         context: context,
                         type: QuickAlertType.success,
-                        title: "Korisnik uspješno obrisan!",
+                        title: "Proizvod uspješno obrisan!",
                       );
                       filterServerSide();
                     },
                   );
                 } on Exception catch (e) {
-                  QuickAlert.show(
+                  await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.error,
                     title: "Greška prilikom brisanja proizvoda!",

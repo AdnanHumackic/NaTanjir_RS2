@@ -48,6 +48,4 @@ public partial class Korisnici:ISoftDelete
     public virtual ICollection<RestoranFavorit> RestoranFavorits { get; set; } = new List<RestoranFavorit>();
 
     public virtual ICollection<Restoran> Restorans { get; set; } = new List<Restoran>();
-
-    public virtual ICollection<Upit> Upits { get; set; } = new List<Upit>();
 }

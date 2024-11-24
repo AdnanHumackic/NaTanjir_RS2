@@ -18,8 +18,8 @@ namespace naTanjir.API.Controllers
         {
         }
 
-       [HttpPost("login")]
        [AllowAnonymous]
+       [HttpPost("login")]
        public Model.Korisnici Login(string username, string password, string connectionId)
        {
            return (_service as IKorisniciService).Login(username, password, connectionId);
@@ -56,13 +56,13 @@ namespace naTanjir.API.Controllers
             return base.Insert(request, cancellationToken);
         }
 
-        [Authorize(Roles = "Kupac, Vlasnik, Admin, Dostavljac, RadnikRestorana")]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         public override Task<Korisnici> Update(int id, KorisniciUpdateRequest request, CancellationToken cancellationToken = default)
         {
             return base.Update(id, request, cancellationToken);
         }
 
-        [Authorize(Roles = "Vlasnik, Admin")]
+        [Authorize(Roles = "Vlasnik,Admin")]
         public override Task Delete(int id, CancellationToken cancellationToken = default)
         {
             return base.Delete(id, cancellationToken);

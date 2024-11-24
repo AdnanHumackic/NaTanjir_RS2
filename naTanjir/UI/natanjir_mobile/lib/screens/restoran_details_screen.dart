@@ -178,6 +178,7 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
           AuthProvider.korisnikId!, widget.odabraniRestoran!.restoranId!);
       recommendedProizvodList = proizvodi;
     }
+    if (mounted) setState(() {});
     setState(() {});
   }
 
