@@ -184,49 +184,40 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (AuthProvider.korisnikId != null) {
-          return await _showDialog(context) ?? false;
-        }
-        Navigator.of(context).pop();
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              controller: scrollController,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  children: [
-                    _buildHeader(),
-                    _buildSearch(),
-                    _buildRecommended(),
-                    _buildPage(),
-                  ],
-                ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            controller: scrollController,
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  _buildSearch(),
+                  _buildRecommended(),
+                  _buildPage(),
+                ],
               ),
             ),
-          ],
-        ),
-        floatingActionButton: AnimatedOpacity(
-          duration: Duration(milliseconds: 1000),
-          opacity: showbtn ? 1.0 : 0.0,
-          child: FloatingActionButton(
-            onPressed: () {
-              scrollController.animateTo(0,
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.fastOutSlowIn);
-            },
-            child: Icon(
-              Icons.arrow_upward,
-              color: Colors.white,
-            ),
-            backgroundColor: Color.fromARGB(255, 0, 83, 86),
           ),
+        ],
+      ),
+      floatingActionButton: AnimatedOpacity(
+        duration: Duration(milliseconds: 1000),
+        opacity: showbtn ? 1.0 : 0.0,
+        child: FloatingActionButton(
+          onPressed: () {
+            scrollController.animateTo(0,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.fastOutSlowIn);
+          },
+          child: Icon(
+            Icons.arrow_upward,
+            color: Colors.white,
+          ),
+          backgroundColor: Color.fromARGB(255, 0, 83, 86),
         ),
       ),
     );
@@ -385,6 +376,37 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
               },
             ),
           ),
+          if (AuthProvider.korisnikId != null)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () async {
+                      if (AuthProvider.korisnikId != null) {
+                        await _showDialog(context) ?? false;
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          "Ocijenite restoran",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        Icon(
+                          Icons.star,
+                          size: 40,
+                          color: Color.fromARGB(255, 255, 215, 0),
+                        ),
+                        SizedBox(width: 8.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )
         ],
       ),
     );

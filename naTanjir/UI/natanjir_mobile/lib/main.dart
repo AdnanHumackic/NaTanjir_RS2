@@ -50,7 +50,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => StavkeNarudzbeProvider()),
     ChangeNotifierProvider(create: (_) => UlogeProvider()),
     ChangeNotifierProvider(create: (_) => LokacijaProvider()),
-    ChangeNotifierProvider(create: (_) => SignalRProvider()),
+    ChangeNotifierProvider(create: (_) => SignalRProvider('notifications-hub')),
   ], child: const MyApp()));
 }
 
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  final SignalRProvider _signalRProvider = SignalRProvider();
+  final SignalRProvider _signalRProvider = SignalRProvider('notifications-hub');
   @override
   void initState() {
     // TODO: implement initState
@@ -227,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                               KorisniciProvider korisniciProvider =
                                   new KorisniciProvider();
                               SignalRProvider _signalRProvider =
-                                  new SignalRProvider();
+                                  new SignalRProvider('notifications-hub');
                               var korisnik = await korisniciProvider.login(
                                   AuthProvider.username!,
                                   AuthProvider.password!,
@@ -259,7 +259,6 @@ class _LoginPageState extends State<LoginPage> {
                                 AuthProvider.restoranId = korisnik.restoranId;
                               }
 
-                              print("Authenticated!");
                               if (AuthProvider.korisnikUloge != null &&
                                   AuthProvider.korisnikUloge!
                                       .any((x) => x.uloga?.naziv == "Kupac")) {

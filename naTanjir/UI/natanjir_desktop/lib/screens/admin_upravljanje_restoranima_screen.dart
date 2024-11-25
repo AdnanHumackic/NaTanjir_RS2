@@ -515,9 +515,12 @@ class _AdminUpravljanjeRestoranimaScreenState
                           if (age < 18 || value!.isAfter(DateTime.now())) {
                             dateError =
                                 "Korisnik mora biti stariji od 18 godina i datum rođenja ne smije \nbiti stariji od današnjeg.";
+                          } else {
+                            dateError = null;
                           }
                         } else {
                           dateError = null;
+                          setState(() {});
                         }
 
                         setState(() {});
@@ -1166,46 +1169,49 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
             DataCell(
               TextButton(
                 onPressed: () async {
-                  try {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.confirm,
-                      title: "Da li ste sigurni da želite obrisati restoran?",
-                      text:
-                          "Ovo će obrisati restoran kao i sve njegove proizvode iz ponude.",
-                      confirmBtnText: "Da",
-                      cancelBtnText: "Ne",
-                      onConfirmBtnTap: () async {
-                        try {
-                          Navigator.of(context).pop();
+                  await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                          "Da li ste sigurni da želite obrisati restoran?"),
+                      content: Text(
+                          "Ovo će obrisati restoran kao i sve njegove proizvode iz ponude."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Ne"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            try {
+                              await provider.delete(item.restoranId!);
 
-                          await provider.delete(item.restoranId!);
-
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Restoran uspješno obrisan!",
-                          );
-
-                          filterServerSide();
-                        } catch (e) {
-                          Navigator.of(context).pop();
-
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.error,
-                            title: "Greška prilikom brisanja restorana!",
-                          );
-                        }
-                      },
-                    );
-                  } on Exception catch (e) {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.error,
-                      title: "Greška!",
-                    );
-                  }
+                              filterServerSide();
+                            } catch (e) {
+                              await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(
+                                      "Greška prilikom brisanja restorana!"),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          child: Text("Da"),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 child: Container(
                   child: Text(
@@ -1222,55 +1228,59 @@ class RestoranDataSource extends AdvancedDataTableSource<Restoran> {
             DataCell(
               TextButton(
                 onPressed: () async {
-                  try {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.confirm,
-                      title:
-                          "Da li ste sigurni da želite vratiti restoran u ponudu?",
-                      text:
-                          "Ovo će vratiti restoran u ponudu kao i sve njegove proizvode iz ponude.",
-                      confirmBtnText: "Da",
-                      cancelBtnText: "Ne",
-                      onConfirmBtnTap: () async {
-                        try {
-                          Navigator.of(context).pop();
+                  await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                          "Da li ste sigurni da želite vratiti restoran u ponudu?"),
+                      content: Text(
+                          "Ovo će vratiti restoran u ponudu kao i sve njegove proizvode iz ponude."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Ne"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
 
-                          var upd = {
-                            'radnoVrijemeOd': item.radnoVrijemeOd,
-                            'radnoVrijemeDo': item.radnoVrijemeDo,
-                            'slika': item.slika,
-                            'lokacija': item.lokacija,
-                            'isDeleted': false,
-                            'vrijemeBrisanja': null,
-                          };
-                          await provider.update(item.restoranId!, upd);
+                            try {
+                              var upd = {
+                                'radnoVrijemeOd': item.radnoVrijemeOd,
+                                'radnoVrijemeDo': item.radnoVrijemeDo,
+                                'slika': item.slika,
+                                'lokacija': item.lokacija,
+                                'isDeleted': false,
+                                'vrijemeBrisanja': null,
+                              };
 
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Restoran uspješno vraćen u ponudu!",
-                          );
+                              await provider.update(item.restoranId!, upd);
 
-                          filterServerSide();
-                        } catch (e) {
-                          Navigator.of(context).pop();
-
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.error,
-                            title: "Greška!",
-                          );
-                        }
-                      },
-                    );
-                  } on Exception catch (e) {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.error,
-                      title: "Greška!",
-                    );
-                  }
+                              filterServerSide();
+                            } catch (e) {
+                              await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(
+                                      "Greška prilikom vraćanja restorana u ponudu!"),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          child: Text("Da"),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 child: Container(
                   child: Text(

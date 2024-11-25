@@ -28,7 +28,7 @@ class _MasterScreenState extends State<MasterScreen> {
     ObavijestListScreen(),
     RestoranFavoritListScreen(),
   ];
-  SignalRProvider _signalRProvider = SignalRProvider();
+  SignalRProvider _signalRProvider = SignalRProvider('notifications-hub');
   void _navigateBottomBar(int index) {
     setState(() {
       _selectedIndex = index;

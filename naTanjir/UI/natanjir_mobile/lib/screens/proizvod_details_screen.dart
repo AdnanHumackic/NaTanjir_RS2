@@ -64,29 +64,20 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (AuthProvider.korisnikId != null) {
-          return await _showDialog(context) ?? false;
-        }
-        Navigator.of(context).pop();
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [_buildPage(), _buildRecommended()],
-                ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [_buildPage(), _buildRecommended()],
               ),
             ),
-            _buildFooter(),
-          ],
-        ),
+          ),
+          _buildFooter(),
+        ],
       ),
     );
   }
@@ -141,43 +132,58 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                     child: Padding(
                       padding: EdgeInsets.all(5),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(width: 8.0),
-                          Flexible(
-                            child: InkWell(
-                              onTap: () {
-                                quantity != 1 ? quantity-- : quantity;
-
-                                setState(() {});
-                              },
-                              child: Icon(
-                                Icons.remove_circle,
-                                size: 35,
-                                color: Color.fromARGB(255, 0, 83, 86),
+                          if (AuthProvider.korisnikId != null)
+                            Flexible(
+                              flex: 1,
+                              child: InkWell(
+                                onTap: () async {
+                                  if (AuthProvider.korisnikId != null) {
+                                    await _showDialog(context) ?? false;
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.star,
+                                  size: 35,
+                                  color: Color.fromARGB(255, 255, 215, 0),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 8.0),
-                          Flexible(
-                            flex: 3,
-                            child: Text(
-                              quantity.toString(),
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
-                          SizedBox(width: 8.0),
-                          Flexible(
-                            child: InkWell(
-                              onTap: () {
-                                quantity++;
-                                setState(() {});
-                              },
-                              child: Icon(
-                                Icons.add_circle,
-                                size: 35,
-                                color: Color.fromARGB(255, 0, 83, 86),
-                              ),
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    quantity != 1 ? quantity-- : quantity;
+                                    setState(() {});
+                                  },
+                                  child: Icon(
+                                    Icons.remove_circle,
+                                    size: 35,
+                                    color: Color.fromARGB(255, 0, 83, 86),
+                                  ),
+                                ),
+                                SizedBox(width: 8.0),
+                                Text(
+                                  quantity.toString(),
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                SizedBox(width: 8.0),
+                                InkWell(
+                                  onTap: () {
+                                    quantity++;
+                                    setState(() {});
+                                  },
+                                  child: Icon(
+                                    Icons.add_circle,
+                                    size: 35,
+                                    color: Color.fromARGB(255, 0, 83, 86),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -408,7 +414,6 @@ class _ProizvodDetailsScreenState extends State<ProizvodDetailsScreen> {
                                   color: Color.fromARGB(255, 0, 83, 86),
                                 ),
                                 onPressed: () async {
-                                  //dodati btn za vracanje nazad kad udjes kao neprijavljen
                                   try {
                                     if (AuthProvider.korisnikId == null) {
                                       await ScaffoldMessenger.of(context)

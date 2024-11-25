@@ -458,46 +458,50 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
             DataCell(
               TextButton(
                 onPressed: () async {
-                  try {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.confirm,
-                      title: "Da li ste sigurni da želite obrisati radnika?",
-                      text:
-                          "Ovo će obrisati radnika i onemogućiti mu pristup aplikaciji.",
-                      confirmBtnText: "Da",
-                      cancelBtnText: "Ne",
-                      onConfirmBtnTap: () async {
-                        try {
-                          Navigator.of(context).pop();
+                  await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title:
+                          Text("Da li ste sigurni da želite obrisati radnika?"),
+                      content: Text(
+                          "Ovo će obrisati radnika i onemogućiti mu pristup aplikaciji."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Ne"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
 
-                          await provider.delete(item.korisnikId!);
+                            try {
+                              await provider.delete(item.korisnikId!);
 
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Radnik uspješno obrisan!",
-                          );
-
-                          filterServerSide();
-                        } catch (e) {
-                          Navigator.of(context).pop();
-
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.error,
-                            title: "Greška prilikom brisanja radnika!",
-                          );
-                        }
-                      },
-                    );
-                  } on Exception catch (e) {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.error,
-                      title: "Greška!",
-                    );
-                  }
+                              filterServerSide();
+                            } catch (e) {
+                              await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title:
+                                      Text("Greška prilikom brisanja radnika!"),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          child: Text("Da"),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 child: Container(
                   child: Text(
@@ -511,58 +515,61 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
             DataCell(
               TextButton(
                 onPressed: () async {
-                  try {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.confirm,
-                      title:
-                          "Da li ste sigurni da želite aktivirati radnikov račun?",
-                      text: "Ovo će omogućiti radniku pristup aplikaciji.",
-                      confirmBtnText: "Da",
-                      cancelBtnText: "Ne",
-                      onConfirmBtnTap: () async {
-                        try {
-                          var upd = {
-                            'ime': item.ime,
-                            'prezime': item.prezime,
-                            'telefon': item.telefon,
-                            'slika': item.slika,
-                            'isDeleted': false,
-                            'vrijemeBrisanja': null,
-                            'korisnickoIme': item.korisnickoIme,
-                            'email': item.email,
-                          };
+                  await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                          "Da li ste sigurni da želite aktivirati radnikov račun?"),
+                      content:
+                          Text("Ovo će omogućiti radniku pristup aplikaciji."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Ne"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
 
-                          await provider.update(item.korisnikId!, upd);
+                            try {
+                              var upd = {
+                                'ime': item.ime,
+                                'prezime': item.prezime,
+                                'telefon': item.telefon,
+                                'slika': item.slika,
+                                'isDeleted': false,
+                                'vrijemeBrisanja': null,
+                                'korisnickoIme': item.korisnickoIme,
+                                'email': item.email,
+                              };
 
-                          Navigator.of(context).pop();
+                              await provider.update(item.korisnikId!, upd);
 
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: "Radnikov račun uspješno aktiviran!",
-                          );
-
-                          filterServerSide();
-                        } catch (e) {
-                          Navigator.of(context).pop();
-
-                          await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.error,
-                            title:
-                                "Greška prilikom aktiviranja radnikovog računa!",
-                          );
-                        }
-                      },
-                    );
-                  } on Exception catch (e) {
-                    await QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.error,
-                      title: "Greška!",
-                    );
-                  }
+                              filterServerSide();
+                            } catch (e) {
+                              await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(
+                                      "Greška prilikom aktiviranja radnikovog računa!"),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          child: Text("Da"),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 child: Container(
                   child: Text(

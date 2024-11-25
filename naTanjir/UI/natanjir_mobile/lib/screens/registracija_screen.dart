@@ -387,12 +387,6 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                   setState(() {
                     resetFields();
                   });
-                } else {
-                  QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.error,
-                    title: "Greška prilikom registracije.",
-                  );
                 }
               },
               child: Text(

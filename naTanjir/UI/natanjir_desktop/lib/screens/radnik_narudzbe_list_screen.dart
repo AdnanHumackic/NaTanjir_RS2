@@ -29,7 +29,7 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
   List<Narudzba> narudzbaList = [];
   SearchResult<StavkeNarudzbe>? stavkeNarudzbeResult;
   late TabController _tabController;
-  final SignalRProvider _signalRProvider = SignalRProvider();
+  final SignalRProvider _signalRProvider = SignalRProvider('notifications-hub');
 
   int page = 1;
 

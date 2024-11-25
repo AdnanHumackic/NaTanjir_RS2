@@ -14,7 +14,7 @@ class ObavijestListScreen extends StatefulWidget {
 }
 
 class _ObavijestListScreenState extends State<ObavijestListScreen> {
-  final SignalRProvider _signalRProvider = SignalRProvider();
+  final SignalRProvider _signalRProvider = SignalRProvider('notifications-hub');
   List<String> _notifications = [];
 
   Future<void> _loadNotifications() async {

@@ -431,7 +431,7 @@ class _RestoranFavoritListScreenState extends State<RestoranFavoritListScreen> {
               child: Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(
-                  "Nemate više resotrana u favoritima za prikazati.",
+                  "Nemate više restorana u favoritima za prikazati.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,

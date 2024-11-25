@@ -330,6 +330,8 @@ class _VlasnikDodajRadnikaScreenState extends State<VlasnikDodajRadnikaScreen> {
                           if (age < 18 || value!.isAfter(DateTime.now())) {
                             dateError =
                                 "Korisnik mora biti stariji od 18 godina i datum rođenja ne smije \nbiti stariji od današnjeg.";
+                          } else {
+                            dateError = null;
                           }
                         } else {
                           dateError = null;

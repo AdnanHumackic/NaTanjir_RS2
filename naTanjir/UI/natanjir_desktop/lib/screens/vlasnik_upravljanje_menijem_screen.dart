@@ -431,43 +431,47 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
           DataCell(
             TextButton(
               onPressed: () async {
-                try {
-                  await QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.confirm,
-                    title:
-                        "Da li ste sigurni da želite obrisati proizvod iz ponude?",
-                    confirmBtnText: "Da",
-                    cancelBtnText: "Ne",
-                    onConfirmBtnTap: () async {
-                      Navigator.of(context).pop();
-
-                      try {
-                        await provider.delete(item!.proizvodId!);
-
-                        await QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.success,
-                          title: "Proizvod uspješno obrisan!",
-                        );
-
-                        filterServerSide();
-                      } catch (e) {
-                        await QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.error,
-                          title: "Greška prilikom brisanja proizvoda!",
-                        );
-                      }
-                    },
-                  );
-                } on Exception catch (e) {
-                  await QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.error,
-                    title: "Greška!",
-                  );
-                }
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                        "Da li ste sigurni da želite obrisati proizvod iz ponude?"),
+                    content: Text("Ovo će obrisati proizvod iz ponude."),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Ne"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          try {
+                            await provider.delete(item!.proizvodId!);
+                            filterServerSide();
+                          } catch (e) {
+                            await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title:
+                                    Text("Greška prilikom brisanja proizvoda!"),
+                                content: Text(e.toString()),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                        child: Text("Da"),
+                      ),
+                    ],
+                  ),
+                );
               },
               child: Container(
                 child: Text(
@@ -481,42 +485,58 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
           DataCell(
             TextButton(
               onPressed: () async {
-                try {
-                  await QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.confirm,
-                    title:
-                        "Da li ste sigurni da želite vratiti proizvod u ponudu?",
-                    confirmBtnText: "Da",
-                    cancelBtnText: "Ne",
-                    onConfirmBtnTap: () async {
-                      var upd = {
-                        'naziv': item?.naziv,
-                        'cijena': item?.cijena,
-                        'opis': item?.opis,
-                        'slika': item?.slika,
-                        'isDeleted': false,
-                        'vrijemeBrisanja': null,
-                        'vrstaProizvodaId': item?.vrstaProizvodaId,
-                      };
-                      await provider.update(item!.proizvodId!, upd);
-                      Navigator.of(context).pop();
+                // Show a confirmation dialog
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                        "Da li ste sigurni da želite vratiti proizvod u ponudu?"),
+                    content: Text("Ovo će vratiti proizvod u ponudu."),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Ne"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          var upd = {
+                            'naziv': item?.naziv,
+                            'cijena': item?.cijena,
+                            'opis': item?.opis,
+                            'slika': item?.slika,
+                            'isDeleted': false,
+                            'vrijemeBrisanja': null,
+                            'vrstaProizvodaId': item?.vrstaProizvodaId,
+                          };
 
-                      await QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.success,
-                        title: "Proizvod uspješno vraćen u ponudu!",
-                      );
-                      filterServerSide();
-                    },
-                  );
-                } on Exception catch (e) {
-                  QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.error,
-                    title: "Greška prilikom vraćanja proizvoda u ponudu!",
-                  );
-                }
+                          try {
+                            await provider.update(item!.proizvodId!, upd);
+                            filterServerSide();
+                          } catch (e) {
+                            await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(
+                                    "Greška prilikom vraćanja proizvoda u ponudu!"),
+                                content: Text(e.toString()),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                        child: Text("Da"),
+                      ),
+                    ],
+                  ),
+                );
               },
               child: Container(
                 child: Text(

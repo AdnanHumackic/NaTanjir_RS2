@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:natanjir_mobile/providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,15 +11,26 @@ class SignalRProvider with ChangeNotifier {
   Timer? _reconnectTimer;
   Timer? _connectionIdTimeoutTimer;
   bool _isReconnecting = false;
-  SignalRProvider._privateConstructor();
+
+  int _messageCount = 0;
+
+  late String _baseUrl;
+  late String _endpoint;
+
+  SignalRProvider._privateConstructor(String endpoint) {
+    _endpoint = endpoint;
+    _baseUrl = const String.fromEnvironment("baseUrl",
+        defaultValue: "http://10.0.2.2:5212/");
+  }
 
   static final SignalRProvider _instance =
-      SignalRProvider._privateConstructor();
+      SignalRProvider._privateConstructor("");
 
-  factory SignalRProvider() {
+  factory SignalRProvider(String endpoint) {
+    _instance._endpoint = endpoint;
     return _instance;
   }
-  int _messageCount = 0;
+
   Future<void> initializeMessageCount() async {
     final messages = await getMessages();
     _messageCount = messages.length;
@@ -28,31 +38,25 @@ class SignalRProvider with ChangeNotifier {
   }
 
   Future<void> startConnection() async {
-    _hubConnection = HubConnectionBuilder()
-        .withUrl(
-          'http://10.0.2.2:5212/notifications-hub',
-        )
-        .build();
+    final url = '$_baseUrl$_endpoint';
+
+    _hubConnection = HubConnectionBuilder().withUrl(url).build();
 
     try {
       await _hubConnection.start();
-      print('SignalR konekcija uspješna.');
       _startConnectionIdTimeout();
     } catch (e) {
-      print('Greška prilikom konektovanja: $e');
       _scheduleReconnect();
     }
 
     _hubConnection.on('ReceiveConnectionId', (arguments) {
       _connectionIdTimeoutTimer?.cancel();
-      print("Connection id: $arguments");
       AuthProvider.connectionId = arguments?[0];
     });
 
     _hubConnection.on('ReceiveMessage', (arguments) async {
       final message = arguments?[0]?.toString() ?? '';
       if (message.isNotEmpty) {
-        print("Poruka: $message");
         await _saveMessage(message);
         _messageCount++;
 
@@ -66,7 +70,6 @@ class SignalRProvider with ChangeNotifier {
 
   void _startConnectionIdTimeout() {
     _connectionIdTimeoutTimer = Timer(Duration(seconds: 3), () {
-      print("Nije primljen ConnectionId. Pokušaj ponovnog povezivanja.");
       _restartConnection();
     });
   }
@@ -76,17 +79,13 @@ class SignalRProvider with ChangeNotifier {
 
     _isReconnecting = true;
     _reconnectTimer = Timer.periodic(Duration(seconds: 3), (timer) async {
-      print("Pokušavam ponovo uspostaviti SignalR konekciju...");
       try {
         await startConnection();
         if (_hubConnection.state == HubConnectionState.Connected) {
           timer.cancel();
           _isReconnecting = false;
-          print("SignalR ponovo povezan.");
         }
-      } catch (e) {
-        print("Ponovno povezivanje neuspješno: $e");
-      }
+      } catch (e) {}
     });
   }
 
@@ -104,7 +103,6 @@ class SignalRProvider with ChangeNotifier {
   Future<void> stopConnection() async {
     if (_hubConnection.state == HubConnectionState.Connected) {
       await _hubConnection.stop();
-      print('SignalR zaustavljen.');
     }
   }
 
@@ -117,9 +115,7 @@ class SignalRProvider with ChangeNotifier {
       final messages = prefs.getStringList(key) ?? [];
       messages.add(message);
       await prefs.setStringList(key, messages);
-    } else {
-      print("Korisnik nije prijavljen.");
-    }
+    } else {}
   }
 
   Future<List<String>> getMessages() async {
@@ -129,7 +125,6 @@ class SignalRProvider with ChangeNotifier {
     if (username != null) {
       return prefs.getStringList('messages_$username') ?? [];
     } else {
-      print("Korisnik nije prijavljen.");
       return [];
     }
   }
@@ -142,9 +137,7 @@ class SignalRProvider with ChangeNotifier {
       await prefs.remove('messages_$username');
       notifyListeners();
       _messageCount = 0;
-    } else {
-      print("Korisnik nije prijavljen.");
-    }
+    } else {}
   }
 
   int get messageCount => _messageCount;
