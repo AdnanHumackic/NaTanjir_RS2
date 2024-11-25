@@ -48,7 +48,6 @@ class _VlasnikDodajProizvodScreenState
     super.didChangeDependencies();
   }
 
-  //TODO:FIX RIGHT OVERFLOW ON THIS SCREEN AND ON ADMIN FORMS
   @override
   void initState() {
     super.initState();
@@ -57,7 +56,7 @@ class _VlasnikDodajProizvodScreenState
     vrstaProizvodumProvider = context.read<VrstaProizvodumProvider>();
     _initialValue = {
       'naziv': widget.proizvod?.naziv,
-      'cijena': widget.proizvod?.cijena.toString(),
+      'cijena': widget.proizvod?.cijena?.toStringAsFixed(2),
       'vrstaProizvodaId': widget.proizvod?.vrstaProizvodaId.toString(),
       'restoranId': widget.proizvod?.restoranId.toString(),
       'opis': widget.proizvod?.opis,
@@ -386,12 +385,6 @@ class _VlasnikDodajProizvodScreenState
                 );
                 clearinput();
                 if (mounted) setState(() {});
-              } else {
-                QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.error,
-                  title: "Greška prilikom dodavanja/uređivanja proizvoda.",
-                );
               }
             },
             child: Center(

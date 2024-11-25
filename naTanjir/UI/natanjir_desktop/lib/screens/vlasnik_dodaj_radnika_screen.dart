@@ -575,33 +575,42 @@ class _VlasnikDodajRadnikaScreenState extends State<VlasnikDodajRadnikaScreen> {
           child: InkWell(
             onTap: () async {
               var isValid = _formKey.currentState!.saveAndValidate();
-              if (isValid == true) {
-                var req = Map.from(_formKey.currentState!.value);
-                DateTime dob = req['datumRodjenja'];
-                req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
-                req['slika'] = _base64Image;
-                req['uloge'] = [_formKey.currentState!.fields['uloge']?.value];
+              if (isValid) {
+                try {
+                  var req = Map.from(_formKey.currentState!.value);
+                  DateTime dob = req['datumRodjenja'];
+                  req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
+                  req['slika'] = _base64Image;
+                  req['uloge'] = [
+                    _formKey.currentState!.fields['uloge']?.value
+                  ];
 
-                await korisniciProvider.insert(req);
-                await QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.confirm,
-                  title: "Uspješno dodan radnik!",
-                  text: "Da li želite isprintati podatke o radniku?",
-                  confirmBtnText: "Da",
-                  cancelBtnText: "Ne",
-                  onConfirmBtnTap: () async {
-                    createPdfFile(req);
-                    Navigator.of(context).pop();
-                  },
-                );
-                clearinput();
-              } else {
-                QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.error,
-                  title: "Greška prilikom dodavanja radnika.",
-                );
+                  await korisniciProvider.insert(req);
+
+                  await QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.confirm,
+                    title: "Uspješno dodan radnik!",
+                    text: "Da li želite isprintati podatke o radniku?",
+                    confirmBtnText: "Da",
+                    cancelBtnText: "Ne",
+                    onConfirmBtnTap: () async {
+                      Navigator.of(context).pop();
+                      createPdfFile(req);
+                    },
+                    onCancelBtnTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  );
+
+                  clearinput();
+                } catch (e) {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.error,
+                    title: "Greška prilikom dodavanja radnika.",
+                  );
+                }
               }
             },
             child: Center(

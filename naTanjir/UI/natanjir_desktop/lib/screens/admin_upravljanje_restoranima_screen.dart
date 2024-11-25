@@ -902,12 +902,6 @@ class _AdminUpravljanjeRestoranimaScreenState
                   },
                 );
                 resetFields();
-              } else {
-                QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.error,
-                  title: "Greška prilikom dodavanja vlasnika.",
-                );
               }
             },
             child: Center(
@@ -957,12 +951,6 @@ class _AdminUpravljanjeRestoranimaScreenState
                 setState(() {
                   resetFields();
                 });
-              } else {
-                await QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.error,
-                  title: "Greška prilikom dodavanja restorana.",
-                );
               }
             },
             child: Center(
