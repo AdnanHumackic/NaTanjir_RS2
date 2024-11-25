@@ -459,31 +459,43 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
               TextButton(
                 onPressed: () async {
                   try {
-                    QuickAlert.show(
+                    await QuickAlert.show(
                       context: context,
                       type: QuickAlertType.confirm,
                       title: "Da li ste sigurni da želite obrisati radnika?",
                       text:
-                          "Ovo će obrisati radnika i onemoguiti mu pristup aplikaciji.",
+                          "Ovo će obrisati radnika i onemogućiti mu pristup aplikaciji.",
                       confirmBtnText: "Da",
                       cancelBtnText: "Ne",
                       onConfirmBtnTap: () async {
-                        Navigator.of(context).pop();
-                        await provider.delete(item.korisnikId!);
+                        try {
+                          Navigator.of(context).pop();
 
-                        await QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.success,
-                          title: "Radnik uspješno obrisan!",
-                        );
-                        filterServerSide();
+                          await provider.delete(item.korisnikId!);
+
+                          await QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.success,
+                            title: "Radnik uspješno obrisan!",
+                          );
+
+                          filterServerSide();
+                        } catch (e) {
+                          Navigator.of(context).pop();
+
+                          await QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.error,
+                            title: "Greška prilikom brisanja radnika!",
+                          );
+                        }
                       },
                     );
                   } on Exception catch (e) {
-                    QuickAlert.show(
+                    await QuickAlert.show(
                       context: context,
                       type: QuickAlertType.error,
-                      title: "Greška prilikom brisanja radnika!",
+                      title: "Greška!",
                     );
                   }
                 },
@@ -500,7 +512,7 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
               TextButton(
                 onPressed: () async {
                   try {
-                    QuickAlert.show(
+                    await QuickAlert.show(
                       context: context,
                       type: QuickAlertType.confirm,
                       title:
@@ -509,32 +521,46 @@ class KorisniciDataSource extends AdvancedDataTableSource<Korisnici> {
                       confirmBtnText: "Da",
                       cancelBtnText: "Ne",
                       onConfirmBtnTap: () async {
-                        var upd = {
-                          'ime': item.ime,
-                          'prezime': item.prezime,
-                          'telefon': item.telefon,
-                          'slika': item.slika,
-                          'isDeleted': false,
-                          'vrijemeBrisanja': null,
-                          'korisnickoIme': item.korisnickoIme,
-                          'email': item.email,
-                        };
-                        await provider.update(item.korisnikId!, upd);
-                        Navigator.of(context).pop();
+                        try {
+                          var upd = {
+                            'ime': item.ime,
+                            'prezime': item.prezime,
+                            'telefon': item.telefon,
+                            'slika': item.slika,
+                            'isDeleted': false,
+                            'vrijemeBrisanja': null,
+                            'korisnickoIme': item.korisnickoIme,
+                            'email': item.email,
+                          };
 
-                        await QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.success,
-                          title: "Radnikov račun uspješno aktiviran!",
-                        );
-                        filterServerSide();
+                          await provider.update(item.korisnikId!, upd);
+
+                          Navigator.of(context).pop();
+
+                          await QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.success,
+                            title: "Radnikov račun uspješno aktiviran!",
+                          );
+
+                          filterServerSide();
+                        } catch (e) {
+                          Navigator.of(context).pop();
+
+                          await QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.error,
+                            title:
+                                "Greška prilikom aktiviranja radnikovog računa!",
+                          );
+                        }
                       },
                     );
                   } on Exception catch (e) {
-                    QuickAlert.show(
+                    await QuickAlert.show(
                       context: context,
                       type: QuickAlertType.error,
-                      title: "Greška prilikom aktiviranja radnikovog računa!",
+                      title: "Greška!",
                     );
                   }
                 },

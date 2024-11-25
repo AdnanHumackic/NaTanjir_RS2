@@ -339,7 +339,7 @@ class RestoraniDataSource extends AdvancedDataTableSource<Restoran> {
             TextButton(
               onPressed: () async {
                 try {
-                  QuickAlert.show(
+                  await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.confirm,
                     title: "Da li ste sigurni da želite obrisati restoran?",
@@ -348,24 +348,35 @@ class RestoraniDataSource extends AdvancedDataTableSource<Restoran> {
                     confirmBtnText: "Da",
                     cancelBtnText: "Ne",
                     onConfirmBtnTap: () async {
-                      Navigator.of(context).pop();
+                      try {
+                        Navigator.of(context).pop();
 
-                      await provider.delete(item!.restoranId!);
+                        await provider.delete(item!.restoranId!);
 
-                      await QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.success,
-                        title: "Restoran uspješno obrisan!",
-                      );
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Restoran uspješno obrisan!",
+                        );
 
-                      filterServerSide();
+                        // Refresh data
+                        filterServerSide();
+                      } catch (e) {
+                        Navigator.of(context).pop();
+
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.error,
+                          title: "Greška prilikom brisanja restorana!",
+                        );
+                      }
                     },
                   );
                 } on Exception catch (e) {
-                  QuickAlert.show(
+                  await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.error,
-                    title: "Greška prilikom brisanja restorana!",
+                    title: "Greška!",
                   );
                 }
               },
@@ -382,7 +393,7 @@ class RestoraniDataSource extends AdvancedDataTableSource<Restoran> {
             TextButton(
               onPressed: () async {
                 try {
-                  QuickAlert.show(
+                  await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.confirm,
                     title:
@@ -392,30 +403,43 @@ class RestoraniDataSource extends AdvancedDataTableSource<Restoran> {
                     confirmBtnText: "Da",
                     cancelBtnText: "Ne",
                     onConfirmBtnTap: () async {
-                      var upd = {
-                        'radnoVrijemeOd': item?.radnoVrijemeOd,
-                        'radnoVrijemeDo': item?.radnoVrijemeDo,
-                        'slika': item?.slika,
-                        'lokacija': item?.lokacija,
-                        'isDeleted': false,
-                        'vrijemeBrisanja': null
-                      };
-                      await provider.update(item!.restoranId!, upd);
-                      Navigator.of(context).pop();
+                      try {
+                        var upd = {
+                          'radnoVrijemeOd': item?.radnoVrijemeOd,
+                          'radnoVrijemeDo': item?.radnoVrijemeDo,
+                          'slika': item?.slika,
+                          'lokacija': item?.lokacija,
+                          'isDeleted': false,
+                          'vrijemeBrisanja': null,
+                        };
 
-                      await QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.success,
-                        title: "Restoran uspješno vraćen u ponudu!",
-                      );
-                      filterServerSide();
+                        await provider.update(item!.restoranId!, upd);
+
+                        Navigator.of(context).pop();
+
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Restoran uspješno vraćen u ponudu!",
+                        );
+
+                        filterServerSide();
+                      } catch (e) {
+                        Navigator.of(context).pop();
+
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.error,
+                          title: "Greška prilikom vraćanja restorana u ponudu!",
+                        );
+                      }
                     },
                   );
                 } on Exception catch (e) {
-                  QuickAlert.show(
+                  await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.error,
-                    title: "Greška prilikom vraćanja restorana u ponudu!",
+                    title: "Greška!",
                   );
                 }
               },

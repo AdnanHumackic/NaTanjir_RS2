@@ -441,21 +441,31 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
                     cancelBtnText: "Ne",
                     onConfirmBtnTap: () async {
                       Navigator.of(context).pop();
-                      await provider.delete(item!.proizvodId!);
 
-                      await QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.success,
-                        title: "Proizvod uspješno obrisan!",
-                      );
-                      filterServerSide();
+                      try {
+                        await provider.delete(item!.proizvodId!);
+
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: "Proizvod uspješno obrisan!",
+                        );
+
+                        filterServerSide();
+                      } catch (e) {
+                        await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.error,
+                          title: "Greška prilikom brisanja proizvoda!",
+                        );
+                      }
                     },
                   );
                 } on Exception catch (e) {
                   await QuickAlert.show(
                     context: context,
                     type: QuickAlertType.error,
-                    title: "Greška prilikom brisanja proizvoda!",
+                    title: "Greška!",
                   );
                 }
               },
