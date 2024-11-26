@@ -92,15 +92,24 @@ class _RadnikNarudzbeListScreenState extends State<RadnikNarudzbeListScreen>
   Future _displayNotification(BuildContext context) async {
     _signalRProvider?.onNotificationReceived = (message) async {
       if (message.isNotEmpty) {
-        await QuickAlert.show(
+        await showDialog(
           context: context,
-          type: QuickAlertType.info,
-          title: "Obavijest",
-          text: message,
-          onConfirmBtnTap: () async {
-            Navigator.of(context).pop();
-            await _firstLoad();
-            setState(() {});
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Obavijest"),
+              content: Text(message),
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await _firstLoad();
+                    setState(() {});
+                  },
+                  child: Text("U redu"),
+                ),
+              ],
+            );
           },
         );
         setState(() {});

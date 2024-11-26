@@ -216,6 +216,8 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                   if (age < 18 || value!.isAfter(DateTime.now())) {
                     dateError =
                         "Morate biti stariji od 18 godina i\ndatum rođenja ne smije biti stariji od \ndanašnjeg.";
+                  } else {
+                    dateError = null;
                   }
                 } else {
                   dateError = null;

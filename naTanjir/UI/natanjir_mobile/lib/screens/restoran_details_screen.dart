@@ -240,69 +240,102 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Flexible(
-            child: SizedBox(
-              width: 90,
-              height: 80,
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                child: widget.odabraniRestoran!.slika != null &&
-                        widget.odabraniRestoran!.slika!.isNotEmpty
-                    ? imageFromString(widget.odabraniRestoran!.slika!)
-                    : Image.asset(
-                        "assets/images/restoranImg.png",
-                        fit: BoxFit.cover,
-                      ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                child: SizedBox(
+                  width: 90,
+                  height: 80,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    child: widget.odabraniRestoran!.slika != null &&
+                            widget.odabraniRestoran!.slika!.isNotEmpty
+                        ? imageFromString(widget.odabraniRestoran!.slika!)
+                        : Image.asset(
+                            "assets/images/restoranImg.png",
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
               ),
-            ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.odabraniRestoran!.naziv ?? "",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  widget.odabraniRestoran!.lokacija ?? "",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                  maxLines: 2,
-                ),
-                SizedBox(height: 5),
-                Row(
+              SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.star, color: Colors.yellow, size: 16),
-                    SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        widget.avgOcjena.toString(),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 108, 108, 108),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    Text(
+                      widget.odabraniRestoran!.naziv ?? "",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      widget.odabraniRestoran!.lokacija ?? "",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                      maxLines: 2,
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.yellow, size: 16),
+                        SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            widget.avgOcjena.toString(),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 108, 108, 108),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+          if (AuthProvider.korisnikId != null)
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: InkWell(
+                onTap: () async {
+                  if (AuthProvider.korisnikId != null) {
+                    await _showDialog(context) ?? false;
+                  }
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "Ocjenite",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(
+                      Icons.star,
+                      size: 28,
+                      color: Color.fromARGB(255, 255, 215, 0),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -376,37 +409,6 @@ class _RestoranDetailsScreenState extends State<RestoranDetailsScreen> {
               },
             ),
           ),
-          if (AuthProvider.korisnikId != null)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () async {
-                      if (AuthProvider.korisnikId != null) {
-                        await _showDialog(context) ?? false;
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Text(
-                          "Ocijenite restoran",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        Icon(
-                          Icons.star,
-                          size: 40,
-                          color: Color.fromARGB(255, 255, 215, 0),
-                        ),
-                        SizedBox(width: 8.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            )
         ],
       ),
     );

@@ -589,28 +589,48 @@ class _VlasnikDodajRadnikaScreenState extends State<VlasnikDodajRadnikaScreen> {
 
                   await korisniciProvider.insert(req);
 
-                  await QuickAlert.show(
+                  bool shouldPrint = await showDialog(
                     context: context,
-                    type: QuickAlertType.confirm,
-                    title: "Uspješno dodan radnik!",
-                    text: "Da li želite isprintati podatke o radniku?",
-                    confirmBtnText: "Da",
-                    cancelBtnText: "Ne",
-                    onConfirmBtnTap: () async {
-                      Navigator.of(context).pop();
-                      createPdfFile(req);
-                    },
-                    onCancelBtnTap: () {
-                      Navigator.of(context).pop();
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Uspješno dodan radnik!"),
+                        content:
+                            Text("Da li želite isprintati podatke o radniku?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text("Ne"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: Text("Da"),
+                          ),
+                        ],
+                      );
                     },
                   );
 
+                  if (shouldPrint == true) {
+                    createPdfFile(req);
+                  }
+
                   clearinput();
                 } catch (e) {
-                  QuickAlert.show(
+                  showDialog(
                     context: context,
-                    type: QuickAlertType.error,
-                    title: "Greška prilikom dodavanja radnika.",
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Greška"),
+                        content: Text("Greška prilikom dodavanja radnika."),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text("U redu"),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 }
               }

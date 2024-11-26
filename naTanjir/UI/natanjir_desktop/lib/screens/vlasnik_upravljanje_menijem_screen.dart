@@ -485,7 +485,6 @@ class ProizvodiDataSource extends AdvancedDataTableSource<Proizvod> {
           DataCell(
             TextButton(
               onPressed: () async {
-                // Show a confirmation dialog
                 await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(

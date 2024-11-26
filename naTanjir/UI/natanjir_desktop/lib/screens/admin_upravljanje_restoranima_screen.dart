@@ -885,26 +885,60 @@ class _AdminUpravljanjeRestoranimaScreenState
             onTap: () async {
               var isValid = _formKeyVlas.currentState!.saveAndValidate();
               if (isValid == true) {
-                var req = Map.from(_formKeyVlas.currentState!.value);
-                DateTime dob = req['datumRodjenja'];
-                req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
-                req['uloge'] = [2];
-                req['slika'] = _base64Image;
+                try {
+                  var req = Map.from(_formKeyVlas.currentState!.value);
+                  DateTime dob = req['datumRodjenja'];
+                  req['datumRodjenja'] = dob.toIso8601String().split('T')[0];
+                  req['uloge'] = [2];
+                  req['slika'] = _base64Image;
 
-                await korisniciProvider.insert(req);
-                await QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.confirm,
-                  title: "Uspješno dodan vlasnik!",
-                  text: "Da li želite isprintati podatke o vlasniku?",
-                  confirmBtnText: "Da",
-                  cancelBtnText: "Ne",
-                  onConfirmBtnTap: () async {
+                  await korisniciProvider.insert(req);
+
+                  bool shouldPrint = await showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Uspješno dodan vlasnik!"),
+                        content:
+                            Text("Da li želite isprintati podatke o vlasniku?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text("Ne"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: Text("Da"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (shouldPrint == true) {
                     createPdfFile(req);
-                    Navigator.of(context).pop();
-                  },
-                );
-                resetFields();
+                  }
+
+                  resetFields();
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Greška"),
+                        content: Text(
+                            "Došlo je do greške prilikom dodavanja vlasnika."),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text("U redu"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               }
             },
             child: Center(
