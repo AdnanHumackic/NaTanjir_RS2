@@ -24,7 +24,6 @@ import 'package:natanjir_mobile/providers/uloga_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_mobile/screens/dostavljac_narudzbe_screen.dart';
-import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:natanjir_mobile/screens/registracija_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';

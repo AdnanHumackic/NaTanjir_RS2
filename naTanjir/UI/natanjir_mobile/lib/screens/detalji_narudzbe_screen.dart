@@ -19,7 +19,6 @@ import 'package:natanjir_mobile/providers/lokacija_provider.dart';
 import 'package:natanjir_mobile/providers/narudzba_provider.dart';
 import 'package:natanjir_mobile/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_mobile/providers/utils.dart';
-import 'package:natanjir_mobile/screens/narudzba_ruta_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';

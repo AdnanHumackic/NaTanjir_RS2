@@ -23,7 +23,6 @@ import 'package:natanjir_desktop/providers/uloga_provider.dart';
 import 'package:natanjir_desktop/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_desktop/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
-import 'package:natanjir_desktop/screens/product_list_screen.dart';
 import 'package:natanjir_desktop/screens/radnik_narudzbe_list_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
 import 'package:provider/provider.dart';

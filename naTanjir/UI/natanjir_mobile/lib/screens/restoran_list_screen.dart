@@ -28,7 +28,6 @@ import 'package:natanjir_mobile/providers/vrsta_proizvodum_provider.dart';
 import 'package:natanjir_mobile/providers/vrsta_restorana_provider.dart';
 import 'package:natanjir_mobile/screens/korisnik_profile_edit_screen.dart';
 import 'package:natanjir_mobile/screens/korisnik_profile_screen.dart';
-import 'package:natanjir_mobile/screens/product_details_screen.dart';
 import 'package:natanjir_mobile/screens/registracija_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_details_screen.dart';
 import 'package:provider/provider.dart';

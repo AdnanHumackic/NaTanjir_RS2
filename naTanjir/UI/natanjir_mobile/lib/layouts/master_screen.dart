@@ -6,8 +6,6 @@ import 'package:natanjir_mobile/screens/dostavljac_narudzbe_screen.dart';
 import 'package:natanjir_mobile/screens/korpa_screen.dart';
 import 'package:natanjir_mobile/screens/narudzbe_list_screen.dart';
 import 'package:natanjir_mobile/screens/obavijesti_list_screen.dart';
-import 'package:natanjir_mobile/screens/product_details_screen.dart';
-import 'package:natanjir_mobile/screens/product_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_favorit_list_screen.dart';
 import 'package:natanjir_mobile/screens/restoran_list_screen.dart';
 import 'package:provider/provider.dart';
