@@ -3,8 +3,8 @@ Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnolo
 
 <h1>Kredencijali za prijavu</h1>
 
+<h2>Mobilna aplikacija</h2>
 <h2><strong>Kupac</strong></h2>
-
 <ul>
     <li><strong style="font-size: 1.2em;">Korisničko ime:</strong> kupac</li>
     <li><strong style="font-size: 1.2em;">Lozinka:</strong> test</li>
@@ -12,16 +12,6 @@ Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnolo
 <h2><strong>Kupac2</strong></h2>
 <ul>
     <li><strong style="font-size: 1.2em;">Korisničko ime:</strong> kupac2</li>
-    <li><strong style="font-size: 1.2em;">Lozinka:</strong> test</li>
-</ul>
-<h2><strong>Vlasnik restorana</strong></h2>
-<ul>
-    <li><strong style="font-size: 1.2em;">Korisničko ime:</strong> vlasnik</li>
-    <li><strong style="font-size: 1.2em;">Lozinka:</strong> test</li>
-</ul>
-<h2><strong>Admin</strong></h2>
-<ul>
-    <li><strong style="font-size: 1.2em;">Korisničko ime:</strong> admin</li>
     <li><strong style="font-size: 1.2em;">Lozinka:</strong> test</li>
 </ul>
 <h2><strong>Dostavljac</strong></h2>
@@ -42,6 +32,18 @@ Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnolo
 <h2><strong>Dostavljac4</strong></h2>
 <ul>
     <li><strong style="font-size: 1.2em;">Korisničko ime:</strong> dostavljac4</li>
+    <li><strong style="font-size: 1.2em;">Lozinka:</strong> test</li>
+</ul>
+
+<h2>Desktop aplikacija</h2>
+<h2><strong>Vlasnik restorana</strong></h2>
+<ul>
+    <li><strong style="font-size: 1.2em;">Korisničko ime:</strong> vlasnik</li>
+    <li><strong style="font-size: 1.2em;">Lozinka:</strong> test</li>
+</ul>
+<h2><strong>Admin</strong></h2>
+<ul>
+    <li><strong style="font-size: 1.2em;">Korisničko ime:</strong> admin</li>
     <li><strong style="font-size: 1.2em;">Lozinka:</strong> test</li>
 </ul>
 <h2><strong>Radnik restorana</strong></h2>
