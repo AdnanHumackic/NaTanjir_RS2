@@ -60,10 +60,10 @@ public partial class NaTanjirContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Ime)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(true);
             entity.Property(e => e.KorisnickoIme)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(true);
             entity.Property(e => e.LozinkaHash)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -72,7 +72,7 @@ public partial class NaTanjirContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Prezime)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(true);
             entity.Property(e => e.RestoranId).HasColumnName("RestoranID");
             entity.Property(e => e.Telefon)
                 .HasMaxLength(20)
