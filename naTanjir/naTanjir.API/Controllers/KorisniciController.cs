@@ -38,13 +38,13 @@ namespace naTanjir.API.Controllers
             (_service as IKorisniciService).TrainData();
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         public override Task<PagedResult<Korisnici>> GetList([FromQuery] KorisniciSearchObject searchObject, CancellationToken cancellationToken = default)
         {
             return base.GetList(searchObject, cancellationToken);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         public override Task<Korisnici> GetById(int id, CancellationToken cancellationToken = default)
         {
             return base.GetById(id, cancellationToken);

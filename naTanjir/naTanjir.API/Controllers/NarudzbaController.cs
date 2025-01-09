@@ -45,20 +45,20 @@ namespace naTanjir.API.Controllers
             return await (_service as INarudzbaService).ZavrsiAsync(id, cancellationToken);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         [HttpGet("{id}/allowedActions")]
         public Task<List<string>> AllowedActions(int id, CancellationToken cancellationToken = default)
         {
             return (_service as INarudzbaService).AllowedActions(id, cancellationToken);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         public override Task<PagedResult<Narudzba>> GetList([FromQuery] NarudzbaSearchObject searchObject, CancellationToken cancellationToken = default)
         {
             return base.GetList(searchObject, cancellationToken);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         public override Task<Narudzba> GetById(int id, CancellationToken cancellationToken = default)
         {
             return base.GetById(id, cancellationToken);

@@ -134,7 +134,7 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                     errorText: "Minimalna dužina imena je 2 znaka."),
                 FormBuilderValidators.maxLength(40,
                     errorText: "Maksimalna dužina imena je 40 znakova."),
-                FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
+                FormBuilderValidators.match(r'^[A-ZČĆŽĐŠ][a-zA-ZčćžđšČĆŽĐŠ]*$',
                     errorText:
                         "Ime mora počinjati sa velikim slovom i smije \nsadržavati samo slova.")
               ]),
@@ -163,7 +163,7 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                     errorText: "Minimalna dužina prezimena je 2 znaka."),
                 FormBuilderValidators.maxLength(40,
                     errorText: "Maksimalna dužina prezimena je 40 znakova."),
-                FormBuilderValidators.match(r'^[A-Z][a-zA-Z]*$',
+                FormBuilderValidators.match(r'^[A-ZČĆŽĐŠ][a-zA-ZčćžđšČĆŽĐŠ]*$',
                     errorText:
                         "Prezime mora počinjati sa velikim slovom i smije \nsadržavati samo slova.")
               ]),
@@ -435,6 +435,9 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                         ?.didChange(null);
                     _formKey.currentState?.fields['lozinkaPotvrda']
                         ?.didChange(null);
+                    passwordError = null;
+                    newPasswordError = null;
+                    confirmPasswordError = null;
                   });
                 }
               } else {

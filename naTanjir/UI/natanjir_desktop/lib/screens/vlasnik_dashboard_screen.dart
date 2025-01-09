@@ -17,6 +17,10 @@ import 'package:natanjir_desktop/providers/restoran_provider.dart';
 import 'package:natanjir_desktop/providers/stavke_narudzbe_provider.dart';
 import 'package:natanjir_desktop/providers/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class VlasnikDashboardScreen extends StatefulWidget {
   const VlasnikDashboardScreen({Key? key}) : super(key: key);
@@ -74,7 +78,43 @@ class _VlasnikDashboardScreenState extends State<VlasnikDashboardScreen> {
         ),
         child: SingleChildScrollView(
           child: Column(
-            children: [_buildSearch(), _buildPage(), _buildStats()],
+            children: [
+              _buildSearch(),
+              _buildPage(),
+              _buildStats(),
+              Row(
+                children: [
+                  Expanded(child: Container()),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 50,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromARGB(255, 0, 83, 86),
+                      ),
+                      child: InkWell(
+                        onTap: () async {
+                          await _generatePdf();
+                          setState(() {});
+                        },
+                        child: Center(
+                          child: Text(
+                            "Sačuvaj izvještaj",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -82,7 +122,6 @@ class _VlasnikDashboardScreenState extends State<VlasnikDashboardScreen> {
   }
 
   String? selectedItem;
-
   Widget _buildSearch() {
     return Padding(
       padding: EdgeInsets.all(25),
@@ -566,5 +605,202 @@ class _VlasnikDashboardScreenState extends State<VlasnikDashboardScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _generatePdf() async {
+    final pdf = pw.Document();
+
+    var restoranId = restoranResult?.result
+            ?.where((e) =>
+                e.vlasnikId == AuthProvider.korisnikId && e.restoranId != null)
+            .map((e) => e.restoranId!)
+            .toList() ??
+        [];
+
+    var stavke = (stavkeNarudzbeResult?.result ?? [])
+        .where((x) =>
+            x.restoran != null &&
+            x.restoran!.vlasnikId == AuthProvider.korisnikId &&
+            (selectedItem == null || x.restoran!.naziv == selectedItem))
+        .map((e) => e.narudzbaId)
+        .toList();
+
+    var restoranNarudzbaIds = <int>{};
+    List<Narudzba> narudzbeList = [];
+    for (var i in stavke) {
+      if (restoranNarudzbaIds.add(i!)) {
+        var filtrirane = narudzbaResult!.result
+            .where((element) => element.narudzbaId == i)
+            .toList();
+
+        narudzbeList.addAll(filtrirane);
+      }
+    }
+    double ukupnaZar = 0;
+    var narudzbaIds = <int>{};
+    for (var i in stavke) {
+      if (narudzbaIds.add(i!)) {
+        var zarada = narudzbaResult!.result
+            .where((element) => element.narudzbaId == i)
+            .map((e) => e.ukupnaCijena)
+            .where((cijena) => cijena != null)
+            .cast<double>()
+            .toList();
+
+        if (zarada.isNotEmpty) {
+          ukupnaZar += zarada.reduce((a, b) => a + b);
+        }
+      }
+    }
+
+    var dostavljeneNarudzbe = 0;
+    for (var i in stavke) {
+      var dost = narudzbaResult!.result
+          .where((element) =>
+              element.narudzbaId == i && element.stateMachine == "zavrsena")
+          .map((e) => e.stavkeNarudzbe != null
+              ? e.stavkeNarudzbe!.where((element) =>
+                  element.restoranId == restoranId &&
+                  element.restoran!.naziv == selectedItem)
+              : [])
+          .length;
+      dostavljeneNarudzbe += dost;
+    }
+
+    var otkazaneNarudzbe = 0;
+    for (var i in stavke) {
+      var otk = narudzbaResult!.result
+          .where((element) =>
+              element.narudzbaId == i && element.stateMachine == "ponistena")
+          .map((e) => e.stavkeNarudzbe != null
+              ? e.stavkeNarudzbe!.where((element) =>
+                  element.restoranId == restoranId &&
+                  element.restoran!.naziv == selectedItem)
+              : [])
+          .length;
+      otkazaneNarudzbe += otk;
+    }
+    var nazivRestorana;
+    if (selectedItem != null) {
+      var restoran = restoranResult?.result?.firstWhere(
+        (e) =>
+            e.vlasnikId == AuthProvider.korisnikId &&
+            e.restoranId != null &&
+            e.naziv == selectedItem,
+      );
+      nazivRestorana = restoran != null ? restoran.naziv : "----";
+    } else {
+      nazivRestorana = "----";
+    }
+
+    try {
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) {
+            return pw.Column(
+              children: [
+                pw.Text('Izvjestaj za restoran: ${nazivRestorana}',
+                    style: pw.TextStyle(
+                        fontSize: 22, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 20),
+                pw.Text('Broj narudzbi: ${narudzbeList.length ?? 0}',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Text(
+                    'Broj dostavljenih narudzbi: ${dostavljeneNarudzbe ?? 0}',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Text('Broj otkazanih narudzbi: ${otkazaneNarudzbe ?? 0}',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Text('Ukupna zarada: ${formatNumber(ukupnaZar ?? 0)} KM',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.SizedBox(height: 20),
+                pw.Text('Broj narudzbi po mjesecima:',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Table.fromTextArray(
+                  headers: ['Mjesec', 'Broj narudzbi'],
+                  data: _getNarudzbeData(),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+
+      final dir = await getApplicationDocumentsDirectory();
+      final vrijeme = DateTime.now();
+      String path = '${dir.path}/Izvjestaj-${nazivRestorana}.pdf';
+      File file = File(path);
+      file.writeAsBytes(await pdf.save());
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Izvještaj uspješno sačuvan'),
+            content: Text('Lokacija izvještaja: $path'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  List<List<String>> _getNarudzbeData() {
+    if (narudzbaResult == null || narudzbaResult!.result.isEmpty) {
+      return [];
+    }
+    var stavke = stavkeNarudzbeResult!.result
+        .where((x) =>
+            x.restoran!.vlasnikId == AuthProvider.korisnikId &&
+            (selectedItem == null || x.restoran?.naziv == selectedItem))
+        .map((e) => e.narudzbaId)
+        .toList();
+
+    List<Narudzba> narudzbeList = [];
+    var processedIds = <int>{};
+
+    for (var i in stavke) {
+      if (processedIds.add(i!)) {
+        var filtrirane = narudzbaResult!.result
+            .where((element) =>
+                element.stateMachine != "ponistena" && element.narudzbaId == i)
+            .toList();
+
+        narudzbeList.addAll(filtrirane);
+      }
+    }
+
+    List<int> narudzbePoMjesecima = List.filled(12, 0);
+
+    for (var narudzba in narudzbeList) {
+      DateTime date = DateTime.parse(narudzba.datumKreiranja!);
+      int month = date.month - 1;
+      narudzbePoMjesecima[month]++;
+    }
+
+    List<String> mjeseci = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+
+    return List.generate(
+        12, (index) => [mjeseci[index], narudzbePoMjesecima[index].toString()]);
   }
 }

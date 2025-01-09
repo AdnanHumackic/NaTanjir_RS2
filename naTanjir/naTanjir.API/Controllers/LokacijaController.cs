@@ -18,7 +18,7 @@ namespace naTanjir.API.Controllers
         }
 
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac, Dostavljac")]
         public override Task<PagedResult<Lokacija>> GetList([FromQuery] LokacijaSearchObject searchObject, CancellationToken cancellationToken = default)
         {
             return base.GetList(searchObject, cancellationToken);

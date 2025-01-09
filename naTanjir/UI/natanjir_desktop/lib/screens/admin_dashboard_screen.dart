@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +12,11 @@ import 'package:natanjir_desktop/providers/korisnici_provider.dart';
 import 'package:natanjir_desktop/providers/narudzba_provider.dart';
 import 'package:natanjir_desktop/providers/restoran_provider.dart';
 import 'package:natanjir_desktop/providers/utils.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -59,7 +64,42 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ),
         child: SingleChildScrollView(
           child: Column(
-            children: [_buildPage(), _buildStats()],
+            children: [
+              _buildPage(),
+              _buildStats(),
+              Row(
+                children: [
+                  Expanded(child: Container()),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 50,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromARGB(255, 0, 83, 86),
+                      ),
+                      child: InkWell(
+                        onTap: () async {
+                          await _generatePdf();
+                          setState(() {});
+                        },
+                        child: Center(
+                          child: Text(
+                            "Sačuvaj izvještaj",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -378,5 +418,107 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _generatePdf() async {
+    final pdf = pw.Document();
+
+    var otkazane = (narudzbaResult?.result ?? [])
+        .where((e) => e.stateMachine == "ponistena")
+        .length;
+    var ukupno = (narudzbaResult?.result ?? []).length;
+    var stopaOtkazivanja = ukupno > 0 ? (otkazane / ukupno) * 100 : 0;
+    try {
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) {
+            return pw.Column(
+              children: [
+                pw.Text(
+                    'Broj korisnika aplikacije: ${korisniciResult?.count ?? 0}',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Text(
+                    'Broj restorana korisnika: ${restoranResult?.count ?? 0}',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Text(
+                    'Stopa otkazivanja narudzbi: ${formatNumber(stopaOtkazivanja)}%',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Text('Ukupan broj narudzbi: ${narudzbaResult?.count ?? 0}',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.SizedBox(height: 20),
+                pw.Text('Broj narudzbi po mjesecima:',
+                    style: pw.TextStyle(fontSize: 18)),
+                pw.Table.fromTextArray(
+                  headers: ['Mjesec', 'Broj narudzbi'],
+                  data: _getNarudzbeData(),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+
+      final dir = await getApplicationDocumentsDirectory();
+      final vrijeme = DateTime.now();
+      String path =
+          '${dir.path}/Izvjestaj-Dana-${formatDate(vrijeme.toString())}.pdf';
+      File file = File(path);
+      file.writeAsBytes(await pdf.save());
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Izvještaj uspješno sačuvan'),
+            content: Text('Lokacija izvještaja: $path'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  List<List<String>> _getNarudzbeData() {
+    if (narudzbaResult == null || narudzbaResult!.result.isEmpty) {
+      return [];
+    }
+
+    List<Narudzba> narudzbeList = narudzbaResult!.result
+        .where((element) => element.stateMachine != "ponistena")
+        .toList();
+
+    List<int> narudzbePoMjesecima = List.filled(12, 0);
+
+    for (var narudzba in narudzbeList) {
+      DateTime date = DateTime.parse(narudzba.datumKreiranja!);
+      int month = date.month - 1;
+      narudzbePoMjesecima[month]++;
+    }
+
+    List<String> mjeseci = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+
+    return List.generate(
+        12, (index) => [mjeseci[index], narudzbePoMjesecima[index].toString()]);
   }
 }

@@ -17,13 +17,13 @@ namespace naTanjir.API.Controllers
         {
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac")]
         public override Task<PagedResult<RestoranFavorit>> GetList([FromQuery] RestoranFavoritSearchObject searchObject, CancellationToken cancellationToken = default)
         {
             return base.GetList(searchObject, cancellationToken);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac")]
         public override Task<RestoranFavorit> GetById(int id, CancellationToken cancellationToken = default)
         {
             return base.GetById(id, cancellationToken);
