@@ -31,7 +31,7 @@ namespace naTanjir.API.Controllers
         {
             return (_service as IKorisniciService).GetRecommendedGradedProducts(korisnikId, restoranId);
         }
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac")]
         [HttpGet("traindata")]
         public void TrainData()
         {

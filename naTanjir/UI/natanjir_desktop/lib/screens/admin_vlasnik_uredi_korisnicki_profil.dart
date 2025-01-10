@@ -303,12 +303,24 @@ class _AdminVlasnikUrediKorisnickiProfilScreenState
                 if (widget.odabraniKorisnik?.korisnikId != null) {
                   await korisniciProvider.update(
                       widget.odabraniKorisnik!.korisnikId!, req);
-                  await QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.success,
-                    title: "Uspješno uređen profil!",
-                  );
                 }
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Uspješno uređen profil!"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
                 Navigator.pop(context, true);
                 if (mounted) setState(() {});
               } else {

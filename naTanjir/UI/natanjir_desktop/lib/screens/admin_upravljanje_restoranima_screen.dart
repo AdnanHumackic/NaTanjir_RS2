@@ -290,6 +290,11 @@ class _AdminUpravljanjeRestoranimaScreenState
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
                             errorText: "Obavezno polje."),
+                        FormBuilderValidators.maxLength(50,
+                            errorText:
+                                "Maksimalna dužina imena je 50 znakova."),
+                        FormBuilderValidators.minLength(2,
+                            errorText: "Minimalna dužina imena je 2 znaka."),
                       ]),
                       onChanged: (value) async {
                         if (value != null && korisniciResult != null) {
@@ -648,7 +653,8 @@ class _AdminUpravljanjeRestoranimaScreenState
                         FormBuilderValidators.minLength(2,
                             errorText: "Minimalna dužina naziva je 2 znaka."),
                         FormBuilderValidators.maxLength(40,
-                            errorText: "Maksimalna dužina naziva je 40 znaka."),
+                            errorText:
+                                "Maksimalna dužina naziva je 40 znakova."),
                       ]),
                       onChanged: (value) async {
                         if (value != null && korisniciResult != null) {

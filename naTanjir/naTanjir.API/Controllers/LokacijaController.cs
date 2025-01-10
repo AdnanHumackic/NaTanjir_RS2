@@ -24,7 +24,7 @@ namespace naTanjir.API.Controllers
             return base.GetList(searchObject, cancellationToken);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac, Dostavljac")]
         public override Task<Lokacija> GetById(int id, CancellationToken cancellationToken = default)
         {
             return base.GetById(id, cancellationToken);
