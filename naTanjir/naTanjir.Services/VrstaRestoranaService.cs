@@ -43,6 +43,15 @@ namespace naTanjir.Services
             await base.BeforeInsertAsync(request, entity, cancellationToken);
         }
 
+        public override async Task BeforeDeleteAsync(VrstaRestorana entity, CancellationToken cancellationToken)
+        {
+            var uUpotrebiVrstaRestorana=Context.Restorans.Any(x=>x.VrstaRestoranaId==entity.VrstaId);
+            if(uUpotrebiVrstaRestorana)
+            {
+                throw new UserException("Ova vrsta restorana je u upotrebi, te se ne moze obrisati");
+            }
+            await base.BeforeDeleteAsync(entity, cancellationToken);
+        }
         public override async Task BeforeUpdateAsync(VrstaRestoranaUpdateRequest request, VrstaRestorana entity, CancellationToken cancellationToken = default)
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);

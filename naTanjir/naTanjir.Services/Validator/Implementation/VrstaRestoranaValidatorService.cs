@@ -36,12 +36,6 @@ namespace naTanjir.Services.Validator.Implementation
                 throw new UserException("Molimo unesite naziv vrste restorana");
             }
 
-            var obj = Context.VrstaRestoranas.Where(x => x.Naziv == naziv).FirstOrDefault();
-
-            if (obj != null)
-            {
-                throw new UserException($"{obj.Naziv} već postoji.");
-            }
         }
     }
 }

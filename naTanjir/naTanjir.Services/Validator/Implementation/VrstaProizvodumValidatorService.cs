@@ -35,13 +35,7 @@ namespace naTanjir.Services.Validator.Implementation
             {
                 throw new UserException("Molimo unesite naziv vrste proizvoda.");
             }
-
-            var obj = Context.VrstaProizvoda.Where(x => x.Naziv == naziv).FirstOrDefault();
-
-            if (obj != null)
-            {
-                throw new UserException($"{obj.Naziv} već postoji.");
-            }
+            
         }
     }
 }

@@ -210,7 +210,7 @@ public partial class NaTanjirContext : DbContext
             entity.Property(e => e.Cijena).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Naziv)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(true);
             entity.Property(e => e.Opis).IsUnicode(false);
             entity.Property(e => e.RestoranId).HasColumnName("RestoranID");
             entity.Property(e => e.StateMachine)
@@ -341,7 +341,7 @@ public partial class NaTanjirContext : DbContext
             entity.Property(e => e.VrstaId).HasColumnName("VrstaID");
             entity.Property(e => e.Naziv)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(true);
             entity.Property(e => e.VrijemeBrisanja).HasColumnType("date");
         });
 
@@ -354,7 +354,7 @@ public partial class NaTanjirContext : DbContext
             entity.Property(e => e.VrstaId).HasColumnName("VrstaID");
             entity.Property(e => e.Naziv)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(true);
             entity.Property(e => e.VrijemeBrisanja).HasColumnType("date");
         });
 

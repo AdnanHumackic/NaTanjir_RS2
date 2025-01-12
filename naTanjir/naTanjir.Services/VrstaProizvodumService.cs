@@ -47,6 +47,17 @@ namespace naTanjir.Services
 
         }
 
+        public override async Task BeforeDeleteAsync(VrstaProizvodum entity, CancellationToken cancellationToken)
+        {
+            var uUpotrebiVrstaProizvoda=Context.Proizvods.Any(x=>x.VrstaProizvodaId==entity.VrstaId);
+
+            if (uUpotrebiVrstaProizvoda)
+            {
+                throw new UserException("Ova vrsta proizvoda je u upotrebi, te se ne moze obrisati");
+            }
+
+            await base.BeforeDeleteAsync(entity, cancellationToken);
+        }
         public override async Task BeforeUpdateAsync(VrstaProizvodumUpdateRequest request, VrstaProizvodum entity, CancellationToken cancellationToken = default)
         {
             await base.BeforeUpdateAsync(request, entity, cancellationToken);

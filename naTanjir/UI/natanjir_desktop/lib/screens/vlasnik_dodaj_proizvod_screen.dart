@@ -154,6 +154,12 @@ class _VlasnikDodajProizvodScreenState
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
                             errorText: "Obavezno polje."),
+                        FormBuilderValidators.minLength(
+                          2,
+                          errorText: "Minimalna dužina je 2 znaka.",
+                        ),
+                        FormBuilderValidators.maxLength(40,
+                            errorText: "Maksimalna dužina je 40 znakova."),
                       ]),
                       onChanged: (value) async {
                         if (value != null && proizvodResult != null) {

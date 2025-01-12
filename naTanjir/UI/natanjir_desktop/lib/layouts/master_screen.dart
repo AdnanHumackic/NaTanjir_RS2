@@ -4,6 +4,8 @@ import 'package:natanjir_desktop/providers/auth_provider.dart';
 import 'package:natanjir_desktop/screens/admin_dashboard_screen.dart';
 import 'package:natanjir_desktop/screens/admin_upravljanje_korisnickim_nalozima_screen.dart';
 import 'package:natanjir_desktop/screens/admin_upravljanje_restoranima_screen.dart';
+import 'package:natanjir_desktop/screens/admin_upravljanje_vrstama_proizvoda.dart';
+import 'package:natanjir_desktop/screens/admin_upravljanje_vrstama_restorana.dart';
 import 'package:natanjir_desktop/screens/korisnik_profile_screen.dart';
 import 'package:natanjir_desktop/screens/radnik_narudzbe_list_screen.dart';
 import 'package:natanjir_desktop/screens/vlasnik_dashboard_screen.dart';
@@ -261,6 +263,48 @@ class _MasterScreenState extends State<MasterScreen> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
                                           RadnikNarudzbeListScreen()));
+                                },
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!
+                                    .any((x) => x.uloga?.naziv == "Admin"))
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.restaurant_menu_outlined,
+                                  color: Colors.white,
+                                ),
+                                title: const Text(
+                                  "Upravljanje vrstama proizvoda",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          AdminUpravljanjeVrstamaProizvodaScreen()));
+                                },
+                              ),
+                            if (AuthProvider.korisnikUloge != null &&
+                                AuthProvider.korisnikUloge!
+                                    .any((x) => x.uloga?.naziv == "Admin"))
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.food_bank_outlined,
+                                  color: Colors.white,
+                                ),
+                                title: const Text(
+                                  "Upravljanje vrstama restorana",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          AdminUpravljanjeVrstamaRestoranaScreen()));
                                 },
                               ),
                             Spacer(),
