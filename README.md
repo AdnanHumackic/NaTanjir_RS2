@@ -22,8 +22,8 @@ Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnolo
 
 <ul>
     <li><strong style="font-size: 1.2em;">Extractovati: fit-build-2025-1-13 - mobile</strong></li>
-    <li><strong style="font-size: 1.2em;">Nakon extractovanja, na pokrenuti emulator uređaj prenijeti fajl "app-debug.apk" koji se nalazi u folderu "flutter-apk"</strong></li>
-    <li><strong style="font-size: 1.2em;">Unijeti mobilne kredencijale koji se mogu pronaći u ovom readme-u skrolanjem</strong></li>
+    <li><strong style="font-size: 1.2em;">Nakon extractovanja, na pokrenuti emulator uređaj prenijeti fajl "app-debug.apk" koji se nalazi u folderu "flutter-apk" i sačekati da se aplikacija instalira</strong></li>
+    <li><strong style="font-size: 1.2em;">Nakon što je aplikacija instalirana, pokrenuti je i unijeti mobilne kredencijale koji se mogu pronaći u ovom readme-u skrolanjem</strong></li>
 </ul>
 
 <h1>Kredencijali za prijavu</h1>
