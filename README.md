@@ -1,6 +1,31 @@
 # NaTanjir_RS2
 Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnologija u Mostaru.
 
+<h1>Upute za pokretanje</h1>
+<b>Nakon kloniranja repozitorija uraditi sljedeće:</b>
+<ul>
+    <li><strong style="font-size: 1.2em;">Extractovati: fit-build-2025-1-13 - env</strong></li>
+    <li><strong style="font-size: 1.2em;">Postaviti .env fajl u: \NaTanjir_RS2\naTanjir</strong></li>
+    <li><strong style="font-size: 1.2em;">Otvoriti \NaTanjir_RS2\naTanjir u terminalu i pokrenuti komandu: docker-compose up --build</strong></li>
+</ul>
+<ul>
+    <li><strong style="font-size: 1.2em;">Extractovati: fit-build-2025-1-13 - desktop</strong></li>
+    <li><strong style="font-size: 1.2em;">Pokrenuti natanjir_desktop.exe koji se nalazi u folderu "Debug"</strong></li>
+    <li><strong style="font-size: 1.2em;">Unijeti desktop kredencijale koji se mogu pronaći u ovom readme-u skrolanjem</strong></li>
+</ul>
+
+<ul>
+    <li><strong style="font-size: 1.2em;">Prije pokretanja mobilne aplikacije pobrinuti se da aplikacija već ne postoji na android emulatoru, ukoliko postoji, uraditi deinstalaciju iste</strong></li>
+    <li><strong style="font-size: 1.2em;">Nakon prvog koraka, u fit-build-2025-1-13 - env pratiti upute(lokacija_upute) za postavljanje lokacije android uređaja</strong></li>
+    <li><strong style="font-size: 1.2em;">Prijedlog lokacije: 43.337424, 17.815102</strong></li>
+</ul>
+
+<ul>
+    <li><strong style="font-size: 1.2em;">Extractovati: fit-build-2025-1-13 - mobile</strong></li>
+    <li><strong style="font-size: 1.2em;">Nakon extractovanja, na pokrenuti emulator uređaj prenijeti fajl "app-debug.apk" koji se nalazi u folderu "flutter-apk"</strong></li>
+    <li><strong style="font-size: 1.2em;">Unijeti mobilne kredencijale koji se mogu pronaći u ovom readme-u skrolanjem</strong></li>
+</ul>
+
 <h1>Kredencijali za prijavu</h1>
 
 <h2>Mobilna aplikacija</h2>
