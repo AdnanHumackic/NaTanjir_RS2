@@ -312,6 +312,12 @@ class _KorisnikProfileEditScreenState extends State<KorisnikProfileEditScreen> {
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
                             errorText: "Obavezno polje."),
+                        FormBuilderValidators.minLength(3,
+                            errorText:
+                                "Nova lozinka mora imati najmanje 3 znaka."),
+                        FormBuilderValidators.maxLength(40,
+                            errorText:
+                                "Nova lozinka ne može imati više od 40 znakova."),
                       ]),
                       onChanged: (value) {
                         if (value != null && value == AuthProvider.password) {
