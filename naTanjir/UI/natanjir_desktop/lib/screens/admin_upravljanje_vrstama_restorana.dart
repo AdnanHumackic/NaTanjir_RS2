@@ -290,7 +290,7 @@ class VrstaRestoranaDataSource extends AdvancedDataTableSource<VrstaRestorana> {
               },
               child: Container(
                 child: Text(
-                  "Obriši vrstu proizvoda",
+                  "Obriši vrstu restorana",
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.red,
