@@ -192,11 +192,10 @@ class _VlasnikDodajProizvodScreenState
                       validators: [
                         FormBuilderValidators.required(
                             errorText: 'Cijena je obavezna'),
-                        FormBuilderValidators.match(
-                          r'^\d+([.]\d{2})?$',
-                          errorText:
-                              'Unesite ispravnu cijenu, npr. 34 ili 34.00',
-                        ),
+                        FormBuilderValidators.numeric(
+                            errorText: 'Cijena mora broj i veća od 0.10.'),
+                        FormBuilderValidators.min(0.1,
+                            errorText: 'Cijena mora biti veća od 0.10'),
                       ],
                     ),
                   ),
@@ -312,6 +311,8 @@ class _VlasnikDodajProizvodScreenState
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
                             errorText: "Obavezno polje."),
+                        FormBuilderValidators.max(1000,
+                            errorText: 'Opis može imati najviše 1000 znakova.'),
                       ]),
                     ),
                   ),
@@ -385,10 +386,14 @@ class _VlasnikDodajProizvodScreenState
                       widget.proizvod!.proizvodId!, req);
                 }
                 await QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.success,
-                  title: "Uspješno dodan/uređen proizvod!",
-                );
+                    context: context,
+                    type: QuickAlertType.success,
+                    title: "Uspješno dodan/uređen proizvod!",
+                    onConfirmBtnTap: () {
+                      Navigator.pop(context, true);
+                    });
+                Navigator.pop(context, true);
+
                 clearinput();
                 if (mounted) setState(() {});
               }

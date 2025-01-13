@@ -17,13 +17,13 @@ namespace naTanjir.API.Controllers
         {
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         public override Task<PagedResult<Uloge>> GetList([FromQuery] UlogeSearchObject searchObject, CancellationToken cancellationToken = default)
         {
             return base.GetList(searchObject, cancellationToken);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Kupac,Vlasnik,Admin,Dostavljac,RadnikRestorana")]
         public override Task<Uloge> GetById(int id, CancellationToken cancellationToken = default)
         {
             return base.GetById(id, cancellationToken);
