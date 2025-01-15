@@ -122,13 +122,13 @@ namespace naTanjir.Services.Recommender.UserGradeBased
                         .Proizvods
                         .Include(x => x.VrstaProizvoda);
 
-            var allBooks = allProductQuery.ToList();
+            var allProducts = allProductQuery.ToList();
 
             var data = new List<ProizvodEntry>();
 
-            foreach (var item in allBooks)
+            foreach (var item in allProducts)
             {
-                foreach (var rb in allBooks)
+                foreach (var rb in allProducts)
                 {
                     if (rb.ProizvodId == item.ProizvodId)
                         continue;
